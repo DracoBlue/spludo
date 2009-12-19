@@ -37,7 +37,7 @@ ServerApplication.prototype = {
                 }
             };
 
-            var response = "Seite nicht gefunden!";
+            var response = null;
 
             try {
                 var controller = controller_manager.getController(req.uri.full.substr(1));
@@ -52,7 +52,7 @@ ServerApplication.prototype = {
                 }
             } catch (e) {
                 context.status = 404;
-                response = "Seite nicht gefunden!" + sys.inspect(e);
+                response = "Page not found!" + sys.inspect(e);
             }
 
             res.sendHeader(context.status, context.headers);
