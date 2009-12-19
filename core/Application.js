@@ -91,7 +91,7 @@ ConsoleApplication.prototype = {
                 response = view.render(controller[1], context);
             }
         } catch (e) {
-            response = "Seite nicht gefunden!" + sys.inspect(e);
+            response = "Error:\n" + sys.inspect(e);
         }
         
         sys.puts(response);
