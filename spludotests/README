@@ -2,3 +2,23 @@ SpludoTests - Spludo Framework README
 =======================
 
 This is the test application for the entire spludo framework.
+
+
+Running the tests
+-----------------
+
+Enter the directory spludotests and execute:
+ ant core-test
+ 
+ 
+Integrating with Continous Integration Tools
+--------------------------------------------
+
+The tests also support an option to return .xml format (junit-style) to
+integrate with tools like hudson or cruise control.
+
+You may run the tests with the following command to achieve that:
+ node ../build/run_tests.js xml
+ 
+Please use that ONLY to retrieve the xml format, because the "ant core-test"
+command is way more convenient for the normal test execution.
