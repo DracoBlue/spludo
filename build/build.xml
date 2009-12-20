@@ -32,7 +32,7 @@
 
     <target name="core-lint">
         <exec executable="bash" dir="${spludo.directory}">
-            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -process 'core/*.js'&quot;" />
+            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -nologo -nofilelisting -process 'core/*.js'&quot;" />
         </exec>
     </target>
 
