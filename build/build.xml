@@ -11,6 +11,24 @@
             <arg line="-c &quot;node ../build/run_tests.js&quot;" />
         </exec>
     </target>
+    
+    <target name="core-test-xml">
+        <mkdir dir="${build}/core" />
+        <exec executable="bash" dir="${spludo.directory}/spludotests">
+            <arg line="-c &quot;node ../build/run_tests.js xml > ${build}/core/test_results.xml &quot;" />
+        </exec>
+    </target>
+    
+    
+    <target name="core-lint-xml">
+        <mkdir dir="${build}/core" />
+        <exec executable="bash" dir="${spludo.directory}">
+            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -process 'core/*.js' -nologo -nofilelisting -nocontext -nosummary > ${build}/core/jslint_report.txt &quot;" />
+        </exec>
+        <exec executable="bash" dir="${spludo.directory}">
+            <arg line="-c &quot;node build/convert_jslint_to_checkstyle.js ${build}/core/jslint_report.txt > ${build}/core/jslint_report.xml &quot;" />
+        </exec>
+    </target>
 
     <target name="core-lint">
         <exec executable="bash" dir="${spludo.directory}">
