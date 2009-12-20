@@ -6,6 +6,14 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class The manager for all registered views.
+ * 
+ * @extends Logging
+ * 
+ * @version 0.1 
+ * @author DracoBlue
+ */
 ViewManager = function() {
     this.views = {};
 };

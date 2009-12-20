@@ -6,6 +6,12 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class A simple controller with either String or RegExp-Path
+ * 
+ * @version 0.1 
+ * @author DracoBlue
+ */
 Controller = function(path, options) {
     if (process.isFunction(options.execute)) {
         this.execute = options.execute;

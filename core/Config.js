@@ -6,6 +6,12 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class The configuration.
+ * 
+ * @version 0.1
+ * @author DracoBlue
+ */
 Config = function() {
     this.values = {};
 };

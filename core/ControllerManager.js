@@ -6,6 +6,14 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class The manager for all registered controllers.
+ * 
+ * @extends Logging
+ * 
+ * @version 0.1 
+ * @author DracoBlue
+ */
 ControllerManager = function() {
     this.controllers_string = {};
     this.controllers_regexp = [];

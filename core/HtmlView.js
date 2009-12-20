@@ -6,6 +6,13 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class A HtmlView, which reads a template file and executes it. Those
+ *        template files may include inline server-side javascript.
+ * 
+ * @version 0.1
+ * @author DracoBlue
+ */
 HtmlView = function(name, content_file) {
     this.content_file = content_file;
     view_manager.addView(name, this);
@@ -65,7 +72,7 @@ HtmlView.prototype.render = function(params, context) {
                 body.push(JSON.stringify(content.substr(current_block_start, content.length)));
                 body.push(");\n");
             }
-            
+
             var body_string = "var content = [];\n " + body.join("\n") + " \nreturn content.join(''); ";
 
             html_view_format[file_name] = new Function("params", "context", body_string);
