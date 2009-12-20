@@ -105,7 +105,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
     for (i in view_files) {
         var view_name = view_files[i].substr(path.length + "views/".length);
         view_name = view_name.substr(0, view_name.length - 4);
-        new HtmlView(view_name, view_files[i]);
+        new EjsView(view_name, view_files[i]);
     }
     delete this.current_module_name;
 };

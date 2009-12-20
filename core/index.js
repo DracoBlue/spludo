@@ -47,7 +47,7 @@ controller_manager = new ControllerManager();
 controller_manager.loadControllers(application_directory);
 
 require("./JsView");
-require("./HtmlView");
+require("./EjsView");
 require("./ViewManager");
 
 /**
