@@ -31,10 +31,15 @@ view_manager.loadViews("./");
 
 var module_names = [];
 
-posix.readdir("./modules").addCallback(function(contents) {
+try {
+    posix.readdir("./modules").addCallback(function(contents) {
     module_names = contents;
-}).wait();
-
+    }).wait();
+} catch (e) {
+    /*
+     * We can't read the modules directory, cause there is none :(
+     */
+}
 /*
  * For each module, load what needs to be loaded.
  */
