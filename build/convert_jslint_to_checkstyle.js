@@ -1,3 +1,11 @@
+/*
+ * This file is part of the Spludo Framework.
+ * Copyright (c) 2009 DracoBlue, http://dracoblue.net/
+ *
+ * Licensed under the terms of MIT License. For the full copyright and license
+ * information, please see the LICENSE file in the root folder.
+ */
+
 var sys = require("sys");
 var posix = require("posix");
 
@@ -24,12 +32,13 @@ for (i = 0; i < file_contents.length; i++) {
 
     if (line.length > 0) {
         tmp = /(.*)\((\d+)\)\: (.*)/.exec(line);
+
         incident = {
             file_name: tmp[1],
             line: tmp[2],
             description: tmp[3],
             severity: "error"
-        }
+        };
 
         if (incident.description.match(/^SyntaxError/)) {
             incident.severity = "error";
