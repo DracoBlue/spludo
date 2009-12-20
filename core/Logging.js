@@ -8,12 +8,26 @@
 
 var sys = require('sys');
 
+var logWithPrefix = function(prefix, args) {
+    var message = "null";
+    if (args.length > 1) {
+        message = sys.inspect(args);
+    }
+    
+    if (args.length === 1) {
+        message = (typeof args[0] === "string") ? args[0] : sys.inspect(args[0]);
+    }
+
+    sys.debug(prefix + ': ' + message);
+
+}
+
 Logging = function() {};
 Logging.prototype = {
     'log' : function() {
-        sys.debug("LOG : " + sys.inspect(arguments));
+        logWithPrefix("LOG ", arguments);
     },
     'info' : function() {
-        sys.debug("INFO: " + sys.inspect(arguments));
+        logWithPrefix("INFO", arguments);
     }
 }
