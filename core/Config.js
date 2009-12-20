@@ -8,7 +8,7 @@
 
 Config = function() {
     this.values = {};
-}
+};
 
 Config.prototype = {
 
@@ -25,4 +25,4 @@ Config.prototype = {
         return this.values[key];
     }
 
-}
+};

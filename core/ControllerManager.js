@@ -84,6 +84,6 @@ ControllerManager.prototype = {
 
         delete this.current_module_name;
     }
-}
+};
 
 process.mixin(true, ControllerManager.prototype, Logging.prototype);

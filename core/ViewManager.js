@@ -42,7 +42,7 @@ ViewManager.prototype = {
             throw new Error("View not found for name " + name + " (module: " + (module || "") + ")!");
         }
 
-        return view
+        return view;
     },
 
     /**
@@ -100,6 +100,6 @@ ViewManager.prototype = {
         }
         delete this.current_module_name;
     }
-}
+};
 
 process.mixin(true, ViewManager.prototype, Logging.prototype);

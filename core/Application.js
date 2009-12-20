@@ -42,11 +42,10 @@ ServerApplication.prototype = {
             try {
                 var controller = controller_manager.getController(req.uri.full.substr(1));
                 response = controller[0].execute(controller[1], context);
-                if (typeof context.view_name === "undefined") {
+                if (typeof context.view_name !== "undefined") {
                     /*
-                     * That's it! We don't need those views ... :(
+                     * We need the view manager, since the view-name is set!
                      */
-                } else {
                     var view = view_manager.getView(context.view_name);
                     response = view.render(controller[1], context);
                 }
@@ -63,7 +62,7 @@ ServerApplication.prototype = {
 
         this.server.listen(this.options["port"]);
     }
-}
+};
 
 process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
 
@@ -77,14 +76,13 @@ ConsoleApplication.prototype = {
         var response = null;
 
         try {
-            var context = {}
+            var context = {};
             var controller = controller_manager.getController(this.options["path"]);
             response = controller[0].execute(controller[1], context);
-            if (typeof context.view_name === "undefined") {
+            if (typeof context.view_name !== "undefined") {
                 /*
-                 * That's it! We don't need those views ... :(
+                 * We need the view manager, since the view-name is set!
                  */
-            } else {
                 var view = view_manager.getView(context.view_name);
                 response = view.render(controller[1], context);
             }
@@ -94,6 +92,6 @@ ConsoleApplication.prototype = {
 
         sys.puts(response);
     }
-}
+};
 
 process.mixin(true, ConsoleApplication.prototype, BaseApplication.prototype);

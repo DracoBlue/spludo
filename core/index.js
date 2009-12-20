@@ -14,7 +14,7 @@ var application_directory = process.cwd() + "/";
 
 process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
-}
+};
 
 require("./Config");
 

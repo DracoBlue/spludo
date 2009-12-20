@@ -8,7 +8,7 @@
 
 process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
-}
+};
 
 JsView = function(name, render_function) {
     if (process.isFunction(render_function)) {
@@ -21,4 +21,4 @@ JsView.prototype = {
     "render": function(params, context) {
         throw new Error("Implement the .render method!");
     }
-}
+};

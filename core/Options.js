@@ -11,7 +11,7 @@ Options = function() {
 
 Options.prototype = {
     'setOptions' : function(options) {
-        this.options = this.options || {}
+        this.options = this.options || {};
         
         if (typeof options === "undefined") {
             return;
@@ -21,4 +21,4 @@ Options.prototype = {
             this.options[option_key] = options[option_key];
         }
     }
-}
+};

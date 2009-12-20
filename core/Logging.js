@@ -19,11 +19,10 @@ var logWithPrefix = function(prefix, args) {
     }
 
     sys.debug(prefix + ': ' + message);
-
-}
+};
 
 var doNotLog = function() {
-}
+};
 
 /*
  * Log Levels:
@@ -51,7 +50,7 @@ var log_configuration = config.get("logging", {
 if (log_configuration.level >= Logging.LEVEL_TRACE) {
     Logging.prototype.trace = function() {
         logWithPrefix("TRACE", arguments);
-    }
+    };
 } else {
     Logging.prototype.trace = doNotLog;
 }
@@ -59,10 +58,10 @@ if (log_configuration.level >= Logging.LEVEL_TRACE) {
 if (log_configuration.level >= Logging.LEVEL_DEBUG) {
     Logging.prototype.log = function() {
         logWithPrefix("LOG  ", arguments);
-    }
+    };
     Logging.prototype.debug = function() {
         logWithPrefix("DEBUG", arguments);
-    }
+    };
 } else {
     Logging.prototype.debug = doNotLog;
     Logging.prototype.log = doNotLog;
@@ -71,7 +70,7 @@ if (log_configuration.level >= Logging.LEVEL_DEBUG) {
 if (log_configuration.level >= Logging.LEVEL_INFO) {
     Logging.prototype.info = function() {
         logWithPrefix("INFO ", arguments);
-    }
+    };
 } else {
     Logging.prototype.info = doNotLog;
 }
@@ -79,7 +78,7 @@ if (log_configuration.level >= Logging.LEVEL_INFO) {
 if (log_configuration.level >= Logging.LEVEL_WARN) {
     Logging.prototype.warn = function() {
         logWithPrefix("WARN ", arguments);
-    }
+    };
 } else {
     Logging.prototype.warn = doNotLog;
 }
@@ -87,7 +86,7 @@ if (log_configuration.level >= Logging.LEVEL_WARN) {
 if (log_configuration.level >= Logging.LEVEL_ERROR) {
     Logging.prototype.error = function() {
         logWithPrefix("ERROR", arguments);
-    }
+    };
 } else {
     Logging.prototype.error = doNotLog;
 }
@@ -95,7 +94,7 @@ if (log_configuration.level >= Logging.LEVEL_ERROR) {
 if (log_configuration.level >= Logging.LEVEL_FATAL) {
     Logging.prototype.fatal = function() {
         logWithPrefix("FATAL", arguments);
-    }
+    };
 } else {
     Logging.prototype.fatal = doNotLog;
 }
