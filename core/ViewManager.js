@@ -68,13 +68,13 @@ ViewManager.prototype = {
         }
         
         for (i in view_files) {
-            require("./../" + view_files[i].substr(0, view_files[i].length - 3));
+            require(view_files[i].substr(0, view_files[i].length - 3));
         }
 
         view_files = [];
 
         try {
-            sys.exec("ls " + path + "views/*.view.html").addCallback(function(stdout, stderr) {
+            sys.exec("ls " + path + "views/*.ejs").addCallback(function(stdout, stderr) {
                 var files_in_folder = stdout.split("\n");
     
                 for (i in files_in_folder) {
@@ -88,9 +88,10 @@ ViewManager.prototype = {
              *  views folder does not exist!
              */
         }
+
         for (i in view_files) {
             var view_name = view_files[i].substr(path.length + "views/".length);
-            view_name = view_name.substr(0, view_name.length - 10);
+            view_name = view_name.substr(0, view_name.length - 4);
             new HtmlView(view_name, view_files[i]);
         }
         delete this.current_module_name;

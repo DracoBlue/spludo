@@ -10,6 +10,8 @@ var sys = require('sys');
 var http = require('http');
 var posix = require('posix');
 
+var application_directory = process.cwd() + "/";
+
 process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
 }
@@ -20,34 +22,34 @@ require("./Controller");
 require("./ControllerManager");
 
 controller_manager = new ControllerManager();
-controller_manager.loadControllers("./");
+controller_manager.loadControllers(application_directory);
 
 require("./JsView");
 require("./HtmlView");
 require("./ViewManager");
 
 view_manager = new ViewManager();
-view_manager.loadViews("./");
+view_manager.loadViews(application_directory);
 
 var module_names = [];
 
 try {
-    posix.readdir("./modules").addCallback(function(contents) {
-    module_names = contents;
+    posix.readdir(application_directory + "modules").addCallback(function(contents) {
+        module_names = contents;
     }).wait();
 } catch (e) {
     /*
      * We can't read the modules directory, cause there is none :(
      */
 }
+
 /*
  * For each module, load what needs to be loaded.
  */
 for (var i=0; i<module_names.length; i++) {
     var module_name = module_names[i];
-    
-    controller_manager.loadControllers("./modules/" + module_name);
-    view_manager.loadViews("./modules/" + module_names, module_name);
+    controller_manager.loadControllers(application_directory + "modules/" + module_name + "/");
+    view_manager.loadViews(application_directory + "modules/" + module_names + "/", module_name);
 }
 
 require("./Application");

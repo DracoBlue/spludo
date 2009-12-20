@@ -71,7 +71,7 @@ ControllerManager.prototype = {
         }
         
         for (i in controller_files) {
-            require("./../" + controller_files[i].substr(0, controller_files[i].length - 3));
+            require(controller_files[i].substr(0, controller_files[i].length - 3));
         }
     }
 }
