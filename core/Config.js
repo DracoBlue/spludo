@@ -9,7 +9,7 @@
 /**
  * @class The configuration.
  * 
- * @version 0.1
+ * @since 0.1
  * @author DracoBlue
  */
 Config = function() {

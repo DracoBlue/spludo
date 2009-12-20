@@ -10,7 +10,7 @@
  * @class A HtmlView, which reads a template file and executes it. Those
  *        template files may include inline server-side javascript.
  * 
- * @version 0.1
+ * @since 0.1
  * @author DracoBlue
  */
 HtmlView = function(name, content_file) {

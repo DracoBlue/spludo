@@ -14,7 +14,7 @@
  * @class Offers a options-property and a setOptions method for convenient
  *        definition and retrieval of options.
  * 
- * @version 0.1
+ * @since 0.1
  * @author DracoBlue
  */
 Options = function() {

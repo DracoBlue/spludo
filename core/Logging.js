@@ -15,7 +15,7 @@ var sys = require('sys');
  * 
  * @class Offers logging facility.
  * 
- * @version 0.1
+ * @since 0.1
  * @author DracoBlue
  */
 Logging = function() {

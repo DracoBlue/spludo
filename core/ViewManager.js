@@ -11,7 +11,7 @@
  * 
  * @extends Logging
  * 
- * @version 0.1 
+ * @since 0.1 
  * @author DracoBlue
  */
 ViewManager = function() {
