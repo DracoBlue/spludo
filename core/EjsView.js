@@ -32,8 +32,8 @@ EjsView.prototype.render = function(params, context) {
             content = file_content;
         }).wait();
 
-        var next_js_tag = content.indexOf("<?javascript");
-        var js_tag_length = "<?javascript".length;
+        var next_js_tag = content.indexOf("<%");
+        var js_tag_length = "<%".length;
 
         if (next_js_tag === -1) {
             ejs_view_format[file_name] = function() {
@@ -54,7 +54,7 @@ EjsView.prototype.render = function(params, context) {
                 body.push(JSON.stringify(content.substr(current_block_start, next_js_tag - current_block_start)));
                 body.push(");\n");
 
-                end_of_js_tag = content.indexOf("?>", next_js_tag);
+                end_of_js_tag = content.indexOf("%>", next_js_tag);
 
                 if (end_of_js_tag === -1) {
                     throw new Error("<?javascript tag not finished!");
@@ -64,7 +64,7 @@ EjsView.prototype.render = function(params, context) {
                 body.push(content.substr(next_js_tag_end, end_of_js_tag - next_js_tag_end));
                 body.push("\n");
                 current_block_start = end_of_js_tag + 2;
-                next_js_tag = content.indexOf("<?javascript", current_block_start);
+                next_js_tag = content.indexOf("<%", current_block_start);
             }
 
             if (current_block_start != content.length) {
@@ -74,7 +74,7 @@ EjsView.prototype.render = function(params, context) {
             }
 
             var body_string = "var content = [];\n " + body.join("\n") + " \nreturn content.join(''); ";
-
+            
             ejs_view_format[file_name] = new Function("params", "context", body_string);
         }
     }
