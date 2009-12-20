@@ -7,6 +7,8 @@
  */
 
 ControllerManager = function() {
+    this.controllers_string = {};
+    this.controllers_regexp = {};
 };
 
 ControllerManager.prototype = {
