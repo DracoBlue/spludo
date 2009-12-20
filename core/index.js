@@ -79,4 +79,6 @@ for ( var i = 0; i < module_names.length; i++) {
     view_manager.loadViews(application_directory + "modules/" + module_names + "/", module_name);
 }
 
+
 require("./Application");
+require("./TestApplication");
