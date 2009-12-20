@@ -6,10 +6,6 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-process.isFunction = function(object) {
-    return (typeof object == "function") ? true : false;
-};
-
 HtmlView = function(name, content_file) {
     this.content_file = content_file;
     view_manager.addView(name, this);
