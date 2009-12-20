@@ -18,6 +18,11 @@ process.isFunction = function(object) {
 
 require("./Config");
 
+/**
+ * The global configuration object.
+ * 
+ * @type Config
+ */
 config = new Config();
 
 try {
@@ -33,6 +38,11 @@ require("./Logging");
 require("./Controller");
 require("./ControllerManager");
 
+/**
+ * The global controller manager.
+ * 
+ * @type ControllerManager
+ */
 controller_manager = new ControllerManager();
 controller_manager.loadControllers(application_directory);
 
@@ -40,6 +50,11 @@ require("./JsView");
 require("./HtmlView");
 require("./ViewManager");
 
+/**
+ * The global view manager.
+ * 
+ * @type ViewManager
+ */
 view_manager = new ViewManager();
 view_manager.loadViews(application_directory);
 
