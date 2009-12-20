@@ -4,14 +4,12 @@ Demo - Spludo Framework README
 Installation
 ------------
 
-To get this demo up and running copy the core folder right into the demo
-folder right into the demo folder.
+If you have nodejs already installed, there is nothing else to install.
 
-Your demo folder should look like this then:
+Your demo folder should look like this:
  demo/
     controllers/
     views/
-    core/
     modules/
     run_console.js
     run_server.js

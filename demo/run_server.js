@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-require("./core");
+require("./../core");
 
 new ServerApplication({
     "port": 8000
