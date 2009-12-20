@@ -1,0 +1,22 @@
+<project name="SpludoCore" default="list" basedir=".">
+
+    <loadproperties srcFile="build.properties" />
+
+    <description>
+        Spludo Core Build-Targets, should be included in a project specific build.xml!
+    </description>
+
+    <target name="core-lint">
+        <exec executable="bash" dir="${spludo.directory}">
+            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -process 'core/*.js'&quot;" />
+        </exec>
+    </target>
+
+    <target name="core-api">
+        <mkdir dir="${build}/core/api" />
+        <exec executable="java" dir="${spludo.directory}">
+            <arg
+                line="-jar ${jsdoctoolkit.directory}/jsrun.jar ${jsdoctoolkit.directory}/app/run.js -a -t=${jsdoctoolkit.directory}/templates/jsdoc -d=${build}/core/api core/" />
+        </exec>
+    </target>
+</project>
