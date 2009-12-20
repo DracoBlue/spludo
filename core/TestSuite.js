@@ -30,7 +30,7 @@ TestSuite.prototype.addTest = function(name, test_function) {
         name: name,
         execute: test_function
     });
-}
+};
 
 TestSuite.prototype.resetStats = function() {
     this.stats = {
@@ -42,7 +42,7 @@ TestSuite.prototype.resetStats = function() {
         failures: 0
     };
     this.failures = [];
-}
+};
 
 TestSuite.prototype.execute = function() {
     var that_suite = this;
@@ -62,7 +62,7 @@ TestSuite.prototype.execute = function() {
             that_suite.stats.assertions_success++;
         }
         that_suite.stats.assertions++;
-    }
+    };
 
     var tests_count = this.tests.length;
 
@@ -71,7 +71,7 @@ TestSuite.prototype.execute = function() {
         var stats_before_test = {
             assertions: this.stats.assertions,
             failures: this.stats.failures
-        }
+        };
         this.current_test_name = current_test.name;
         this.stats.tests++;
         var before_time = (new Date()).getMilliseconds();
@@ -94,4 +94,4 @@ TestSuite.prototype.execute = function() {
 
         current_test.stats.assertions_success = current_test.stats.assertions - current_test.stats.failures;
     }
-}
+};

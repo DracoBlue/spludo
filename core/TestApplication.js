@@ -6,6 +6,17 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @class The application, which runs the TestSuites.
+ * 
+ * @extends BaseApplication
+ * 
+ * @param {Object} options Options to specify the behaviour
+ * @param {String} [options.format=console] The format of the output (can be console or xml).
+ * 
+ * @since 0.1
+ * @author DracoBlue
+ */
 TestApplication = function(options) {
     this.setOptions(options);
 
@@ -53,4 +64,4 @@ TestApplication.prototype.run = function() {
     } else {
         sys.puts(test_suite_manager.getResultAsText());
     }
-}
+};

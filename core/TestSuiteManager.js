@@ -23,8 +23,9 @@ process.mixin(true, TestSuiteManager.prototype, Logging.prototype);
  * Add a suite to the suite manager.
  */
 TestSuiteManager.prototype.addTestSuite = function(name, suite, module_name, file_name) {
-    var module_name = this.current_module_name || file_name;
-    var file_name = this.current_test_file || file_name;
+    module_name = this.current_module_name || file_name;
+    file_name = this.current_test_file || file_name;
+    
     this.info("addTestSuite: module:" + module_name + ", name:" + name);
     this.suites.push( {
         name: name,
@@ -45,7 +46,7 @@ TestSuiteManager.prototype.execute = function() {
         current_suite = this.suites[i];
         current_suite.suite.execute();
     }
-}
+};
 
 /**
  * This function collections all information gained while executing the test
@@ -87,7 +88,7 @@ TestSuiteManager.prototype.getResultAsJunitXml = function() {
     suite_result.push("</testsuites>");
 
     return suite_result.join("");
-}
+};
 
 /**
  * This is a pretty big renderer function for the test results.
@@ -96,6 +97,8 @@ TestSuiteManager.prototype.getResultAsJunitXml = function() {
  */
 TestSuiteManager.prototype.getResultAsText = function() {
     var suite_result = [];
+    
+    var i = 0;
 
     /*
      * We'll collect everything we know about every executed suite:
@@ -110,7 +113,7 @@ TestSuiteManager.prototype.getResultAsText = function() {
     };
 
     var suites_count = this.suites.length;
-    for ( var i = 0; i < suites_count; i++) {
+    for ( i = 0; i < suites_count; i++) {
         /*
          * Once we are at one suite, we'll make those two helpers for easier and
          * faster access to the selected suite and its stats
@@ -203,15 +206,15 @@ TestSuiteManager.prototype.getResultAsText = function() {
     var paint_good_items_count = Math.floor(promile_assert_worked / 100);
     var paint_bad_items_count = 100 - paint_good_items_count;
     suite_result.push(" Progress (" + paint_good_items_count + "%): \n  ");
-    for ( var i = 0; i < paint_good_items_count; i++) {
+    for ( i = 0; i < paint_good_items_count; i++) {
         suite_result.push("#");
     }
-    for ( var i = 0; i < paint_bad_items_count; i++) {
+    for ( i = 0; i < paint_bad_items_count; i++) {
         suite_result.push("_");
     }
 
     return suite_result.join("");
-}
+};
 
 /**
  * Get all available views and load them ... .
