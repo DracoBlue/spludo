@@ -5,6 +5,12 @@
     <description>
         Spludo Core Build-Targets, should be included in a project specific build.xml!
     </description>
+    
+    <target name="core-test">
+        <exec executable="bash" dir="${spludo.directory}/spludotests">
+            <arg line="-c &quot;node ../build/run_tests.js&quot;" />
+        </exec>
+    </target>
 
     <target name="core-lint">
         <exec executable="bash" dir="${spludo.directory}">
