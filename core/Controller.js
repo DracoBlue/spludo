@@ -22,10 +22,8 @@ Controller = function(path, options) {
     controller_manager.addController(path, this);
 };
 
-Controller.prototype = {
-    'execute': function() {
-        throw new Error("Implement execute-method me!");
-    }
-};
-
 process.mixin(true, Controller.prototype, Options.prototype, Logging.prototype);
+
+Controller.prototype.execute = function() {
+    throw new Error("Implement execute-method me!");
+};

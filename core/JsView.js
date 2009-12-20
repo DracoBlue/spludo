@@ -6,19 +6,13 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-process.isFunction = function(object) {
-    return (typeof object == "function") ? true : false;
-};
-
 JsView = function(name, render_function) {
-    if (process.isFunction(render_function)) {
+    if (typeof render_function === "function") {
         this.render = render_function;
     }
     view_manager.addView(name, this);
 };
 
-JsView.prototype = {
-    "render": function(params, context) {
-        throw new Error("Implement the .render method!");
-    }
+JsView.prototype.render = function(params, context) {
+    throw new Error("Implement the .render method!");
 };

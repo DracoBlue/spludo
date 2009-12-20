@@ -10,19 +10,15 @@ Config = function() {
     this.values = {};
 };
 
-Config.prototype = {
-
-    "setValues": function(values) {
-        for (k in values) {
-            this.values[k] = values[k];
-        }
-    },
-
-    "get": function(key, default_value) {
-        if (typeof this.values[key] === "undefined") {
-            return default_value;
-        }
-        return this.values[key];
+Config.prototype.setValues = function(values) {
+    for (k in values) {
+        this.values[k] = values[k];
     }
+};
 
+Config.prototype.get = function(key, default_value) {
+    if (typeof this.values[key] === "undefined") {
+        return default_value;
+    }
+    return this.values[key];
 };
