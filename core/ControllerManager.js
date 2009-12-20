@@ -13,14 +13,16 @@ ControllerManager = function() {
 
 ControllerManager.prototype = {
     'addController' : function(path, controller) {
+        var module_name = this.current_module_name || null;
 
         if (typeof path === "function") {
             /*
              * Handle those pretty regexp objects as path!
              */
+            this.info("addController: type:RegExp, module:"+module_name+", path:" + path);
             this.controllers_regexp = this.controllers_regexp || [];
 
-            this.controllers_regexp.push( [ path, controller ]);
+            this.controllers_regexp.push( [ path, controller, module_name ]);
 
             return;
         }
@@ -30,18 +32,20 @@ ControllerManager.prototype = {
         if (this.controllers_string[path]) {
             throw new Error("Path already served by " + this.controllers[path]);
         }
-        this.controllers_string[path] = controller;
+            
+        this.info("addController: type:String, module:"+module_name+", path:" + path);
+        this.controllers_string[path] = [ controller, module_name ];
     },
 
     'getController' : function(path) {
         if (this.controllers_string[path]) {
-            return [ this.controllers_string[path], [ path ] ];
+            return [ this.controllers_string[path][0], [ path ], this.controllers_string[path][1] ];
         }
 
         for (i in this.controllers_regexp) {
             var match = String(path).match(this.controllers_regexp[i][0]);
             if (match) {
-                return [ this.controllers_regexp[i][1], match ];
+                return [ this.controllers_regexp[i][1], match, this.controllers_regexp[i][2] ];
             }
         }
 
@@ -51,7 +55,9 @@ ControllerManager.prototype = {
     /**
      * Get all available controllers and load them ... .
      */
-    "loadControllers" : function(path) {
+    "loadControllers" : function(path, module_name) {
+        this.current_module_name = module_name;
+        
         var sys = require('sys');
         var controller_files = [];
         try {
@@ -73,5 +79,9 @@ ControllerManager.prototype = {
         for (i in controller_files) {
             require(controller_files[i].substr(0, controller_files[i].length - 3));
         }
+        
+        delete this.current_module_name;
     }
 }
+
+process.mixin(true, ControllerManager.prototype, Logging.prototype);
