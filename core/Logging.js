@@ -11,6 +11,9 @@ var sys = require('sys');
 Logging = function() {};
 Logging.prototype = {
     'log' : function() {
-        sys.debug(sys.inspect(arguments));
+        sys.debug("LOG : " + sys.inspect(arguments));
+    },
+    'info' : function() {
+        sys.debug("INFO: " + sys.inspect(arguments));
     }
 }
