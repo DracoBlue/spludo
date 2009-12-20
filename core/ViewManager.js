@@ -15,6 +15,8 @@ ViewManager.prototype = {
         this.views = this.views || {};
         module_name = module_name || this.current_module_name;
         
+        this.info("addView: module:"+module_name+", name:" + name);
+        
         if (module_name) {
             this.views[module_name + "." + name ] = view;
             if (typeof this.views[name] === "undefined") {
@@ -48,6 +50,8 @@ ViewManager.prototype = {
      */
     "loadViews" : function(path, module_name) {
         this.current_module_name = module_name;
+        
+        this.info("loadViews: module:"+module_name+", path:" + path);
 
         var sys = require('sys');
         var view_files = [];
@@ -97,3 +101,5 @@ ViewManager.prototype = {
         delete this.current_module_name;
     }
 }
+
+process.mixin(true, ViewManager.prototype, Logging.prototype);
