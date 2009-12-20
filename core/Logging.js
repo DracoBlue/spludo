@@ -21,23 +21,19 @@ var logWithPrefix = function(prefix, args) {
     sys.debug(prefix + ': ' + message);
 
 }
-/*
- * Log Levels:
- *
- *     6   <     5     <  4   <  3   <  2    <   1   <  0
- *   TRACE < DEBUG/LOG < INFO < WARN < ERROR < FATAL < OFF
- */
-
-var log_configuration = config.get(
-    "logging", {
-        "level": 3
-    }
-);
 
 var doNotLog = function() {}
 
+/*
+ * Log Levels:
+ *
+ *    *  <   6   <     5     <  4   <  3   <  2    <   1   <  0
+ *   ALL < TRACE < DEBUG/LOG < INFO < WARN < ERROR < FATAL < OFF
+ */
+
 Logging = function() {};
 
+Logging.LEVEL_ALL = 127;
 Logging.LEVEL_TRACE = 6;
 Logging.LEVEL_LOG = 5;
 Logging.LEVEL_DEBUG = 5;
@@ -45,7 +41,13 @@ Logging.LEVEL_INFO = 4;
 Logging.LEVEL_WARN = 3;
 Logging.LEVEL_ERROR = 2;
 Logging.LEVEL_FATAL = 1;
-Logging.LEVEL_ALL = 0;
+Logging.LEVEL_OFF = 0;
+
+var log_configuration = config.get(
+    "logging", {
+        "level": Logging.LEVEL_WARN
+    }
+);
 
 if (log_configuration.level >= Logging.LEVEL_TRACE) {
     Logging.prototype.trace = function() {
