@@ -8,6 +8,6 @@
 
 require("./../core");
 
-new ServerApplication({
+new ServerApplication( {
     "port": 8000
 }).run();

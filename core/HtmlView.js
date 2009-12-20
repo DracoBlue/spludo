@@ -26,7 +26,7 @@ HtmlView.prototype = {
         var file_name = this.content_file;
 
         if (typeof html_view_format[file_name] === "undefined") {
-            posix.cat(file_name).addCallback(function (file_content) {
+            posix.cat(file_name).addCallback(function(file_content) {
                 content = file_content;
             }).wait();
 
@@ -46,24 +46,29 @@ HtmlView.prototype = {
                 var end_of_js_tag = 0;
 
                 while (next_js_tag != -1) {
-                    content_array.push("content.push(" + JSON.stringify(content.substr( current_block_start, next_js_tag)) + ");\n");
-                    
+                    content_array.push("content.push("
+                            + JSON.stringify(content.substr(current_block_start, next_js_tag)) + ");\n");
+
                     end_of_js_tag = content.indexOf("?>", next_js_tag);
 
                     if (end_of_js_tag === -1) {
                         throw new Error("<?javascript tag not finished!");
                     }
 
-                    content_array.push("\n" + content.substr(next_js_tag + js_tag_length, end_of_js_tag - next_js_tag - js_tag_length) + "\n");
+                    content_array.push("\n"
+                            + content.substr(next_js_tag + js_tag_length, end_of_js_tag - next_js_tag - js_tag_length)
+                            + "\n");
                     current_block_start = end_of_js_tag + 2;
                     next_js_tag = content.indexOf("<?javascript", current_block_start);
                 }
 
-                if (current_block_start != content.length ) {
-                    content_array.push("content.push("+JSON.stringify(content.substr(current_block_start,content.length)) +");\n");
+                if (current_block_start != content.length) {
+                    content_array.push("content.push("
+                            + JSON.stringify(content.substr(current_block_start, content.length)) + ");\n");
                 }
 
-                html_view_format[file_name] = new Function("params", "context", "var content = [];\n " + content_array.join("\n") + " \nreturn content.join(''); ");
+                html_view_format[file_name] = new Function("params", "context", "var content = [];\n "
+                        + content_array.join("\n") + " \nreturn content.join(''); ");
             }
         }
 

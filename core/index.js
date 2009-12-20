@@ -58,7 +58,7 @@ try {
 /*
  * For each module, load what needs to be loaded.
  */
-for (var i=0; i<module_names.length; i++) {
+for ( var i = 0; i < module_names.length; i++) {
     var module_name = module_names[i];
     controller_manager.loadControllers(application_directory + "modules/" + module_name + "/", module_name);
     view_manager.loadViews(application_directory + "modules/" + module_names + "/", module_name);

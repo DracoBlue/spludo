@@ -23,12 +23,9 @@ Controller = function(path, options) {
 }
 
 Controller.prototype = {
-    'execute' : function() {
+    'execute': function() {
         throw new Error("Implement execute-method me!");
     }
 }
 
-process.mixin(true, Controller.prototype,
-    Options.prototype,
-    Logging.prototype
-);
+process.mixin(true, Controller.prototype, Options.prototype, Logging.prototype);

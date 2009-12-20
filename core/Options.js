@@ -6,15 +6,19 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-Options = function() {};
+Options = function() {
+};
+
 Options.prototype = {
     'setOptions' : function(options) {
         this.options = this.options || {}
+        
         if (typeof options === "undefined") {
             return;
         }
+        
         for (option_key in options) {
             this.options[option_key] = options[option_key];
-        };
+        }
     }
 }

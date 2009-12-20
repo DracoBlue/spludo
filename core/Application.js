@@ -27,13 +27,13 @@ ServerApplication = function(options) {
 };
 
 ServerApplication.prototype = {
-    "run" : function() {
+    "run": function() {
         var http = require("http");
         this.server = http.createServer(function(req, res) {
             var context = {
-                status : 200,
+                status: 200,
                 headers: {
-                    'Content-Type' : 'text/plain'
+                    'Content-Type': 'text/plain'
                 }
             };
 
@@ -60,21 +60,19 @@ ServerApplication.prototype = {
 
             res.finish();
         });
-        
+
         this.server.listen(this.options["port"]);
     }
 }
 
 process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
 
-
-
 ConsoleApplication = function(options) {
     this.setOptions(options);
 };
 
 ConsoleApplication.prototype = {
-    "run" : function() {
+    "run": function() {
         var sys = require("sys");
         var response = null;
 
@@ -93,7 +91,7 @@ ConsoleApplication.prototype = {
         } catch (e) {
             response = "Error:\n" + sys.inspect(e);
         }
-        
+
         sys.puts(response);
     }
 }

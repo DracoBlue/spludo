@@ -8,6 +8,6 @@
 
 require("./../core");
 
-new ConsoleApplication({
+new ConsoleApplication( {
     "path": process.ARGV[2] || ""
 }).run();

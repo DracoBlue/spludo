@@ -19,6 +19,6 @@ JsView = function(name, render_function) {
 
 JsView.prototype = {
     "render": function(params, context) {
-        throw new Error("Implement the .render method!");        
+        throw new Error("Implement the .render method!");
     }
 }

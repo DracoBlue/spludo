@@ -14,26 +14,26 @@ ViewManager.prototype = {
     'addView' : function(name, view, module_name) {
         this.views = this.views || {};
         module_name = module_name || this.current_module_name;
-        
-        this.info("addView: module:"+module_name+", name:" + name);
-        
+
+        this.info("addView: module:" + module_name + ", name:" + name);
+
         if (module_name) {
-            this.views[module_name + "." + name ] = view;
+            this.views[module_name + "." + name] = view;
             if (typeof this.views[name] === "undefined") {
-                this.views[ name ] = view;
+                this.views[name] = view;
             }
         } else {
-            this.views[ name ] = view;
+            this.views[name] = view;
         }
     },
 
     'getView' : function(name, module) {
         var module_name = module_name || null;
-        
+
         var view = null;
-        
+
         if (module_name !== null) {
-            view = this.views[ module_name + "." + name ];
+            view = this.views[module_name + "." + name];
         } else {
             view = this.views[name] || null;
         }
@@ -50,15 +50,15 @@ ViewManager.prototype = {
      */
     "loadViews" : function(path, module_name) {
         this.current_module_name = module_name;
-        
-        this.info("loadViews: module:"+module_name+", path:" + path);
+
+        this.info("loadViews: module:" + module_name + ", path:" + path);
 
         var sys = require('sys');
         var view_files = [];
         try {
             sys.exec("ls " + path + "views/*.js").addCallback(function(stdout, stderr) {
                 var files_in_folder = stdout.split("\n");
-    
+
                 for (i in files_in_folder) {
                     if (files_in_folder[i] !== "") {
                         view_files.push(files_in_folder[i]);
@@ -67,10 +67,10 @@ ViewManager.prototype = {
             }).wait();
         } catch (e) {
             /*
-             *  views folder does not exist!
+             * views folder does not exist!
              */
         }
-        
+
         for (i in view_files) {
             require(view_files[i].substr(0, view_files[i].length - 3));
         }
@@ -80,7 +80,7 @@ ViewManager.prototype = {
         try {
             sys.exec("ls " + path + "views/*.ejs").addCallback(function(stdout, stderr) {
                 var files_in_folder = stdout.split("\n");
-    
+
                 for (i in files_in_folder) {
                     if (files_in_folder[i] !== "") {
                         view_files.push(files_in_folder[i]);
@@ -89,7 +89,7 @@ ViewManager.prototype = {
             }).wait();
         } catch (e) {
             /*
-             *  views folder does not exist!
+             * views folder does not exist!
              */
         }
 

@@ -13,7 +13,7 @@ var logWithPrefix = function(prefix, args) {
     if (args.length > 1) {
         message = sys.inspect(args);
     }
-    
+
     if (args.length === 1) {
         message = (typeof args[0] === "string") ? args[0] : sys.inspect(args[0]);
     }
@@ -22,16 +22,17 @@ var logWithPrefix = function(prefix, args) {
 
 }
 
-var doNotLog = function() {}
+var doNotLog = function() {
+}
 
 /*
  * Log Levels:
- *
- *    *  <   6   <     5     <  4   <  3   <  2    <   1   <  0
- *   ALL < TRACE < DEBUG/LOG < INFO < WARN < ERROR < FATAL < OFF
+ *  * < 6 < 5 < 4 < 3 < 2 < 1 < 0 ALL < TRACE < DEBUG/LOG < INFO < WARN < ERROR <
+ * FATAL < OFF
  */
 
-Logging = function() {};
+Logging = function() {
+};
 
 Logging.LEVEL_ALL = 127;
 Logging.LEVEL_TRACE = 6;
@@ -43,11 +44,9 @@ Logging.LEVEL_ERROR = 2;
 Logging.LEVEL_FATAL = 1;
 Logging.LEVEL_OFF = 0;
 
-var log_configuration = config.get(
-    "logging", {
-        "level": Logging.LEVEL_WARN
-    }
-);
+var log_configuration = config.get("logging", {
+    "level" : Logging.LEVEL_WARN
+});
 
 if (log_configuration.level >= Logging.LEVEL_TRACE) {
     Logging.prototype.trace = function() {
@@ -100,4 +99,3 @@ if (log_configuration.level >= Logging.LEVEL_FATAL) {
 } else {
     Logging.prototype.fatal = doNotLog;
 }
-
