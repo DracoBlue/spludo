@@ -37,7 +37,7 @@ ViewManager.prototype = {
         }
 
         if (view === null) {
-            throw new Error("View found for name " + name + " (module: " + (module || "") + ")!");
+            throw new Error("View not found for name " + name + " (module: " + (module || "") + ")!");
         }
 
         return view
