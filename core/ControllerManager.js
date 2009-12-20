@@ -57,6 +57,8 @@ ControllerManager.prototype = {
      */
     "loadControllers" : function(path, module_name) {
         this.current_module_name = module_name;
+            
+        this.info("loadControllers: module:"+module_name+", path:" + path);
         
         var sys = require('sys');
         var controller_files = [];
