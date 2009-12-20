@@ -8,7 +8,7 @@
 
 ControllerManager = function() {
     this.controllers_string = {};
-    this.controllers_regexp = {};
+    this.controllers_regexp = [];
 };
 
 ControllerManager.prototype = {
@@ -22,7 +22,7 @@ ControllerManager.prototype = {
             this.info("addController: type:RegExp, module:"+module_name+", path:" + path);
             this.controllers_regexp = this.controllers_regexp || [];
 
-            this.controllers_regexp.push( [ path, controller, module_name ]);
+            this.controllers_regexp.push([ path, controller, module_name ]);
 
             return;
         }
