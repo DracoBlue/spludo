@@ -19,4 +19,8 @@
                 line="-jar ${jsdoctoolkit.directory}/jsrun.jar ${jsdoctoolkit.directory}/app/run.js -p -a -t=${jsdoctoolkit.directory}/templates/jsdoc -d=${build}/core/api core/" />
         </exec>
     </target>
+    
+    <target name="core-clean">
+        <delete dir="${build}/core"/>
+    </target>
 </project>
