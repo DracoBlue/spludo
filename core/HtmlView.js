@@ -8,7 +8,7 @@
 
 process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
-}
+};
 
 HtmlView = function(name, content_file) {
     this.content_file = content_file;
@@ -36,18 +36,21 @@ HtmlView.prototype = {
             if (next_js_tag === -1) {
                 html_view_format[file_name] = function() {
                     return content;
-                }
+                };
             } else {
                 /*
                  * We have <?javascript ... ?> definitions, let's parse them!
                  */
-                var content_array = [];
+                var body = [];
                 var current_block_start = 0;
                 var end_of_js_tag = 0;
+                var next_js_tag_end = 0;
 
                 while (next_js_tag != -1) {
-                    content_array.push("content.push("
-                            + JSON.stringify(content.substr(current_block_start, next_js_tag)) + ");\n");
+                    next_js_tag_end = next_js_tag + js_tag_length;
+                    body.push("\ncontent.push(");
+                    body.push(JSON.stringify(content.substr(current_block_start, next_js_tag - current_block_start)));
+                    body.push(");\n");
 
                     end_of_js_tag = content.indexOf("?>", next_js_tag);
 
@@ -55,23 +58,25 @@ HtmlView.prototype = {
                         throw new Error("<?javascript tag not finished!");
                     }
 
-                    content_array.push("\n"
-                            + content.substr(next_js_tag + js_tag_length, end_of_js_tag - next_js_tag - js_tag_length)
-                            + "\n");
+                    body.push("\n");
+                    body.push(content.substr(next_js_tag_end, end_of_js_tag - next_js_tag_end));
+                    body.push("\n");
                     current_block_start = end_of_js_tag + 2;
                     next_js_tag = content.indexOf("<?javascript", current_block_start);
                 }
 
                 if (current_block_start != content.length) {
-                    content_array.push("content.push("
-                            + JSON.stringify(content.substr(current_block_start, content.length)) + ");\n");
+                    body.push("content.push(");
+                    body.push(JSON.stringify(content.substr(current_block_start, content.length)));
+                    body.push(");\n");
                 }
+                
+                var body_string = "var content = [];\n " + body.join("\n") + " \nreturn content.join(''); ";
 
-                html_view_format[file_name] = new Function("params", "context", "var content = [];\n "
-                        + content_array.join("\n") + " \nreturn content.join(''); ");
+                html_view_format[file_name] = new Function("params", "context", body_string);
             }
         }
 
         return html_view_format[file_name]();
     }
-}
+};
