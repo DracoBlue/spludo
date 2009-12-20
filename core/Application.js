@@ -11,7 +11,7 @@
  * 
  * @extends Options
  * 
- * @version 0.1
+ * @since 0.1
  * @author DracoBlue
  */
 BaseApplication = function(options) {
@@ -35,7 +35,10 @@ BaseApplication.prototype.run = function() {
  * 
  * @extends BaseApplication
  * 
- * @version 0.1
+ * @param {Object} options Options to specify the behaviour
+ * @param {Number} options.port The port, which should be used when launching the application server.
+ * 
+ * @since 0.1
  * @author DracoBlue
  */
 ServerApplication = function(options) {
@@ -96,7 +99,10 @@ ServerApplication.prototype.run = function() {
  * 
  * @extends BaseApplication
  * 
- * @version 0.1
+ * @param {Object} options Options to specify the behaviour
+ * @param {String} options.path The initial path to launch (when {@link ConsoleApplication#run} gets called)
+ * 
+ * @since 0.1
  * @author DracoBlue
  */
 ConsoleApplication = function(options) {
