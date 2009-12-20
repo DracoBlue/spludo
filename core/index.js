@@ -16,6 +16,18 @@ process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
 }
 
+require("./Config");
+
+config = new Config();
+
+try {
+    require(application_directory + "config");
+} catch (e) {
+    /*
+     * It's a pitty, we don't have a config file :(.
+     */
+}
+
 require("./Options");
 require("./Logging");
 require("./Controller");
