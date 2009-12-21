@@ -28,9 +28,6 @@ Layout = function(name, options) {
     this.before = options.before || null;
     this.after = options.after || null;
     this.headers = options.headers || null;
-    /**
-     * @type function
-     */
     this.wrap = options.wrap || null;
     this.name = name;
 
