@@ -41,7 +41,7 @@ EjsView.prototype.render = function(params, context) {
             };
         } else {
             /*
-             * We have <?javascript ... ?> definitions, let's parse them!
+             * We have <% ... %> definitions, let's parse them!
              */
             var body = [];
             var current_block_start = 0;
@@ -57,7 +57,7 @@ EjsView.prototype.render = function(params, context) {
                 end_of_js_tag = content.indexOf("%>", next_js_tag);
 
                 if (end_of_js_tag === -1) {
-                    throw new Error("<?javascript tag not finished!");
+                    throw new Error("<% tag not finished!");
                 }
 
                 body.push("\n");
