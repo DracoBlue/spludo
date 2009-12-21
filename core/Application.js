@@ -48,6 +48,14 @@ BaseApplication.executePath = function(path, context) {
         response = view.render(controller[1], context);
     }
     
+    if (typeof context.layout_name !== "undefined") {
+        /*
+         * We need the view manager, since the view-name is set!
+         */
+        var layout = layout_manager.getLayout(context.layout_name);
+        response = layout.render(response, controller[1], context);
+    }
+    
     return response;
 };
 
