@@ -31,6 +31,27 @@ BaseApplication.prototype.run = function() {
 };
 
 /**
+ * Runs a specific path
+ */
+BaseApplication.executePath = function(path, context) {
+    context = context || {};
+    
+    var controller = controller_manager.getController(path);
+    
+    var response = controller[0].execute(controller[1], context);
+    
+    if (typeof context.view_name !== "undefined") {
+        /*
+         * We need the view manager, since the view-name is set!
+         */
+        var view = view_manager.getView(context.view_name);
+        response = view.render(controller[1], context);
+    }
+    
+    return response;
+};
+
+/**
  * @class The application running and listening on a specific port.
  * 
  * @extends BaseApplication
@@ -71,17 +92,10 @@ ServerApplication.prototype.run = function() {
         var response = null;
 
         try {
-            var controller = controller_manager.getController(req.uri.full.substr(1));
-            response = controller[0].execute(controller[1], context);
-            if (typeof context.view_name !== "undefined") {
-                /*
-                 * We need the view manager, since the view-name is set!
-                 */
-                var view = view_manager.getView(context.view_name);
-                response = view.render(controller[1], context);
-            }
+            response = BaseApplication.executePath(req.uri.full.substr(1), context);
         } catch (e) {
             context.status = 404;
+            var sys = require("sys");
             response = "Page not found!" + sys.inspect(e);
         }
 
@@ -119,16 +133,7 @@ ConsoleApplication.prototype.run = function() {
     var response = null;
 
     try {
-        var context = {};
-        var controller = controller_manager.getController(this.options["path"]);
-        response = controller[0].execute(controller[1], context);
-        if (typeof context.view_name !== "undefined") {
-            /*
-             * We need the view manager, since the view-name is set!
-             */
-            var view = view_manager.getView(context.view_name);
-            response = view.render(controller[1], context);
-        }
+        response = BaseApplication.executePath(this.options["path"]);
     } catch (e) {
         response = "Error:\n" + sys.inspect(e);
     }
