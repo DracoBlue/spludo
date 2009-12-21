@@ -10,6 +10,17 @@
  * @class A layout, which can be used to define default behavior for headers or
  *        inject/wrap special formatting to a view output
  * 
+ * @param {Object}
+ *            options Options to specify the behaviour
+ * @param {Array|null}
+ *            options.before The controller(name)s, which should be rendered before the content
+ * @param {Array|null}
+ *            options.after The controller(name)s, which should be rendered before the content
+ * @param {Object|null}
+ *            options.headers The headers, which should be set
+ * @param {Function|null}
+ *            options.wrap The function, which should be called to wrap around the content.
+ * 
  * @since 0.1
  * @author DracoBlue
  */
