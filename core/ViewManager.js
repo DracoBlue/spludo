@@ -36,19 +36,19 @@ ViewManager.prototype.addView = function(name, view, module_name) {
     }
 };
 
-ViewManager.prototype.getView = function(name, module) {
-    var module_name = module_name || null;
+ViewManager.prototype.getView = function(name, module_name) {
+    module_name = module_name || null;
 
     var view = null;
 
     if (module_name !== null) {
-        view = this.views[module_name + "." + name];
+        view = this.views[module_name + "." + name] || this.views[name];
     } else {
         view = this.views[name] || null;
     }
 
     if (view === null) {
-        throw new Error("View not found for name " + name + " (module: " + (module || "") + ")!");
+        throw new Error("View not found for name " + name + " (module: " + (module_name || "") + ")!");
     }
 
     return view;
