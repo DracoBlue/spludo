@@ -46,11 +46,11 @@ ContextToolkit = {
 
         context = context || {};
         context.headers = context.headers || {};
-
         context.headers["Set-Cookie"] = [];
-        for (key in context.cookies) {
-            context.headers["Set-Cookie"]
-                    .push(encodeURIComponent(key) + "=" + encodeURIComponent(context.cookies[key]));
+        
+        var cookies = context.cookies;
+        for (key in cookies) {
+            context.headers["Set-Cookie"].push(encodeURIComponent(key) + "=" + encodeURIComponent(cookies[key]));
         }
 
     }
