@@ -57,6 +57,8 @@ for (i = 0; i < file_contents.length; i++) {
 
         output.push('<error line="' + incident.line + '" column="0" severity="');
         output.push(incident.severity + '" message="' + incident.description + '"/>');
+
+        last_file_name = incident.file_name;
     }
 }
 
