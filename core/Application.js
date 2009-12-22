@@ -33,8 +33,9 @@ BaseApplication.prototype.run = function() {
 /**
  * Runs a specific path
  */
-BaseApplication.executePath = function(path, context) {
+BaseApplication.executePath = function(path, context, inner) {
     context = context || {};
+    inner = inner || null;
     
     var controller = controller_manager.getController(path);
     
@@ -45,7 +46,7 @@ BaseApplication.executePath = function(path, context) {
          * We need the view manager, since the view-name is set!
          */
         var view = view_manager.getView(context.view_name);
-        response = view.render(controller[1], context);
+        response = view.render(controller[1], context, inner);
     }
     
     if (typeof context.layout_name !== "undefined") {
