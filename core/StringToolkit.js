@@ -6,19 +6,25 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/**
+ * @private
+ */
 var xml_special_to_escaped_one_map = {
-    '&':'&amp;',
-    '"':'&quot;',
-    '<':'&lt;',
-    '>':'&gt;'
-}
+    '&': '&amp;',
+    '"': '&quot;',
+    '<': '&lt;',
+    '>': '&gt;'
+};
 
+/**
+ * @private
+ */
 var escaped_one_to_xml_special_map = {
-        '&amp;': '&',
-        '&quot;': '"',
-        '&lt;': '<',
-        '&gt;': '>'
-    }
+    '&amp;': '&',
+    '&quot;': '"',
+    '&lt;': '<',
+    '&gt;': '>'
+};
 
 /**
  * @class A toolkit for convenient functions to de-/encode uri, html and so on.
@@ -32,11 +38,11 @@ StringToolkit = {
             return xml_special_to_escaped_one_map[item];
         });
     },
-    
+
     decodeXml: function(string) {
         return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g, function(str, item) {
             return escaped_one_to_xml_special_map[item];
         });
     }
-    
+
 }
