@@ -58,18 +58,6 @@ require("./ViewManager");
 view_manager = new ViewManager();
 view_manager.loadViews(application_directory);
 
-require("./Layout");
-require("./LayoutManager");
-
-/**
- * The global layout manager.
- * 
- * @type LayoutManager
- */
-layout_manager = new LayoutManager();
-layout_manager.loadLayouts(application_directory);
-
-
 var module_names = [];
 
 try {
@@ -89,7 +77,6 @@ for ( var i = 0; i < module_names.length; i++) {
     var module_name = module_names[i];
     controller_manager.loadControllers(application_directory + "modules/" + module_name + "/", module_name);
     view_manager.loadViews(application_directory + "modules/" + module_name + "/", module_name);
-    layout_manager.loadLayouts(application_directory + "modules/" + module_name + "/", module_name);
 }
 
 
