@@ -20,7 +20,7 @@ EjsView = function(name, content_file) {
 
 var ejs_view_format = {};
 
-EjsView.prototype.render = function(params, context) {
+EjsView.prototype.render = function(params, context, inner) {
     var content = null;
     var posix = require("posix");
     var sys = require("sys");
@@ -47,6 +47,9 @@ EjsView.prototype.render = function(params, context) {
             var current_block_start = 0;
             var end_of_js_tag = 0;
             var next_js_tag_end = 0;
+            
+            body.push("var content = [];");
+            body.push("var slot = BaseApplication.executePath;");
 
             while (next_js_tag != -1) {
                 next_js_tag_end = next_js_tag + js_tag_length;
@@ -73,11 +76,13 @@ EjsView.prototype.render = function(params, context) {
                 body.push(");\n");
             }
 
-            var body_string = "var content = [];\n " + body.join("\n") + " \nreturn content.join(''); ";
+            body.push("return content.join('');");
             
-            ejs_view_format[file_name] = new Function("params", "context", body_string);
+            var body_string = body.join("\n");
+            
+            ejs_view_format[file_name] = new Function("params", "context", "inner", body_string);
         }
     }
-
-    return ejs_view_format[file_name]();
+    
+    return ejs_view_format[file_name](params, context, inner);
 };

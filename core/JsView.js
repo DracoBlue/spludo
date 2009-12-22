@@ -20,6 +20,6 @@ JsView = function(name, render_function) {
     view_manager.addView(name, this);
 };
 
-JsView.prototype.render = function(params, context) {
+JsView.prototype.render = function(params, context, inner) {
     throw new Error("Implement the .render method!");
 };
