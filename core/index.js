@@ -16,6 +16,8 @@ process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
 };
 
+require("./StringToolkit");
+
 require("./Config");
 
 /**
@@ -35,6 +37,7 @@ try {
 
 require("./Options");
 require("./Logging");
+
 require("./Controller");
 require("./ControllerManager");
 
