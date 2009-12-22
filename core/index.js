@@ -38,6 +38,8 @@ try {
 require("./Options");
 require("./Logging");
 
+require("./ContextToolkit");
+
 require("./Controller");
 require("./ControllerManager");
 
