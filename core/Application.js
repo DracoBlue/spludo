@@ -52,8 +52,8 @@ BaseApplication.executePath = function(path, context) {
         /*
          * We need the view manager, since the view-name is set!
          */
-        var layout = layout_manager.getLayout(context.layout_name);
-        response = layout.render(response, controller[1], context);
+        var layout_view = view_manager.getView(context.layout_name);
+        response = layout_view.render(controller[1], context, response);
     }
     
     return response;
