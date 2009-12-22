@@ -33,6 +33,7 @@ var escaped_one_to_xml_special_map = {
  * @author DracoBlue
  */
 StringToolkit = {
+        
     encodeXml: function(string) {
         return string.replace(/([\&"<>])/g, function(str, item) {
             return xml_special_to_escaped_one_map[item];
@@ -45,4 +46,4 @@ StringToolkit = {
         });
     }
 
-}
+};
