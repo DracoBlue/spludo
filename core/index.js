@@ -80,5 +80,7 @@ for ( var i = 0; i < module_names.length; i++) {
 }
 
 
-require("./Application");
+require("./BaseApplication");
+require("./ServerApplication");
+require("./ConsoleApplication");
 require("./TestApplication");
