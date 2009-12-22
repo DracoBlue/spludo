@@ -53,6 +53,7 @@ EjsView.prototype.render = function(params, context, inner) {
 
             while (next_js_tag != -1) {
                 next_js_tag_end = next_js_tag + js_tag_length;
+
                 body.push("\ncontent.push(");
                 body.push(JSON.stringify(content.substr(current_block_start, next_js_tag - current_block_start)));
                 body.push(");\n");
@@ -64,8 +65,21 @@ EjsView.prototype.render = function(params, context, inner) {
                 }
 
                 body.push("\n");
-                body.push(content.substr(next_js_tag_end, end_of_js_tag - next_js_tag_end));
+                
+                if (content.charAt(next_js_tag_end) === '=') {
+                    /*
+                     * Ok, this is a special one! We have
+                     * <%=EXPR%>
+                     */
+                    body.push("\ncontent.push(");
+                    body.push(content.substr(next_js_tag_end + 1, end_of_js_tag - next_js_tag_end - 1));
+                    body.push(");\n");
+                } else {
+                    body.push(content.substr(next_js_tag_end, end_of_js_tag - next_js_tag_end));
+                }
+                
                 body.push("\n");
+                
                 current_block_start = end_of_js_tag + 2;
                 next_js_tag = content.indexOf("<%", current_block_start);
             }
@@ -78,9 +92,11 @@ EjsView.prototype.render = function(params, context, inner) {
 
             body.push("return content.join('');");
             
-            var body_string = body.join("\n");
-            
-            ejs_view_format[file_name] = new Function("params", "context", "inner", body_string);
+            try {
+                ejs_view_format[file_name] = new Function("params", "context", "inner", body.join("\n"));
+            } catch (e) {
+                throw new Error("Syntax Error in .ejs-File: " + e.message, file_name, 0);
+            }
         }
     }
     
