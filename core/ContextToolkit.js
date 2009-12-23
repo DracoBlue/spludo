@@ -14,6 +14,23 @@
  */
 ContextToolkit = {
 
+    /**
+     * Set a cookie.
+     * 
+     * @param {Context}
+     *            context Specifies the context to set this cookie for.
+     * @param {String}
+     *            key Set the key for the cookie. Must be a string.
+     * @param {String|Object|Array|Number}
+     *            value Set value of the cookie. May even be an Object. Will be
+     *            encoded to JSON.
+     * @param {Number}
+     *            [life_time=null] Set the amount of seconds this cookie is
+     *            meant to be alive. Can be 0 to indicate that this is set for
+     *            the lifetime of the browser session only.
+     * @param {String}
+     *            [path=null] Set the path for the cookie.
+     */
     setCookie: function(context, key, value, life_time, path) {
         context.cookies = context.cookies || {};
         context.cookies_path = context.cookies_path || {};
@@ -68,10 +85,30 @@ ContextToolkit = {
         }
     },
 
+    /**
+     * Remove a cookie. This is achieved by setting the lifetime to -1.
+     * 
+     * @param {Context}
+     *            context Specifies the context to remove this cookie from.
+     * @param {String}
+     *            key Set the key for the cookie. Must be a string.
+     * @param {String}
+     *            [path=null] Set the path for the cookie.
+     */
     removeCookie: function(context, key, path) {
-        this.setCookie(context, key, "", -3600 * 24, path);
+        this.setCookie(context, key, "", -1, path);
     },
 
+    /**
+     * Apply the request-headers to a context. This will for instance set the
+     * Context#clean_cookies and Context#cookies property.
+     * 
+     * @param {Context}
+     *            context The context for the operation.
+     * @param {Object}
+     *            headers The request headers (usually taken from
+     *            http.ServerRequest.headers)
+     */
     applyRequestHeaders: function(context, headers) {
         /*
          * If we have no request cookie, we don't need this stuff.
@@ -109,6 +146,14 @@ ContextToolkit = {
         }
     },
 
+    /**
+     * Apply the cookies, which are currently available on the context, to the
+     * correct headers. This is usually triggered by the application, which
+     * delivers the response for the context.
+     * 
+     * @param {Context}
+     *            context The context for the operation.
+     */
     applyCookiesToHeaders: function(context) {
         if (!context || !context.cookies) {
 
