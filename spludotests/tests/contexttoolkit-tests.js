@@ -28,8 +28,7 @@ new TestSuite("Cookies in ContextToolkit", {
 
         ContextToolkit.applyCookiesToHeaders(context);
 
-        equal(context.headers["Set-Cookie"][0], "key=value");
-        equal(context.headers["Set-Cookie"][1], "key2=value2");
+        equal(context.headers["Set-Cookie"].indexOf("key="), 0);
     }
 
 });
