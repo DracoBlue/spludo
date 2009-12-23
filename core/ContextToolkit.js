@@ -19,6 +19,15 @@ ContextToolkit = {
         context.cookies_path = context.cookies_path || {};
         context.cookies_life_time = context.cookies_life_time || {};
         context.cookies[key] = value;
+
+        /*
+         * If this is a clean cookie, we have to remove it from clean cookies,
+         * so we don't forget to send it!
+         */
+        if (context.clean_cookies && context.clean_cookies[key]) {
+            delete context.clean_cookies[key];
+        }
+
         if (typeof life_time !== "undefined") {
             if (life_time !== null) {
                 if (life_time === 0) {
@@ -63,6 +72,43 @@ ContextToolkit = {
         this.setCookie(context, key, "", -3600 * 24, path);
     },
 
+    applyRequestHeaders: function(context, headers) {
+        /*
+         * If we have no request cookie, we don't need this stuff.
+         */
+        if (typeof headers["cookie"] === "undefined") {
+            return;
+        }
+
+        context.clean_cookies = context.clean_cookies || {};
+        context.cookies = context.cookies || {};
+        var raw = headers["cookie"].split("; ");
+        var sys = require("sys");
+
+        var cookie_key = null;
+        var cookie_value = null;
+
+        for (i in raw) {
+            /*
+             * Transform (raw_line): test1=%7B%22key%22%3A%22value%22%7D To
+             * (cookie_key: cookie_value): "test1": { "key": "value" }
+             */
+            var raw_line = raw[i].split("=");
+            try {
+                cookie_key = decodeURIComponent(raw_line[0]);
+                cookie_value = raw_line[1] || "";
+                cookie_value = decodeURIComponent(raw_line[1]);
+
+                context.clean_cookies[cookie_key] = JSON.parse(cookie_value, true);
+                context.cookies[cookie_key] = context.clean_cookies[cookie_key];
+            } catch (e) {
+                /*
+                 * If there is an exception with an item -> ignore.
+                 */
+            }
+        }
+    },
+
     applyCookiesToHeaders: function(context) {
         if (!context || !context.cookies) {
 
@@ -86,14 +132,23 @@ ContextToolkit = {
         var set_cookie_headers = [];
 
         for (key in cookies) {
-            var set_cookie_string = encodeURIComponent(key) + "=" + encodeURIComponent(JSON.stringify(cookies[key]));
-            if (typeof context.cookies_life_time[key] !== "undefined") {
-                set_cookie_string = set_cookie_string + "; expires=" + context.cookies_life_time[key];
+            /*
+             * We did not received that cookie as request cookie, or at least
+             * changed it afterwards.
+             */
+            if (!context.clean_cookies || typeof context.clean_cookies[key] === "undefined") {
+
+                var set_cookie_string = encodeURIComponent(key) + "=";
+                set_cookie_string = set_cookie_string + encodeURIComponent(JSON.stringify(cookies[key]));
+
+                if (typeof context.cookies_life_time[key] !== "undefined") {
+                    set_cookie_string = set_cookie_string + "; expires=" + context.cookies_life_time[key];
+                }
+                if (typeof context.cookies_path[key] !== "undefined") {
+                    set_cookie_string = set_cookie_string + "; path=" + context.cookies_path[key];
+                }
+                set_cookie_headers.push(set_cookie_string);
             }
-            if (typeof context.cookies_path[key] !== "undefined") {
-                set_cookie_string = set_cookie_string + "; path=" + context.cookies_path[key];
-            }
-            set_cookie_headers.push(set_cookie_string);
         }
 
         /*
