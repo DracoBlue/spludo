@@ -39,6 +39,7 @@ require("./Options");
 require("./Logging");
 
 require("./ContextToolkit");
+require("./Context");
 
 require("./Controller");
 require("./ControllerManager");
