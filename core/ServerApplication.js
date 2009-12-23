@@ -43,6 +43,8 @@ ServerApplication.prototype.run = function() {
                 'Content-Type': 'text/plain'
             }
         };
+        
+        ContextToolkit.applyRequestHeaders(context, req.headers);
 
         var response = null;
 
