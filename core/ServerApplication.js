@@ -36,14 +36,14 @@ process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
 ServerApplication.prototype.run = function() {
     var http = require("http");
 
-    this.server = http.createServer(function(req, res) {
+    var finishRequest = function(req, res, body) {
         var context = {
             status: 200,
             headers: {
                 'Content-Type': 'text/plain'
             }
         };
-        
+
         ContextToolkit.applyRequestHeaders(context, req.headers);
 
         var response = null;
@@ -60,6 +60,24 @@ ServerApplication.prototype.run = function() {
         res.sendBody(response);
 
         res.finish();
+    };
+    
+    this.server = http.createServer(function(req, res, body) {
+        if (req.method == "GET") {
+            finishRequest(req, res);
+        }
+        
+        var body = [];
+
+        req.addListener("body", function(content) {
+            if (content !== null) {
+                body.push(content);
+            }
+        });
+        
+        req.addListener("complete",  function() {
+            finishRequest(req, res, body.join());
+        });
     });
 
     this.server.listen(this.options["port"]);
