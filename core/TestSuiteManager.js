@@ -181,6 +181,16 @@ TestSuiteManager.prototype.getResultAsText = function() {
             }
             suite_result.push("\n");
         }
+        
+        var failures = current_suite.suite.failures;
+        var failures_length = failures.length;
+        if (failures_length !== 0) {
+            suite_result.push("  > Failures: \n");
+            for (var f = 0; f < failures_length; f++) {
+                suite_result.push(" [  ] " + failures[f].name);
+                suite_result.push(": " + failures[f].message + "\n");
+            }
+        }
     }
 
     /*
