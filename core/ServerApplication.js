@@ -43,7 +43,6 @@ ServerApplication.prototype.run = function() {
                 'Content-Type': 'text/plain'
             }
         };
-        var sys = require("sys");
         
         context.params = {};
 
@@ -52,7 +51,7 @@ ServerApplication.prototype.run = function() {
              * Ok, we need to parse that!
              */
              var body_entries = body.split("&");
-             var body_entries_length = body_entries.length
+             var body_entries_length = body_entries.length;
              var i = 0;
 
              for (i=0; i<body_entries_length; i++) {
