@@ -20,6 +20,8 @@
 ServerApplication = function(options) {
     this.setOptions(options);
 
+    this.options.session_key = this.options.session_key || "s";
+
     /**
      * The Http-Server listening for new connections.
      * 
@@ -35,6 +37,8 @@ process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
  */
 ServerApplication.prototype.run = function() {
     var http = require("http");
+    
+    var session_key = this.options.session_key;
 
     var finishRequest = function(req, res, body) {
         var context = {
@@ -61,8 +65,23 @@ ServerApplication.prototype.run = function() {
                 context.params[key] = value;
              }
         }
-        
+
         ContextToolkit.applyRequestHeaders(context, req.headers);
+
+        var session_id = (context.cookies && context.cookies[session_key]) || null;
+        
+        if (session_id) {
+            try {
+                context.session = session_manager.getSession(session_id);
+                context.session_id = session_id;
+            } catch (e) {
+                /*
+                 * Seems like that cookie is invalid by now. Let's remove the cookie.
+                 */
+                ContextToolkit.removeCookie(context, session_key);
+                session_id = null;
+            }
+        }
 
         var response = null;
 
@@ -73,6 +92,18 @@ ServerApplication.prototype.run = function() {
             var sys = require("sys");
             response = "Page not found!" + sys.inspect(e);
         }
+
+        if (session_id !== context.session_id) {
+            session_id = context.session_id;
+
+            if (session_id === null) {
+                ContextToolkit.removeCookie(context, session_key);
+            } else {
+                ContextToolkit.setCookie(context, session_key, session_id);
+            }
+        }
+
+        ContextToolkit.applyCookiesToHeaders(context);
 
         res.sendHeader(context.status, context.headers);
         res.sendBody(response);
