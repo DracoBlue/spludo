@@ -57,6 +57,8 @@ SessionManager.prototype.createSession = function(session) {
     }
     
     this.storage.set(session_id, JSON.stringify(session));
+    
+    this.info("createSession: " + session_id);
 
     return session_id;
 };
