@@ -41,6 +41,16 @@ require("./Logging");
 require("./ContextToolkit");
 require("./Context");
 
+require("./MemoryStorage");
+require("./StorageManager");
+
+/**
+ * The global storage manager.
+ * 
+ * @type StorageManager
+ */
+storage_manager = new StorageManager();
+
 require("./Controller");
 require("./ControllerManager");
 
