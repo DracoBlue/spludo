@@ -44,12 +44,13 @@ ServerApplication.prototype.run = function() {
             }
         };
         var sys = require("sys");
+        
+        context.params = {};
 
         if (body !== null) {
             /*
              * Ok, we need to parse that!
              */
-             context.params = {};
              var body_entries = body.split("&");
              var body_entries_length = body_entries.length
              var i = 0;
