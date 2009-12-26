@@ -41,3 +41,22 @@ SessionManager.prototype.getSession = function(session_id) {
 SessionManager.prototype.setSession = function(session_id, session) {
     this.storage.set(session_id, JSON.stringify(session));
 };
+
+SessionManager.prototype.createSession = function(session) {
+    var session_id = null;
+
+    /*
+     * FIXME: This is an ugly solution. Guess what happens if we have lots
+     * of session. We need some way better function here.
+     */
+    while (session_id === null) {
+        session_id = new String(Math.floor(Math.random()*999999999));
+        if (this.storage.has(session_id)) {
+            session_id = null;
+        }
+    }
+    
+    this.storage.set(session_id, JSON.stringify(session));
+
+    return session_id;
+};
