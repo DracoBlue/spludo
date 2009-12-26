@@ -206,6 +206,18 @@ ContextToolkit = {
          */
         context.headers["Set-Cookie"] = set_cookie_headers.join("\nSet-Cookie: ");
 
-    }
+    },
 
+    /**
+     * Redirect to a different url.
+     * 
+     * @param {Context}
+     *            context The context for the operation.
+     * @param {String}
+     *            path The path where to redirect to.
+     */
+    applyRedirect: function(context, path) {
+        context.status = 302;
+        context.headers["Location"] = "/" + (path);
+    }
 };
