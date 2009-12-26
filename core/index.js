@@ -51,6 +51,15 @@ require("./StorageManager");
  */
 storage_manager = new StorageManager();
 
+require("./SessionManager");
+
+/**
+ * The global session manager.
+ * 
+ * @type SessionManager
+ */
+session_manager = new SessionManager(config.get("session", {}));
+
 require("./Controller");
 require("./ControllerManager");
 
