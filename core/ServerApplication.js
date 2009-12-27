@@ -73,7 +73,6 @@ ServerApplication.prototype.run = function() {
         if (session_id) {
             try {
                 context.session = session_manager.getSession(session_id);
-                context.session_id = session_id;
             } catch (e) {
                 /*
                  * Seems like that cookie is invalid by now. Let's remove the cookie.
@@ -82,6 +81,8 @@ ServerApplication.prototype.run = function() {
                 session_id = null;
             }
         }
+        
+        context.session_id = session_id;
 
         var response = null;
 
