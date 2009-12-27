@@ -96,6 +96,29 @@ try {
 }
 
 /*
+ * Find all /lib, modulename/lib folders and append them to the require path.
+ */
+var lib_folders = [application_directory + "lib"];
+for ( var m = 0; m < module_names.length; m++) {
+    lib_folders.push(application_directory + "modules/" + module_names[m] + "/lib");
+}
+
+for ( var f = 0; f < lib_folders.length; f++) {
+    try {
+        var p = posix.stat(lib_folders[f]).addCallback(function (stats) {
+            if (stats.isDirectory()) {
+                Logging.prototype.info("index: Adding "+lib_folders[f]+" as lib.");
+                require.paths.push(lib_folders[f]);
+            }
+        }).wait();
+    } catch (e) {
+        /*
+         * Folder does not exist!
+         */
+    }
+}
+
+/*
  * For each module, load what needs to be loaded.
  */
 for ( var i = 0; i < module_names.length; i++) {
@@ -103,6 +126,7 @@ for ( var i = 0; i < module_names.length; i++) {
     controller_manager.loadControllers(application_directory + "modules/" + module_name + "/", module_name);
     view_manager.loadViews(application_directory + "modules/" + module_name + "/", module_name);
 }
+
 
 
 require("./BaseApplication");
