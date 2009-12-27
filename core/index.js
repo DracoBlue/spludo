@@ -105,10 +105,20 @@ for ( var m = 0; m < module_names.length; m++) {
 
 for ( var f = 0; f < lib_folders.length; f++) {
     try {
-        var p = posix.stat(lib_folders[f]).addCallback(function (stats) {
+        posix.stat(lib_folders[f]).addCallback(function (stats) {
             if (stats.isDirectory()) {
                 Logging.prototype.info("index: Adding "+lib_folders[f]+" as lib.");
                 require.paths.push(lib_folders[f]);
+            }
+            try {
+                posix.stat(lib_folders[f] + "/index.js").addCallback(function (stats) {
+                    Logging.prototype.info("index: Loading "+lib_folders[f]+"/index.js.");
+                    require(lib_folders[f] + "/index");
+                }).wait();
+            } catch (e) {
+                /*
+                * Folder does not exist!
+                */
             }
         }).wait();
     } catch (e) {
@@ -123,8 +133,10 @@ for ( var f = 0; f < lib_folders.length; f++) {
  */
 for ( var i = 0; i < module_names.length; i++) {
     var module_name = module_names[i];
-    controller_manager.loadControllers(application_directory + "modules/" + module_name + "/", module_name);
-    view_manager.loadViews(application_directory + "modules/" + module_name + "/", module_name);
+    var module_folder = application_directory + "modules/" + module_name + "/";
+    
+    controller_manager.loadControllers(module_folder, module_name);
+    view_manager.loadViews(module_folder, module_name);
 }
 
 
