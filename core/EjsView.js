@@ -7,30 +7,40 @@
  */
 
 /**
- * @class A EjsView, which reads a template file and executes it. Those
- *        template files may include inline server-side javascript.
+ * @class A EjsView, which reads a template file and executes it. Those template
+ *        files may include inline server-side javascript.
  * 
  * @since 0.1
  * @author DracoBlue
  */
 EjsView = function(name, content_file) {
+    var posix = require("posix");
+
+    var view = this;
     this.content_file = content_file;
-    view_manager.addView(name, this);
+
+    var p = posix.cat(content_file);
+
+    p.addCallback(function(file_content) {
+        view.content = file_content;
+        view_manager.addView(name, view);
+    });
+
+    p.addErrback(function() {
+        throw new Error("Cannot read Ejs-File at " + content_file);
+    });
+    
+    this.promise = p;
 };
 
 var ejs_view_format = {};
 
 EjsView.prototype.render = function(params, context, inner) {
-    var content = null;
-    var posix = require("posix");
-    var sys = require("sys");
-
     var file_name = this.content_file;
-
+    
     if (typeof ejs_view_format[file_name] === "undefined") {
-        posix.cat(file_name).addCallback(function(file_content) {
-            content = file_content;
-        }).wait();
+
+        var content = this.content;
 
         var next_js_tag = content.indexOf("<%");
         var js_tag_length = "<%".length;
@@ -47,7 +57,7 @@ EjsView.prototype.render = function(params, context, inner) {
             var current_block_start = 0;
             var end_of_js_tag = 0;
             var next_js_tag_end = 0;
-            
+
             body.push("var content = [];");
             body.push("var slot = BaseApplication.executePath;");
 
@@ -65,11 +75,10 @@ EjsView.prototype.render = function(params, context, inner) {
                 }
 
                 body.push("\n");
-                
+
                 if (content.charAt(next_js_tag_end) === '=') {
                     /*
-                     * Ok, this is a special one! We have
-                     * <%=EXPR%>
+                     * Ok, this is a special one! We have <%=EXPR%>
                      */
                     body.push("\ncontent.push(");
                     body.push(content.substr(next_js_tag_end + 1, end_of_js_tag - next_js_tag_end - 1));
@@ -77,9 +86,9 @@ EjsView.prototype.render = function(params, context, inner) {
                 } else {
                     body.push(content.substr(next_js_tag_end, end_of_js_tag - next_js_tag_end));
                 }
-                
+
                 body.push("\n");
-                
+
                 current_block_start = end_of_js_tag + 2;
                 next_js_tag = content.indexOf("<%", current_block_start);
             }
@@ -91,7 +100,7 @@ EjsView.prototype.render = function(params, context, inner) {
             }
 
             body.push("return content.join('');");
-            
+
             try {
                 ejs_view_format[file_name] = new Function("params", "context", "inner", body.join("\n"));
             } catch (e) {
@@ -99,6 +108,6 @@ EjsView.prototype.render = function(params, context, inner) {
             }
         }
     }
-    
+
     return ejs_view_format[file_name](params, context, inner);
 };

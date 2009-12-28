@@ -9,6 +9,7 @@
 new TestSuite("PlainHtmlFiles", {
     loadingAPlainHtmlFile: function() {
         var new_view = new EjsView("plain_html_file", "testdata/plain_html_file.ejs");
+        new_view.promise.wait();
 
         var posix = require("posix");
 
@@ -22,6 +23,7 @@ new TestSuite("PlainHtmlFiles", {
 
     loadingAPlainHtmlFileWithATag: function() {
         var new_view = new EjsView("plain_html_file", "testdata/plain_html_file_with_beginning_tag.ejs");
+        new_view.promise.wait();
 
         var posix = require("posix");
 
@@ -37,6 +39,7 @@ new TestSuite("PlainHtmlFiles", {
 new TestSuite("SimpleEjsFiles", {
     simpleEjsFileWithTwoBlocks: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_indention_and_two_blocks.ejs");
+        new_view.promise.wait();
 
         var posix = require("posix");
 
@@ -66,6 +69,7 @@ new TestSuite("SimpleEjsFiles", {
 new TestSuite("ExpressionEjsFiles", {
     ejsFileWithMultipleExpressionBlocks: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_expression.ejs");
+        new_view.promise.wait();
 
         var posix = require("posix");
 
@@ -79,6 +83,7 @@ new TestSuite("ExpressionEjsFiles", {
 
     exceptionWithWrongBlock: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_exception_for_not_closed_expression_tag.ejs");
+        new_view.promise.wait();
 
         try {
             new_view.render()
@@ -92,6 +97,7 @@ new TestSuite("ExpressionEjsFiles", {
 
     exceptionForSemicolonInExpressionBlock: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_exception_for_semicolon_in_expression_tag.ejs");
+        new_view.promise.wait();
 
         try {
             new_view.render();
