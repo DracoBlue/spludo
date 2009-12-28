@@ -113,6 +113,11 @@ ServerApplication.prototype.run = function() {
     };
     
     this.server = http.createServer(function(req, res) {
+        if (static_files_manager.canHandleRequest(req)) {
+            static_files_manager.handleRequest(req, res);
+            return ;
+        }
+        
         if (req.method === "GET") {
             finishRequest(req, res, null);
             return ;

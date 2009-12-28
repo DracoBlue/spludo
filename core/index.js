@@ -60,6 +60,9 @@ require("./SessionManager");
  */
 session_manager = new SessionManager(config.get("session", {}));
 
+require("./StaticFilesManager");
+static_files_manager = new StaticFilesManager();
+
 require("./Controller");
 require("./ControllerManager");
 
@@ -127,6 +130,19 @@ for ( var f = 0; f < lib_folders.length; f++) {
 }
 
 /*
+ * Load the static folder, if the core has one.
+ */
+try {
+    posix.stat(application_directory + "static").addCallback(function (stats) {
+        static_files_manager.addFolder(application_directory + "static/");
+    }).wait();
+} catch (e) {
+    /*
+    * Folder does not exist!
+    */
+}
+
+/*
  * Load controllers and views
  */
 controller_manager.loadControllers(application_directory);
@@ -141,6 +157,17 @@ for ( var i = 0; i < module_names.length; i++) {
     
     controller_manager.loadControllers(module_folder, module_name);
     view_manager.loadViews(module_folder, module_name);
+    
+    try {
+        posix.stat(module_folder + "static/").addCallback(function (stats) {
+            static_files_manager.addFolder(module_folder + "static/");
+        }).wait();
+    } catch (e) {
+        /*
+        * Folder does not exist!
+        */
+    }
+    
 }
 
 
