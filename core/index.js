@@ -69,7 +69,6 @@ require("./ControllerManager");
  * @type ControllerManager
  */
 controller_manager = new ControllerManager();
-controller_manager.loadControllers(application_directory);
 
 require("./JsView");
 require("./EjsView");
@@ -81,7 +80,6 @@ require("./ViewManager");
  * @type ViewManager
  */
 view_manager = new ViewManager();
-view_manager.loadViews(application_directory);
 
 var module_names = [];
 
@@ -127,6 +125,12 @@ for ( var f = 0; f < lib_folders.length; f++) {
          */
     }
 }
+
+/*
+ * Load controllers and views
+ */
+controller_manager.loadControllers(application_directory);
+view_manager.loadViews(application_directory);
 
 /*
  * For each module, load what needs to be loaded.
