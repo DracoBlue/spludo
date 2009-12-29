@@ -55,7 +55,7 @@ var file_extension_to_mime_type_map = {
         "jpg": "image/jpeg",
         "jpeg": "image/jpeg",
         "png": "image/png"
-}
+};
 
 StaticFilesManager.prototype.handleRequest = function(req, res) {
     var uri = req.uri.full.substr(1);
