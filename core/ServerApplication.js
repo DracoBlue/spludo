@@ -107,7 +107,7 @@ ServerApplication.prototype.run = function() {
         ContextToolkit.applyCookiesToHeaders(context);
 
         res.sendHeader(context.status, context.headers);
-        res.sendBody(response);
+        res.sendBody(response, "binary");
 
         res.finish();
     };

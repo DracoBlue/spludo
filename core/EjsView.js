@@ -19,7 +19,7 @@ EjsView = function(name, content_file) {
     var view = this;
     this.content_file = content_file;
 
-    var p = posix.cat(content_file);
+    var p = posix.cat(content_file, "binary");
 
     p.addCallback(function(file_content) {
         view.content = file_content;
