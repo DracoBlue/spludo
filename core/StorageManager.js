@@ -11,7 +11,7 @@
  * 
  * @extends Logging
  * 
- * @since 0.1 
+ * @since 0.1
  * @author DracoBlue
  */
 StorageManager = function() {
@@ -31,4 +31,20 @@ StorageManager.prototype.getStorage = function(name) {
     }
 
     throw new Error("Storage for name " + name + " not found!");
+};
+
+StorageManager.prototype.shutdown = function() {
+    for (name in this.storages) {
+        /*
+         * Check wether this storage has a shutdown method.
+         */
+        if (typeof this.storages[name].shutdown === "function") {
+            try {
+                this.storages[name].shutdown();
+            } catch (e) {
+                this.warn("Exception when trying to shutdown storage " + name);
+                this.warn(e);
+            }
+        }
+    }
 };

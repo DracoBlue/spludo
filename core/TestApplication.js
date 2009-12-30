@@ -64,4 +64,6 @@ TestApplication.prototype.run = function() {
     } else {
         sys.puts(test_suite_manager.getResultAsText());
     }
+    
+    storage_manager.shutdown();
 };
