@@ -42,6 +42,7 @@ require("./ContextToolkit");
 require("./Context");
 
 require("./MemoryStorage");
+require("./PostgresStorage");
 require("./StorageManager");
 
 /**
@@ -52,13 +53,6 @@ require("./StorageManager");
 storage_manager = new StorageManager();
 
 require("./SessionManager");
-
-/**
- * The global session manager.
- * 
- * @type SessionManager
- */
-session_manager = new SessionManager(config.get("session", {}));
 
 require("./StaticFilesManager");
 static_files_manager = new StaticFilesManager();
@@ -141,6 +135,13 @@ try {
     * Folder does not exist!
     */
 }
+
+/**
+ * The global session manager.
+ * 
+ * @type SessionManager
+ */
+session_manager = new SessionManager(config.get("session", {}));
 
 /*
  * Load controllers and views
