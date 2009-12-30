@@ -103,6 +103,15 @@ PostgresStorage = function(name, options) {
     
     this.setOptions(options);
 
+    /**
+     * Shutdown the database.
+     * 
+     * @private
+     */
+    this.db_shutdown = function() {
+        db.close();
+    };
+    
     storage_manager.addStorage(name, this);
 };
 
@@ -187,4 +196,13 @@ PostgresStorage.prototype.remove = function(key) {
     });
 
     p.wait();
+};
+
+/**
+ * Shutdown the storage
+ */
+PostgresStorage.prototype.shutdown = function() {
+    this.log("PostgresStorage:shutdown");
+
+    this.db_shutdown();
 };
