@@ -19,5 +19,18 @@
     <target name="clean" description="clean up" depends="core-clean" >
         <delete dir="${build}"/>
     </target>
+    
+    <target name="test">
+        <exec executable="bash">
+            <arg line="-c &quot;node ../build/run_tests.js&quot;" />
+        </exec>
+    </target>
+
+    <target name="test-xml">
+        <mkdir dir="${build}" />
+        <exec executable="bash">
+            <arg line="-c &quot;node ../build/run_tests.js xml > ${build}/test_results.xml &quot;" />
+        </exec>
+    </target>
 </project>
 
