@@ -9,7 +9,7 @@
 /**
  * @class The memory storage.
  * 
- * @since 0.1 
+ * @since 0.1
  * @author DracoBlue
  */
 MemoryStorage = function(name, options) {
@@ -23,17 +23,17 @@ MemoryStorage = function(name, options) {
 process.mixin(true, MemoryStorage.prototype, Options.prototype, Logging.prototype);
 
 MemoryStorage.prototype.set = function(key, value) {
-   this.values[key] = value; 
+    this.values[key] = value;
 };
 
 MemoryStorage.prototype.get = function(key) {
-   return this.values[key]; 
+    return this.values[key];
 };
 
 MemoryStorage.prototype.has = function(key) {
-   return typeof this.values[key] !== "undefined"; 
+    return typeof this.values[key] !== "undefined";
 };
 
 MemoryStorage.prototype.remove = function(key) {
-   delete this.values[key]; 
+    delete this.values[key];
 };
