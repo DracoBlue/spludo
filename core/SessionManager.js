@@ -17,7 +17,7 @@
 SessionManager = function(options) {
     options = options || {};
 
-    var engine = options.engine || MemoryStorage;
+    var engine = GLOBAL[options.engine || "MemoryStorage"];
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
