@@ -39,11 +39,20 @@ Validation.prototype.execute = function(values) {
                     validated_values[key] = values[key];
                 } else {
                     var value_error_messages = [];
+                    
                     for (m = 0; m < value_errors_length; m++) {
-                        if (validators[v].error_messages[value_errors[m]]) {
-                            value_error_messages.push(validators[v].error_messages[value_errors[m]]);
+                        var validator_message = validators[v].error_messages[value_errors[m]];
+                        
+                        /*
+                         * If we have no validator message, let's try the default.
+                         */
+                        validator_message = validator_message || validators[v].error_messages[""];
+                        
+                        if (validator_message) {
+                            value_error_messages.push(validator_message);
                         }
                     }
+
                     errors.push([key, value_errors, value_error_messages]);
                 }
             }
