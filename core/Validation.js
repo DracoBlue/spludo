@@ -14,9 +14,14 @@
  */
 Validation = function() {
     this.validators = {};
+
+    /** 
+     * All values, which are already validated (since last execute-call).
+     */
+    this.validated_values = {};
 };
 
-process.mixin(true, Validator.prototype, Options.prototype, Logging.prototype);
+process.mixin(true, Validation.prototype, Options.prototype, Logging.prototype);
 
 Validation.prototype.execute = function(values) {
     var errors = [];
