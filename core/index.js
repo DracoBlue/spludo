@@ -78,6 +78,18 @@ require("./ViewManager");
  */
 view_manager = new ViewManager();
 
+require("./Validator");
+require("./ValidatorManager");
+
+/**
+ * The global validator manager.
+ * 
+ * @type ValidatorManager
+ */
+validator_manager = new ValidatorManager();
+
+require("./Validation");
+
 var module_names = [];
 
 try {
