@@ -42,11 +42,11 @@ Validation.prototype.execute = function(values) {
                     errors.push([key, value_errors, value_error_messages]);
                 }
             }
-        } else {
-            /*
-             * What if no validator is registered for this?
-             */
         }
+        /*
+         * If no validator is registered, this parameter won't be pushed to
+         * validated_values.
+         */
     }
 
     this.validated_values = validated_values;
