@@ -90,6 +90,10 @@ validator_manager = new ValidatorManager();
 
 require("./Validation");
 
+if (!config.get('core', {}).disable_core_validators) {
+    require("./core-validators");
+}
+
 var module_names = [];
 
 try {
