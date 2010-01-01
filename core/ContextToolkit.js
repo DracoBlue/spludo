@@ -110,6 +110,8 @@ ContextToolkit = {
      *            http.ServerRequest.headers)
      */
     applyRequestHeaders: function(context, headers) {
+        context.request_headers = headers;
+
         /*
          * If we have no request cookie, we don't need this stuff.
          */
