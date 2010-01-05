@@ -78,6 +78,20 @@ require("./ViewManager");
  */
 view_manager = new ViewManager();
 
+require("./DataMapper");
+require("./DataMapperManager");
+
+/**
+ * The global data mapper manager.
+ * 
+ * @type DataMapperManager
+ */
+data_mapper_manager = new DataMapperManager();
+
+if (!config.get('core', {}).disable_core_data_mappers) {
+    require("./core-data-mappers");
+}
+
 require("./Validator");
 require("./ValidatorManager");
 
