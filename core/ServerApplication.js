@@ -32,11 +32,13 @@ ServerApplication = function(options) {
 
 process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
 
+var http = require("http");
+var sys = require("sys");
+
 /**
  * Runs the application.
  */
 ServerApplication.prototype.run = function() {
-    var http = require("http");
     
     var session_key = this.options.session_key;
 
@@ -44,7 +46,8 @@ ServerApplication.prototype.run = function() {
         var context = {
             status: 200,
             headers: {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'text/plain',
+                'Server': 'Spludo 0.1'
             }
         };
         
@@ -90,7 +93,6 @@ ServerApplication.prototype.run = function() {
             response = BaseApplication.executePath(req.uri.full.substr(1), context);
         } catch (e) {
             context.status = 404;
-            var sys = require("sys");
             response = "Page not found!" + sys.inspect(e);
         }
 

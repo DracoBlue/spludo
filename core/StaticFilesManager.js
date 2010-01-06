@@ -20,13 +20,14 @@ StaticFilesManager = function() {
 
 process.mixin(true, StaticFilesManager.prototype, Logging.prototype);
 
+var sys = require("sys");
+var posix = require("posix");
+
 StaticFilesManager.prototype.addFolder = function(folder_name) {
     if (this.folders[folder_name]) {
         throw new Error("Folder " + folder_name + " already added!");
     }
     this.folders[folder_name] = true;
-
-    var sys = require("sys");
 
     var file_manager = this;
 
@@ -78,8 +79,6 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
     }
 
     var static_file_cache = {};
-
-    var posix = require("posix");
 
     var p = posix.cat(this.files[uri], "binary");
 

@@ -122,7 +122,6 @@ ContextToolkit = {
         context.clean_cookies = context.clean_cookies || {};
         context.cookies = context.cookies || {};
         var raw = headers["cookie"].split("; ");
-        var sys = require("sys");
 
         var cookie_key = null;
         var cookie_value = null;
