@@ -22,3 +22,23 @@ new DataMapper("json", {
     }
 });
 
+new DataMapper("string", {
+    "decode": function (value, options) {
+        return value;
+    },
+
+    "encode": function (value, options) {
+        return String(value);
+    }
+});
+
+new DataMapper("number", {
+    "decode": function (value, options) {
+        return Number(value);
+    },
+
+    "encode": function (value, options) {
+        return String(value);
+    }
+});
+
