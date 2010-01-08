@@ -29,7 +29,7 @@ DbslayerDatabaseConnection = function(name, options) {
     var http = require("http");
     
     var db_escape_string = function(string) {
-        return string.replace(/'/g, "''");
+        return string.replace(/([\n\r\'\"])/g, "\\$&");
     };
     
     var query = function(sql) {
@@ -108,7 +108,7 @@ DbslayerDatabaseConnection = function(name, options) {
     
     this.retrieveById = function(element_type, id) {
         var elements = null;
-        var p = query("SELECT * FROM " + element_type + " WHERE id = '" + id + "' LIMIT 1");
+        var p = query("SELECT * FROM " + db_escape_string(element_type) + " WHERE id = '" + id + "' LIMIT 1");
         
         p.addCallback(function(data) {
             elements = data;
@@ -136,7 +136,7 @@ DbslayerDatabaseConnection = function(name, options) {
         // FIXME: how to fix the limit problem, when we just need an offset?
         limit = limit || 230585;
         
-        var p = query("SELECT * FROM " + element_type + " ORDER BY id DESC LIMIT " + offset + ", " + limit + "");
+        var p = query("SELECT * FROM " + db_escape_string(element_type) + " ORDER BY id DESC LIMIT " + offset + ", " + limit + "");
         
         p.addCallback(function(data) {
             elements = data;
@@ -163,7 +163,7 @@ DbslayerDatabaseConnection = function(name, options) {
     
     this.deleteById = function(element_type, id) {
         var had_error = false;
-        var p = query("DELETE FROM " + element_type + " WHERE id = '" + id + "' LIMIT 1");
+        var p = query("DELETE FROM " + db_escape_string(element_type) + " WHERE id = '" + id + "' LIMIT 1");
         
         p.addCallback(function(data) {
             had_error = false;
@@ -192,12 +192,11 @@ DbslayerDatabaseConnection = function(name, options) {
         var keys = [];
         var values = [];
         for (key in element) {
-            // FIXME: SQL ESCAPING FOR KEYS!
-            keys.push('`' + key + '`');
+            keys.push('`' + db_escape_string(key) + '`');
             values.push('\'' + db_escape_string(element[key]) + '\'');
         }
 
-        p = query("INSERT INTO " + table_name + " (" + keys.join(', ') + ") VALUES (" + values.join(', ') + ")");
+        p = query("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(', ') + ")");
         p.wait();
     };    
     
@@ -211,20 +210,19 @@ DbslayerDatabaseConnection = function(name, options) {
         
         var setters = [];
         for (key in element) {
-            // FIXME: SQL ESCAPING FOR KEYS!
-            setters.push('`' + key + '` = \'' + db_escape_string(element[key]) + '\'');
+            setters.push('`' + db_escape_string(key) + '` = \'' + db_escape_string(element[key]) + '\'');
         }
 
         var p = null;
         try {
-            p = query("INSERT INTO " + table_name + " (`id`) VALUES ('" + element.id + "')");
+            p = query("INSERT INTO " + db_escape_string(table_name) + " (`id`) VALUES ('" + element.id + "')");
             p.wait();
         } catch (e) {
             /*
              * We do not care if that fails ;). The fact is, that we just want to secure that the entry exists.
              */
         }
-        p = query("UPDATE " + table_name + " SET " + setters.join(', ') + " WHERE `id` = '" + element.id + "'");
+        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `id` = '" + element.id + "'");
         p.wait();
     };
 };
