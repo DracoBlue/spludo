@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("PlainHtmlFiles", {
+new TestSuite("core.ejs.PlainHtmlFiles", {
     loadingAPlainHtmlFile: function() {
         var new_view = new EjsView("plain_html_file", "testdata/plain_html_file.ejs");
         new_view.promise.wait();
@@ -36,7 +36,7 @@ new TestSuite("PlainHtmlFiles", {
     }
 });
 
-new TestSuite("SimpleEjsFiles", {
+new TestSuite("core.ejs.SimpleEjsFiles", {
     simpleEjsFileWithTwoBlocks: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_indention_and_two_blocks.ejs");
         new_view.promise.wait();
@@ -66,7 +66,7 @@ new TestSuite("SimpleEjsFiles", {
     }
 });
 
-new TestSuite("ExpressionEjsFiles", {
+new TestSuite("core.ejs.ExpressionEjsFiles", {
     ejsFileWithMultipleExpressionBlocks: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_expression.ejs");
         new_view.promise.wait();

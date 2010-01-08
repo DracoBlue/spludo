@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("XmlEncodeDecode", {
+new TestSuite("core.stringtoolkit.XmlEncodeDecode", {
     convertingSomethingWithoutSpecialChars: function() {
         equal(StringToolkit.encodeXml("this is a test"), "this is a test");
         equal(StringToolkit.decodeXml("this is a test"), "this is a test");

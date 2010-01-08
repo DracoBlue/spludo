@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("Memory Storage", {
+new TestSuite("core.storage.MemoryStorage", {
 
     simpleSetAndGet: function() {
         var storage = new MemoryStorage("simple_set_and_get_storage");

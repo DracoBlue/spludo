@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("Cookies in ContextToolkit", {
+new TestSuite("core.contexttoolkit.Cookies", {
 
     settingCookiesWithNoLifetime: function() {
         var context = {};

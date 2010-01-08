@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("Validation", {
+new TestSuite("core.validation.Validation", {
 
    exportOnlyValidatedStrings: function() {
         var val = new Validation();
