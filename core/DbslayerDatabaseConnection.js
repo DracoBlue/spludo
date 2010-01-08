@@ -226,7 +226,7 @@ DbslayerDatabaseConnection = function(name, options) {
         }
         p = query("UPDATE " + table_name + " SET " + setters.join(', ') + " WHERE `id` = '" + element.id + "'");
         p.wait();
-    }
+    };
 };
 
 process.mixin(true, DbslayerDatabaseConnection.prototype, DatabaseConnection.prototype);
