@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("data_mappers.JsonMapperTests", {
+new TestSuite("core.data_mappers.JsonMapperTests", {
 
     simpleEncodeDecode: function() {
         var data_mapper = data_mapper_manager.getDataMapper('json');
