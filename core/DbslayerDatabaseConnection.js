@@ -106,9 +106,9 @@ DbslayerDatabaseConnection = function(name, options) {
         return promise;
     };
     
-    this.retrieveById = function(element_type, id) {
+    this.retrieveByKey = function(element_type, key_id, id) {
         var elements = null;
-        var p = query("SELECT * FROM " + db_escape_string(element_type) + " WHERE id = '" + id + "' LIMIT 1");
+        var p = query("SELECT * FROM " + db_escape_string(element_type) + " WHERE " + db_escape_string(key_id) + "  = '" + db_escape_string(id) + "' LIMIT 1");
         
         p.addCallback(function(data) {
             elements = data;
@@ -128,6 +128,10 @@ DbslayerDatabaseConnection = function(name, options) {
         }
         
         return null;
+    };    
+    
+    this.retrieveById = function(element_type, id) {
+        return this.retrieveByKey(element_type, "id", id);
     };
     
     this.retrieve = function(element_type, offset, limit) {
@@ -136,7 +140,7 @@ DbslayerDatabaseConnection = function(name, options) {
         // FIXME: how to fix the limit problem, when we just need an offset?
         limit = limit || 230585;
         
-        var p = query("SELECT * FROM " + db_escape_string(element_type) + " ORDER BY id DESC LIMIT " + offset + ", " + limit + "");
+        var p = query("SELECT * FROM " + db_escape_string(element_type) + " LIMIT " + offset + ", " + limit + "");
         
         p.addCallback(function(data) {
             elements = data;
@@ -161,9 +165,9 @@ DbslayerDatabaseConnection = function(name, options) {
         return elements || [];
     };
     
-    this.deleteById = function(element_type, id) {
+    this.deleteByKey = function(element_type, key_id, id) {
         var had_error = false;
-        var p = query("DELETE FROM " + db_escape_string(element_type) + " WHERE id = '" + id + "' LIMIT 1");
+        var p = query("DELETE FROM " + db_escape_string(element_type) + " WHERE " + db_escape_string(key_id) + " = '" + db_escape_string(id) + "' LIMIT 1");
         
         p.addCallback(function(data) {
             had_error = false;
@@ -180,9 +184,13 @@ DbslayerDatabaseConnection = function(name, options) {
         }
     };
     
-    this.create = function(element) {
+    this.deleteById = function(element_type, id) {
+        return this.deleteByKey(element_type, "id", id);
+    };
+    
+    this.createWithKey = function(element, key_id) {
         sys.debug(sys.inspect(element));
-        if (typeof element.id !== "undefined") {
+        if (typeof element[key_id] !== "undefined") {
             throw new Error("element id given! We want to create an element, the id should not be given!");
         }
 
@@ -200,8 +208,12 @@ DbslayerDatabaseConnection = function(name, options) {
         p.wait();
     };    
     
-    this.store = function(element) {
-        if (!element || typeof element.id === "undefined") {
+    this.create = function(element) {
+        this.createWithKey(element, "id");
+    };
+    
+    this.storeWithKey = function(element, key_id) {
+        if (!element || typeof element[key_id] === "undefined") {
             throw new Error("element id not given!");
         }
 
@@ -215,15 +227,19 @@ DbslayerDatabaseConnection = function(name, options) {
 
         var p = null;
         try {
-            p = query("INSERT INTO " + db_escape_string(table_name) + " (`id`) VALUES ('" + element.id + "')");
+            p = query("INSERT INTO " + db_escape_string(table_name) + " (`id`) VALUES ('" + db_escape_string(element[key_id]) + "')");
             p.wait();
         } catch (e) {
             /*
              * We do not care if that fails ;). The fact is, that we just want to secure that the entry exists.
              */
         }
-        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `id` = '" + element.id + "'");
+        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `id` = '" + db_escape_string(element[key_id]) + "'");
         p.wait();
+    };
+    
+    this.store = function(element) {
+        this.storeWithKey(element, "id");
     };
 };
 
