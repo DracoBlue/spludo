@@ -216,7 +216,7 @@ DbslayerDatabaseConnection = function(name, options) {
         if (!element || typeof element[key_id] === "undefined") {
             throw new Error("element id not given!");
         }
-
+        
         var table_name = element._table;
         delete element._table;
         
@@ -227,14 +227,14 @@ DbslayerDatabaseConnection = function(name, options) {
 
         var p = null;
         try {
-            p = query("INSERT INTO " + db_escape_string(table_name) + " (`id`) VALUES ('" + db_escape_string(element[key_id]) + "')");
+            p = query("INSERT INTO " + db_escape_string(table_name) + " (`" + db_escape_string(key_id) + "`) VALUES ('" + db_escape_string(element[key_id]) + "')");
             p.wait();
         } catch (e) {
             /*
              * We do not care if that fails ;). The fact is, that we just want to secure that the entry exists.
              */
         }
-        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `id` = '" + db_escape_string(element[key_id]) + "'");
+        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `" + db_escape_string(key_id) + "` = '" + db_escape_string(element[key_id]) + "'");
         p.wait();
     };
     
