@@ -39,7 +39,7 @@ new Validator("number", {
             return errors;
         }
 
-        if (String(num_parameter) !== parameter) {
+        if (String(num_parameter) !== String(parameter)) {
             errors.push("type");
             return errors;
         }
