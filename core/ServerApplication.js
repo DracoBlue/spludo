@@ -88,9 +88,9 @@ ServerApplication.prototype.run = function() {
         context.session_id = session_id;
 
         var response = null;
-
+        
         try {
-            response = BaseApplication.executePath(req.uri.full.substr(1), context);
+            response = BaseApplication.executePath(req.url.substr(1), context);
         } catch (e) {
             context.status = 404;
             response = "Page not found!" + sys.inspect(e);

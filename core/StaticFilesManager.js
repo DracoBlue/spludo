@@ -46,7 +46,7 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
 };
 
 StaticFilesManager.prototype.canHandleRequest = function(req) {
-    var uri = req.uri.full.substr(1);
+    var uri = req.url.substr(1);
     return typeof this.files[uri] === "undefined" ? false : true;
 };
 
@@ -59,7 +59,7 @@ var file_extension_to_mime_type_map = {
 };
 
 StaticFilesManager.prototype.handleRequest = function(req, res) {
-    var uri = req.uri.full.substr(1);
+    var uri = req.url.substr(1);
     
     this.info('static: ' + uri);
     var file_extension = /\.([\w]+)$/.exec(uri);
