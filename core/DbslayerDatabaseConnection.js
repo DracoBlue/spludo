@@ -37,14 +37,13 @@ DbslayerDatabaseConnection = function(name, options) {
         
         var promise = new process.Promise();
         var request = connection.request('GET', '/db?' + escape(JSON.stringify({"SQL":sql})), {'host': host});
-//        var request = connection.request('GET', "/", {'host': host});
         
         if (timeout !== 0) {
             promise.timeout(timeout);
         }
 
         request.finish(function(response){
-            response.setBodyEncoding("binary");
+            response.setBodyEncoding("utf8");
             
             var body = [];
             
@@ -134,13 +133,26 @@ DbslayerDatabaseConnection = function(name, options) {
         return this.retrieveByKey(element_type, "id", id);
     };
     
-    this.retrieve = function(element_type, offset, limit) {
+    this.retrieve = function(element_type, offset, limit, filters) {
         var elements = null;
         offset = offset || 0;
         // FIXME: how to fix the limit problem, when we just need an offset?
         limit = limit || 230585;
         
-        var p = query("SELECT * FROM " + db_escape_string(element_type) + " LIMIT " + offset + ", " + limit + "");
+        var where = "";
+        
+        if (filters && filters.length>0) {
+            where = [];
+            
+            var f = 0;
+            for (f = 0; f < filters.length; f++) {
+                where.push(" "+db_escape_string(filters[f][0])+" " + (filters[f][2] || " = ") + " '" + db_escape_string(filters[f][1]) + "'");
+            }
+            
+            where = " WHERE " + where.join(" AND ");
+        }
+        
+        var p = query("SELECT SQL_CALC_FOUND_ROWS * FROM " + db_escape_string(element_type) + where + " LIMIT " + offset + ", " + limit + "");
         
         p.addCallback(function(data) {
             elements = data;
@@ -152,6 +164,19 @@ DbslayerDatabaseConnection = function(name, options) {
         
         p.wait();
         
+        var total_count = 0;
+        
+        p = query("SELECT found_rows() db_connection_found_rows");
+        
+        p.addCallback(function(data) {
+            total_count = data[0]['db_connection_found_rows'];
+        });
+        
+        p.addErrback(function(data) {
+            total_count = 0;
+        });
+        
+        p.wait();
         
         if (elements) {
             var elements_length = elements.length;
@@ -162,7 +187,30 @@ DbslayerDatabaseConnection = function(name, options) {
             }
         }
         
-        return elements || [];
+        return [elements || [], total_count];
+    };
+    
+    this.count = function(element_type) {
+        var elements = null;
+        
+        var p = query("SELECT COUNT(*) dbslayer_db_connection_count FROM " + db_escape_string(element_type));
+        
+        p.addCallback(function(data) {
+            elements = data;
+        });
+        
+        p.addErrback(function(data) {
+            elements = null;
+        });
+        
+        p.wait();
+        
+        if (elements) {
+            var elements_length = elements.length;
+            return elements[0]['dbslayer_db_connection_count'];
+        }
+        
+        return 0;
     };
     
     this.deleteByKey = function(element_type, key_id, id) {
