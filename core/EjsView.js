@@ -19,7 +19,7 @@ var posix = require("posix");
  * @author DracoBlue
  */
 EjsView = function(name, content_file, encoding) {
-    encoding = encoding || "utf8"
+    encoding = encoding || "utf8";
     
     var view = this;
     this.content_file = content_file;
