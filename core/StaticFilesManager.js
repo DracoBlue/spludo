@@ -97,12 +97,4 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
         res.sendBody("");
         res.finish();
     });
-
-    p.addCancelback(function() {
-        res.sendHeader(404, {
-        });
-        res.sendBody("");
-        res.finish();
-    });
-
 };
