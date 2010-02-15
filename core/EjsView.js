@@ -6,20 +6,25 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var posix = require("posix");
+
 /**
  * @class A EjsView, which reads a template file and executes it. Those template
  *        files may include inline server-side javascript.
  * 
+ * @param {String} name
+ * @param {String} content_file
+ * @param {String} [encoding="utf8"]
  * @since 0.1
  * @author DracoBlue
  */
-EjsView = function(name, content_file) {
-    var posix = require("posix");
-
+EjsView = function(name, content_file, encoding) {
+    encoding = encoding || "utf8"
+    
     var view = this;
     this.content_file = content_file;
 
-    var p = posix.cat(content_file, "binary");
+    var p = posix.cat(content_file, encoding);
 
     p.addCallback(function(file_content) {
         view.content = file_content;
