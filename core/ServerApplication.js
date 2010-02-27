@@ -34,6 +34,7 @@ process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
 
 var http = require("http");
 var sys = require("sys");
+var multipart = require("multipart");
 
 /**
  * Runs the application.
@@ -42,7 +43,7 @@ ServerApplication.prototype.run = function() {
     
     var session_key = this.options.session_key;
 
-    var finishRequest = function(req, res, body) {
+    var finishRequest = function(req, res, body, params) {
         var context = {
             status: 200,
             headers: {
@@ -51,8 +52,8 @@ ServerApplication.prototype.run = function() {
             }
         };
         
-        context.params = {};
-
+        context.params = params || {};
+        
         if (body !== null) {
             /*
              * Ok, we need to parse that!
@@ -93,7 +94,8 @@ ServerApplication.prototype.run = function() {
             response = BaseApplication.executePath(req.url.substr(1), context);
         } catch (e) {
             context.status = 404;
-            response = "Page not found!" + sys.inspect(e);
+            response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
+            response = response + "Arguments: " + sys.inspect(e.arguments);
         }
 
         if (session_id !== context.session_id) {
@@ -109,7 +111,7 @@ ServerApplication.prototype.run = function() {
         ContextToolkit.applyCookiesToHeaders(context);
 
         res.sendHeader(context.status, context.headers);
-        res.sendBody(response, "utf8");
+        res.sendBody(response, context.encoding || "utf8");
 
         res.finish();
     };
@@ -124,20 +126,54 @@ ServerApplication.prototype.run = function() {
             finishRequest(req, res, null);
             return ;
         }
-        
-        var body = [];
-        
-        req.addListener('body', function(content) {
-            if (content === null) {
-                return ;
-            }
-            body.push(content);
-        });
 
-        req.addListener('complete', function(content) {
-            finishRequest(req, res, body.join(""));
-        });
+        req.setBodyEncoding("binary");
+        
+        var stream = multipart.parse(req);
 
+        if (stream.isMultiPart) {
+            
+            var parts = {};
+            var current_part_name = null;
+            
+            stream.addListener("partBegin", function (part) {
+                current_part_name = part.name;
+                parts[current_part_name] = {
+                    "name": current_part_name,
+                    "filename": part.filename,
+                    "body": []
+                };
+            });
+            
+            stream.addListener("body", function(chunk) {
+                parts[current_part_name].body.push(chunk);
+            });
+            
+            stream.addListener("partEnd", function () {
+                if (current_part_name !== null) {
+                    parts[current_part_name].body = parts[current_part_name].body.join("");
+                }
+                current_part_name = null;
+            });
+            
+            stream.addListener('complete', function(content) {
+                finishRequest(req, res, null, parts);
+            });
+        } else {
+            var body = [];
+            
+            stream.addListener("body", function(chunk) {
+                if (chunk === null) {
+                    return ;
+                }
+                body.push(chunk);
+            });
+            
+            stream.addListener('complete', function(content) {
+                finishRequest(req, res, body.join(""));
+            });
+        }
+        
     });
 
     this.server.listen(this.options["port"]);
