@@ -45,6 +45,12 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
     });
 };
 
+
+StaticFilesManager.prototype.addFile = function(file_name, folder_name) {
+    this.info("StaticFilesManager.addFolder: adding " + file_name + " in " + folder_name + " as static file.");
+    this.files["static/" + file_name] = folder_name + file_name;
+};
+
 StaticFilesManager.prototype.canHandleRequest = function(req) {
     var uri = req.url.substr(1);
     return typeof this.files[uri] === "undefined" ? false : true;
