@@ -16,6 +16,71 @@ process.isFunction = function(object) {
     return (typeof object == "function") ? true : false;
 };
 
+/**
+ * Creates a group of all passed arguments (each of them must be a function)
+ * and returns a function, which executes all.
+ * 
+ * @return function
+ */
+GLOBAL.group = function () {
+    var args = arguments;
+    var args_length = args.length;
+    
+    return function(cb) {
+        if (args_length === 0) {
+            cb();
+            return ;
+        }
+    
+        if (args_length === 1) {
+            cb();
+            return ;
+        }
+        
+        var items_left_to_execute = args_length;
+        
+        var call_group_item = function(arg) {
+            arg(function() {
+                items_left_to_execute--;
+                if (!items_left_to_execute) {
+                    cb();
+                }
+            });
+        };
+    
+        for ( var i = 0; i < args_length; i++) {
+            call_group_item(args[i]);
+        }
+    };
+}
+
+/**
+ * Executes all functions (passed as arguments) in order.
+ * 
+ * @return
+ */
+GLOBAL.chain = function () {
+    var args = arguments;
+    var args_length = args.length;
+    
+    if (args_length === 0) {
+        return ;
+    }
+    
+    var args_pos = 0;
+
+    var start_func = function() {
+        args[args_pos](function() {
+            args_pos++;
+            if (args_length > args_pos) {
+                start_func();
+            }
+        });
+    };
+    
+    start_func();
+}
+
 require("./StringToolkit");
 
 require("./Config");
