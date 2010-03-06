@@ -6,7 +6,9 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-var posix = require("posix");
+var fs = require("fs");
+
+var next_ejs_slot_view_id = 1;
 
 /**
  * @class A EjsView, which reads a template file and executes it. Those template
@@ -24,18 +26,16 @@ EjsView = function(name, content_file, encoding) {
     var view = this;
     this.content_file = content_file;
 
-    var p = posix.cat(content_file, encoding);
-
-    p.addCallback(function(file_content) {
-        view.content = file_content;
-        view_manager.addView(name, view);
-    });
-
-    p.addErrback(function() {
-        throw new Error("Cannot read Ejs-File at " + content_file);
-    });
+    var file_content = "";
     
-    this.promise = p;
+    try {
+        file_content = fs.readFileSync(content_file, encoding);
+    } catch (e) {
+        throw new Error("Cannot read Ejs-File at " + content_file);
+    }
+    
+    view.content = file_content;
+    view_manager.addView(name, view);
 };
 
 var ejs_view_format = {};
@@ -52,7 +52,7 @@ EjsView.prototype.render = function(params, context, inner) {
 
         if (next_js_tag === -1) {
             ejs_view_format[file_name] = function() {
-                return content;
+                return [content, []];
             };
         } else {
             /*
@@ -64,7 +64,12 @@ EjsView.prototype.render = function(params, context, inner) {
             var next_js_tag_end = 0;
 
             body.push("var content = [];");
-            body.push("var slot = BaseApplication.executePath;");
+            body.push("var slots = [];");
+            body.push("var slot = function(path, context, inner) {");
+            body.push("    var slot_id = next_ejs_slot_view_id++;");
+            body.push("    slots.push([slot_id, path, context, inner]);");
+            body.push("    return '%%%EJSSLOT%' + slot_id + '%%%';");
+            body.push("};");
 
             while (next_js_tag != -1) {
                 next_js_tag_end = next_js_tag + js_tag_length;
@@ -104,15 +109,42 @@ EjsView.prototype.render = function(params, context, inner) {
                 body.push(");\n");
             }
 
-            body.push("return content.join('');");
+            body.push("return [content.join(''), slots];");
 
             try {
-                ejs_view_format[file_name] = new Function("params", "context", "inner", body.join("\n"));
+                ejs_view_format[file_name] = new Function("params", "context", "inner", "next_ejs_slot_view_id", body.join("\n"));
             } catch (e) {
                 throw new Error("Syntax Error in .ejs-File: " + e.message, file_name, 0);
             }
         }
     }
 
-    return ejs_view_format[file_name](params, context, inner);
+    return function(cb) {
+        var ejs_view_response = ejs_view_format[file_name](params, context, inner, next_ejs_slot_view_id);
+
+        var response = ejs_view_response[0];
+        var slots = ejs_view_response[1];
+        
+        if (slots.length > 0) {
+            next_ejs_slot_view_id += slots.length;
+            
+            var chain_elements = [];
+            slots.forEach(function(element) {
+                chain_elements.push(function (chain_cb) {
+                    var slot_id = element[0];
+                    BaseApplication.executePath(element[1], element[2], element[3])(function(slot_response) {
+                        response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", slot_response);
+                        chain_cb();
+                    });
+                });
+            });
+            chain_elements.push(function () {
+                cb(response);
+            });
+            
+            chain.apply(this, chain_elements);
+        } else {
+            cb(response);
+        }
+    };
 };

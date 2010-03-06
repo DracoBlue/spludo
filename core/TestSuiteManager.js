@@ -19,6 +19,8 @@ TestSuiteManager = function() {
 
 process.mixin(true, TestSuiteManager.prototype, Logging.prototype);
 
+var sys = require('sys');
+
 /**
  * Add a suite to the suite manager.
  */
@@ -230,33 +232,42 @@ TestSuiteManager.prototype.getResultAsText = function() {
  * Get all available views and load them ... .
  */
 TestSuiteManager.prototype.loadTests = function(path, module_name) {
-    this.current_module_name = module_name;
-
-    this.info("loadTests: module:" + module_name + ", path:" + path);
-
-    var sys = require('sys');
-    var view_files = [];
-    try {
-        sys.exec("ls " + path + "tests/*.js").addCallback(function(stdout, stderr) {
-            var files_in_folder = stdout.split("\n");
-
-            for (i in files_in_folder) {
-                if (files_in_folder[i] !== "") {
-                    view_files.push(files_in_folder[i]);
+    var self = this;
+    
+    return function(cb) {
+    
+        self.info("loadTests: module:" + module_name + ", path:" + path);
+        
+        try {
+            sys.exec("ls " + path + "tests/*.js", function(err, stdout, stderr) {
+                var files_in_folder = stdout.split("\n");
+    
+                var test_files = [];
+                
+                for (i in files_in_folder) {
+                    if (files_in_folder[i] !== "") {
+                        test_files.push(files_in_folder[i]);
+                    }
                 }
-            }
-        }).wait();
-    } catch (e) {
-        /*
-         * views folder does not exist!
-         */
-    }
-
-    for (i in view_files) {
-        this.current_test_file = view_files[i];
-        require(view_files[i].substr(0, view_files[i].length - 3));
-    }
-
-    delete this.current_test_file;
-    delete this.current_module_name;
+                
+                for (i in test_files) {
+                    self.current_test_file = test_files[i];
+                    self.current_module_name = module_name;
+                    
+                    require(test_files[i].substr(0, test_files[i].length - 3));
+                    
+                    delete self.current_module_name;
+                }
+                
+                delete self.current_test_file;
+                
+                cb();
+            });
+        } catch (e) {
+            /*
+             * views folder does not exist!
+             */
+            cb();
+        }
+    };
 };

@@ -7,6 +7,7 @@
  */
 
 var sys = require("sys");
+var http = require("http");
 
 /**
  * @class A class for a connection to an dbslayer database.
@@ -17,7 +18,8 @@ var sys = require("sys");
  * @author DracoBlue
  */
 DbslayerDatabaseConnection = function(name, options) {
-
+    var self = this;
+    
     var port = options.port || 9090;
     var host = options.host || '127.0.0.1';
     var timeout = options.timeout || 0;
@@ -26,8 +28,6 @@ DbslayerDatabaseConnection = function(name, options) {
     delete options.port;
     delete options.host;
     
-    var http = require("http");
-    
     var db_escape_string = function(string) {
         return string.replace(/([\n\r\'\"])/g, "\\$&");
     };
@@ -35,98 +35,97 @@ DbslayerDatabaseConnection = function(name, options) {
     var query = function(sql) {
         var connection = http.createClient(port, host);
         
-        var promise = new process.Promise();
-        var request = connection.request('GET', '/db?' + escape(JSON.stringify({"SQL":sql})), {'host': host});
+        return function(cb) {
         
-        if (timeout !== 0) {
-            promise.timeout(timeout);
-        }
-
-        request.finish(function(response){
-            response.setBodyEncoding("utf8");
+            var request = connection.request('GET', '/db?' + escape(JSON.stringify({"SQL":sql})), {'host': host});
             
-            var body = [];
-            
-            response.addListener("body", function (chunk) {
-                body.push(chunk);
-            });
-            
-            response.addListener("complete", function () {
-                var data = null;
+            if (timeout !== 0) {
+                promise.timeout(timeout);
+            }
+    
+            request.addListener('response', function(response){
+                response.setBodyEncoding("utf8");
                 
-                try {
-                    data = JSON.parse(body.join(""));
-                } catch(e){
-                    promise.emitError(null, e.message);
-                    return ;
-                }
+                var body = [];
                 
-                if (typeof data.MYSQL_ERROR !== "undefined") {
-                    promise.emitError(data.MYSQL_ERROR, data.MYSQL_ERRNO);
-                } else if (typeof data.ERROR !== "undefined"){
-                    promise.emitError(data.ERROR);
-                } else {
-                    var query_result = data.RESULT;
-
-                    if (!query_result.ROWS) {
-                        if (query_result.SUCCESS) {
-                            promise.emitSuccess();
-                        } else {
-                            promise.emitError();
-                        }
+                response.addListener("data", function (chunk) {
+                    body.push(chunk);
+                });
+                
+                response.addListener("end", function () {
+                    var data = null;
+                    
+                    try {
+                        data = JSON.parse(body.join(""));
+                    } catch(e){
+                        cb(true, null, e.message);
                         return ;
                     }
                     
-                    var headers = query_result.HEADER;
                     
-                    var headers_length = headers.length;
-
-                    // var types = query_result.TYPES;
-                    
-                    var rows = query_result.ROWS;
-                    var rows_length = rows.length;
-                    
-                    var results = [];
-                    
-                    for (r=0; r < rows_length; r++) {
-                        var row = {};
-                        var raw_row = rows[r];
-                        for (h=0; h < headers_length; h++) {
-                            row[headers[h]] = raw_row[h];
+                    if (typeof data.MYSQL_ERROR !== "undefined") {
+                        cb(true, data.MYSQL_ERROR, data.MYSQL_ERRNO);
+                    } else if (typeof data.ERROR !== "undefined"){
+                        cb(true, data.ERROR);
+                    } else {
+                        var query_result = data.RESULT;
+    
+                        if (!query_result.ROWS) {
+                            if (query_result.SUCCESS) {
+                                cb(false);
+                            } else {
+                                cb(true);
+                            }
+                            return ;
                         }
-                        results.push(row);
-                    }
-                    
-                    promise.emitSuccess(results);
-                }             
+                        
+                        var headers = query_result.HEADER;
+                        
+                        var headers_length = headers.length;
+    
+                        // var types = query_result.TYPES;
+                        
+                        var rows = query_result.ROWS;
+                        var rows_length = rows.length;
+                        
+                        var results = [];
+                        
+                        for (r=0; r < rows_length; r++) {
+                            var row = {};
+                            var raw_row = rows[r];
+                            for (h=0; h < headers_length; h++) {
+                                row[headers[h]] = raw_row[h];
+                            }
+                            results.push(row);
+                        }
+                        
+                        cb(false, results);
+                    }             
+                });
             });
-        });
-        
-        return promise;
+            
+            request.close();
+        };
     };
     
-    this.retrieveByKey = function(element_type, key_id, id) {
-        var elements = null;
-        var p = query("SELECT * FROM " + db_escape_string(element_type) + " WHERE " + db_escape_string(key_id) + "  = '" + db_escape_string(id) + "' LIMIT 1");
-        
-        p.addCallback(function(data) {
-            elements = data;
-        });
-        
-        p.addErrback(function(data) {
-            elements = null;
-        });
-        
-        p.wait();
-        
-        if (elements && elements.length === 1) {
-            var element = elements[0];
-            element._table = element_type;
-            element._server = name;
-            return element;
-        }
-        
-        return null;
+    this.retrieveByKey = function(element_type_name, key_id, id) {
+        return function(cb) {
+            query("SELECT * FROM " + db_escape_string(element_type_name) + " WHERE " + db_escape_string(key_id) + "  = '" + db_escape_string(id) + "' LIMIT 1")(function(err, data) {
+                if (err) {
+                    cb(null);
+                    return ;
+                }
+                
+                var elements = data;
+                
+                if (elements && elements.length === 1) {
+                    var element = elements[0];
+                    element._table = element_type_name;
+                    element._server = name;
+                    cb(element);
+                }
+            });
+        };
     };    
     
     this.retrieveById = function(element_type, id) {
@@ -134,102 +133,80 @@ DbslayerDatabaseConnection = function(name, options) {
     };
     
     this.retrieve = function(element_type, offset, limit, filters) {
-        var elements = null;
-        offset = offset || 0;
-        // FIXME: how to fix the limit problem, when we just need an offset?
-        limit = limit || 230585;
-        
-        var where = "";
-        
-        if (filters && filters.length>0) {
-            where = [];
+        return function(cb) {
+            var elements = null;
+            offset = offset || 0;
+            // FIXME: how to fix the limit problem, when we just need an offset?
+            limit = limit || 230585;
             
-            var f = 0;
-            for (f = 0; f < filters.length; f++) {
-                where.push(" "+db_escape_string(filters[f][0])+" " + (filters[f][2] || " = ") + " '" + db_escape_string(filters[f][1]) + "'");
+            var where = "";
+            
+            if (filters && filters.length>0) {
+                where = [];
+                
+                var f = 0;
+                for (f = 0; f < filters.length; f++) {
+                    where.push(" "+db_escape_string(filters[f][0])+" " + (filters[f][2] || " = ") + " '" + db_escape_string(filters[f][1]) + "'");
+                }
+                
+                where = " WHERE " + where.join(" AND ");
             }
             
-            where = " WHERE " + where.join(" AND ");
-        }
-        
-        var p = query("SELECT SQL_CALC_FOUND_ROWS * FROM " + db_escape_string(element_type) + where + " LIMIT " + offset + ", " + limit + "");
-        
-        p.addCallback(function(data) {
-            elements = data;
-        });
-        
-        p.addErrback(function(data) {
-            elements = null;
-        });
-        
-        p.wait();
-        
-        var total_count = 0;
-        
-        p = query("SELECT found_rows() db_connection_found_rows");
-        
-        p.addCallback(function(data) {
-            total_count = data[0]['db_connection_found_rows'];
-        });
-        
-        p.addErrback(function(data) {
-            total_count = 0;
-        });
-        
-        p.wait();
-        
-        if (elements) {
-            var elements_length = elements.length;
-            for (i = 0; i < elements_length; i++) {
-                var element = elements[i];
-                element._table = element_type;
-                element._server = name;
-            }
-        }
-        
-        return [elements || [], total_count];
+            query("SELECT SQL_CALC_FOUND_ROWS * FROM " + db_escape_string(element_type) + where + " LIMIT " + offset + ", " + limit + "")(function(err, data) {
+                if (err) {
+                    cb(null);
+                    return ;
+                }
+                
+                var elements = data;
+                
+                if (elements) {
+                    var total_count = 0;
+                    
+                    query("SELECT found_rows() db_connection_found_rows")(function(found_rows_err, found_rows_data) {
+                        if (!found_rows_err) {
+                            total_count = found_rows_data[0]['db_connection_found_rows'];
+                        }
+                        
+                        var elements_length = elements.length;
+                        for (i = 0; i < elements_length; i++) {
+                            var element = elements[i];
+                            element._table = element_type;
+                            element._server = name;
+                        }
+                        cb([elements || [], total_count]);
+                    });
+                    
+                    
+                } else {
+                    cb([[], 0]);
+                }
+                
+            });
+        };
     };
     
     this.count = function(element_type) {
-        var elements = null;
-        
-        var p = query("SELECT COUNT(*) dbslayer_db_connection_count FROM " + db_escape_string(element_type));
-        
-        p.addCallback(function(data) {
-            elements = data;
-        });
-        
-        p.addErrback(function(data) {
-            elements = null;
-        });
-        
-        p.wait();
-        
-        if (elements) {
-            var elements_length = elements.length;
-            return elements[0]['dbslayer_db_connection_count'];
-        }
-        
-        return 0;
+        return function(cb) {
+            query("SELECT COUNT(*) dbslayer_db_connection_count FROM " + db_escape_string(element_type))(function(err, elements) {
+                if (err) {
+                    cb(0);
+                } else {
+                    cb(elements[0]['dbslayer_db_connection_count']);
+                }
+            });
+        };
     };
     
     this.deleteByKey = function(element_type, key_id, id) {
-        var had_error = false;
-        var p = query("DELETE FROM " + db_escape_string(element_type) + " WHERE " + db_escape_string(key_id) + " = '" + db_escape_string(id) + "' LIMIT 1");
-        
-        p.addCallback(function(data) {
-            had_error = false;
-        });
-        
-        p.addErrback(function(data) {
-            had_error = true;
-        });
-        
-        p.wait();
-        
-        if (had_error) {
-            throw new Error("Cannot delete entry by id " + id);
-        }
+        return function(cb) {
+            query("DELETE FROM " + db_escape_string(element_type) + " WHERE " + db_escape_string(key_id) + " = '" + db_escape_string(id) + "' LIMIT 1")(function(err, data) {
+                if (err) {
+                    throw new Error("Cannot delete entry by id " + id);
+                }
+                cb();
+            });
+        };
     };
     
     this.deleteById = function(element_type, id) {
@@ -237,7 +214,6 @@ DbslayerDatabaseConnection = function(name, options) {
     };
     
     this.createWithKey = function(element, key_id) {
-        sys.debug(sys.inspect(element));
         if (typeof element[key_id] !== "undefined") {
             throw new Error("element id given! We want to create an element, the id should not be given!");
         }
@@ -251,9 +227,12 @@ DbslayerDatabaseConnection = function(name, options) {
             keys.push('`' + db_escape_string(key) + '`');
             values.push('\'' + db_escape_string(element[key]) + '\'');
         }
-
-        p = query("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(', ') + ")");
-        p.wait();
+        
+        return function(cb) {
+            query("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(', ') + ")")(function(err, data) {
+                cb();
+            });
+        };
     };    
     
     this.create = function(element) {
@@ -268,22 +247,30 @@ DbslayerDatabaseConnection = function(name, options) {
         var table_name = element._table;
         delete element._table;
         
+        
         var setters = [];
         for (key in element) {
+            if (typeof element[key] !== "string") {
+                element[key] = new String(element[key]);
+            }
             setters.push('`' + db_escape_string(key) + '` = \'' + db_escape_string(element[key]) + '\'');
         }
 
-        var p = null;
-        try {
-            p = query("INSERT INTO " + db_escape_string(table_name) + " (`" + db_escape_string(key_id) + "`) VALUES ('" + db_escape_string(element[key_id]) + "')");
-            p.wait();
-        } catch (e) {
-            /*
-             * We do not care if that fails ;). The fact is, that we just want to secure that the entry exists.
-             */
-        }
-        p = query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `" + db_escape_string(key_id) + "` = '" + db_escape_string(element[key_id]) + "'");
-        p.wait();
+        return function(cb) {
+            chain(function(chain_cb) {
+                query("INSERT INTO " + db_escape_string(table_name) + " (`" + db_escape_string(key_id) + "`) VALUES ('" + db_escape_string(element[key_id]) + "')")(function(err, data) {
+                    chain_cb();
+                });
+            },
+            function(chain_cb) {
+                query("UPDATE " + db_escape_string(table_name) + " SET " + setters.join(', ') + " WHERE `" + db_escape_string(key_id) + "` = '" + db_escape_string(element[key_id]) + "'")(function(err, data) {
+                    chain_cb();
+                });
+            },
+            function() {
+                cb();
+            });
+        };
     };
     
     this.store = function(element) {

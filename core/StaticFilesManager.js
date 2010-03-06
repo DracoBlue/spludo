@@ -21,7 +21,7 @@ StaticFilesManager = function() {
 process.mixin(true, StaticFilesManager.prototype, Logging.prototype);
 
 var sys = require("sys");
-var posix = require("posix");
+var fs = require("fs");
 
 StaticFilesManager.prototype.addFolder = function(folder_name) {
     if (this.folders[folder_name]) {
@@ -32,7 +32,7 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
     var file_manager = this;
 
     file_manager.info("StaticFilesManager.addFolder: adding " + folder_name + " as static folder.");
-    sys.exec("cd " + folder_name + " && find -type f").addCallback(function(stdout, stderr) {
+    sys.exec("cd " + folder_name + " && find -type f", function(err, stdout, stderr) {
         var files = stdout.split("\n");
         var files_length = files.length;
         for ( var f = 0; f < files_length; f++) {
@@ -86,21 +86,17 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
 
     var static_file_cache = {};
 
-    var p = posix.cat(this.files[uri], "binary");
-
-    p.addCallback(function(content) {
-        res.sendHeader(200, {
-            "Content-Type": mime_type,
-            "Cache-Control": "public, max-age=300"
-        });
-        res.sendBody(content, "binary");
-        res.finish();
-    });
-
-    p.addErrback(function() {
-        res.sendHeader(404, {
-        });
-        res.sendBody("");
-        res.finish();
+    fs.readFile(this.files[uri], "binary", function(err, content) {
+        if (err) {
+            res.sendHeader(404, {
+            });
+        } else {
+            res.sendHeader(200, {
+                "Content-Type": mime_type,
+                "Cache-Control": "public, max-age=300"
+            });
+            res.write(content, "binary");
+        }
+        res.close();
     });
 };

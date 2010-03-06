@@ -6,6 +6,8 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var sys = require('sys');
+
 /**
  * @class The manager for all registered views.
  * 
@@ -58,54 +60,75 @@ ViewManager.prototype.getView = function(name, module_name) {
  * Get all available views and load them ... .
  */
 ViewManager.prototype.loadViews = function(path, module_name) {
-    this.current_module_name = module_name;
-
+    var self = this;
+    
     this.info("loadViews: module:" + module_name + ", path:" + path);
 
-    var sys = require('sys');
-    var view_files = [];
+    var js_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.js ' + module_name + '/' + path);
+    
     try {
-        sys.exec("ls " + path + "views/*.js").addCallback(function(stdout, stderr) {
-            var files_in_folder = stdout.split("\n");
-
-            for (i in files_in_folder) {
-                if (files_in_folder[i] !== "") {
-                    view_files.push(files_in_folder[i]);
+        sys.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
+            var view_files = [];
+            
+            if (!err) {
+                var files_in_folder = stdout.split("\n");
+    
+                for (i in files_in_folder) {
+                    if (files_in_folder[i] !== "") {
+                        view_files.push(files_in_folder[i]);
+                    }
                 }
+
+                self.current_module_name = module_name;
+                
+                
+                for (i in view_files) {
+                    require(view_files[i].substr(0, view_files[i].length - 3));
+                }
+                
+                delete self.current_module_name;
             }
-        }).wait();
+            bootstrap_manager.finishMandatoryElement(js_bootstrap_token);
+        });
     } catch (e) {
         /*
          * views folder does not exist!
          */
+        bootstrap_manager.finishMandatoryElement(js_bootstrap_token);
     }
-
-    for (i in view_files) {
-        require(view_files[i].substr(0, view_files[i].length - 3));
-    }
-
-    view_files = [];
+    
+    var ejs_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.ejs ' + module_name + '/' + path);
 
     try {
-        sys.exec("ls " + path + "views/*.ejs").addCallback(function(stdout, stderr) {
-            var files_in_folder = stdout.split("\n");
-
-            for (i in files_in_folder) {
-                if (files_in_folder[i] !== "") {
-                    view_files.push(files_in_folder[i]);
+        sys.exec("ls " + path + "views/*.ejs", function(err, stdout, stderr) {
+            var view_files = [];
+            
+            if (!err) {
+                var files_in_folder = stdout.split("\n");
+    
+                for (i in files_in_folder) {
+                    if (files_in_folder[i] !== "") {
+                        view_files.push(files_in_folder[i]);
+                    }
                 }
             }
-        }).wait();
+            
+            self.current_module_name = module_name;
+            
+            for (i in view_files) {
+                var view_name = view_files[i].substr(path.length + "views/".length);
+                view_name = view_name.substr(0, view_name.length - 4);
+                new EjsView(view_name, view_files[i]);
+            }
+            
+            delete self.current_module_name;
+            
+            bootstrap_manager.finishMandatoryElement(ejs_bootstrap_token);
+        });
     } catch (e) {
         /*
          * views folder does not exist!
          */
+        bootstrap_manager.finishMandatoryElement(ejs_bootstrap_token);
     }
-
-    for (i in view_files) {
-        var view_name = view_files[i].substr(path.length + "views/".length);
-        view_name = view_name.substr(0, view_name.length - 4);
-        new EjsView(view_name, view_files[i]);
-    }
-    delete this.current_module_name;
 };

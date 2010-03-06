@@ -8,7 +8,7 @@
 
 var sys = require('sys');
 var http = require('http');
-var posix = require('posix');
+var fs = require('fs');
 
 var application_directory = process.cwd() + "/";
 
@@ -52,7 +52,7 @@ GLOBAL.group = function () {
             call_group_item(args[i]);
         }
     };
-}
+};
 
 /**
  * Executes all functions (passed as arguments) in order.
@@ -79,7 +79,7 @@ GLOBAL.chain = function () {
     };
     
     start_func();
-}
+};
 
 require("./StringToolkit");
 
@@ -102,6 +102,15 @@ try {
 
 require("./Options");
 require("./Logging");
+
+require("./BootstrapManager");
+
+/**
+ * The global bootstrap manager
+ * 
+ * @type BootstrapManager
+ */
+bootstrap_manager = new BootstrapManager();
 
 require("./ContextToolkit");
 require("./Context");
@@ -177,13 +186,10 @@ require("./Validation");
 if (!config.get('core', {}).disable_core_validators) {
     require("./core-validators");
 }
-
 var module_names = [];
 
 try {
-    posix.readdir(application_directory + "modules").addCallback(function(contents) {
-        module_names = contents;
-    }).wait();
+    module_names = fs.readdirSync(application_directory + "modules");
 } catch (e) {
     /*
      * We can't read the modules directory, cause there is none :(
@@ -199,27 +205,34 @@ for ( var m = 0; m < module_names.length; m++) {
 }
 
 for ( var f = 0; f < lib_folders.length; f++) {
+    var lib_folder_exists = false;
     try {
-        posix.stat(lib_folders[f]).addCallback(function (stats) {
-            if (stats.isDirectory()) {
-                Logging.prototype.info("index: Adding "+lib_folders[f]+" as lib.");
-                require.paths.push(lib_folders[f]);
-            }
-            try {
-                posix.stat(lib_folders[f] + "/index.js").addCallback(function (stats) {
-                    Logging.prototype.info("index: Loading "+lib_folders[f]+"/index.js.");
-                    require(lib_folders[f] + "/index");
-                }).wait();
-            } catch (e) {
-                /*
-                * Folder does not exist!
-                */
-            }
-        }).wait();
+        var lib_folder_stats = fs.statSync(lib_folders[f]);
+        if (lib_folder_stats.isDirectory()) {
+            Logging.prototype.info("index: Adding "+lib_folders[f]+" as lib.");
+            require.paths.push(lib_folders[f]);
+            lib_folder_exists = true;
+        }
     } catch (e) {
         /*
          * Folder does not exist!
          */
+    }
+    if (lib_folder_exists) {
+        var lib_index_file_exists = false;
+        try {
+            index_js_stats = fs.statSync(lib_folders[f] + "/index.js");
+            lib_index_file_exists = true;
+        } catch (e) {
+            /*
+             * Index file does not exist!
+             */
+        }
+        
+        if (lib_index_file_exists) {
+            Logging.prototype.info("index: Loading "+lib_folders[f]+"/index.js.");
+            require(lib_folders[f] + "/index");
+        }
     }
 }
 
@@ -227,9 +240,8 @@ for ( var f = 0; f < lib_folders.length; f++) {
  * Load the static folder, if the core has one.
  */
 try {
-    posix.stat(application_directory + "static").addCallback(function (stats) {
-        static_files_manager.addFolder(application_directory + "static/");
-    }).wait();
+    static_folder_stats = fs.statSync(application_directory + "static");
+    static_files_manager.addFolder(application_directory + "static/");
 } catch (e) {
     /*
     * Folder does not exist!
@@ -260,9 +272,8 @@ for ( var i = 0; i < module_names.length; i++) {
     view_manager.loadViews(module_folder, module_name);
     
     try {
-        posix.stat(module_folder + "static/").addCallback(function (stats) {
-            static_files_manager.addFolder(module_folder + "static/");
-        }).wait();
+        module_static_folder_stats = fs.statSync(module_folder + "static/");
+        static_files_manager.addFolder(module_folder + "static/");
     } catch (e) {
         /*
         * Folder does not exist!
@@ -270,8 +281,6 @@ for ( var i = 0; i < module_names.length; i++) {
     }
     
 }
-
-
 
 require("./BaseApplication");
 require("./ServerApplication");

@@ -30,40 +30,59 @@ TestApplication = function(options) {
 
 process.mixin(true, TestApplication.prototype, BaseApplication.prototype);
 
+var sys = require("sys");
+var fs = require("fs");
+
 TestApplication.prototype.run = function() {
-    var sys = require("sys");
-    var posix = require("posix");
+    var self = this;
+    bootstrap_manager.event_emitter.addListener('end', function() {
+        var application_directory = process.cwd() + "/";
 
-    var application_directory = process.cwd() + "/";
-    test_suite_manager.loadTests(application_directory);
-    
-    var module_names = [];
+        var load_tests_chain = [];
+        
+        load_tests_chain.push(function(chain_cb) {
+            test_suite_manager.loadTests(application_directory)(function(){
+                chain_cb();
+            });
+        });
+        
+        var module_names = [];
 
-    try {
-        posix.readdir(application_directory + "modules").addCallback(function(contents) {
-            module_names = contents;
-        }).wait();
-    } catch (e) {
+        try {
+            module_names = fs.readdirSync(application_directory + "modules");
+        } catch (e) {
+            /*
+             * We can't read the modules directory, cause there is none :(
+             */
+        }
+        
         /*
-         * We can't read the modules directory, cause there is none :(
+         * For each module, load what needs to be loaded.
          */
-    }
-
-    /*
-     * For each module, load what needs to be loaded.
-     */
-    for ( var i = 0; i < module_names.length; i++) {
-        var module_name = module_names[i];
-        test_suite_manager.loadTests(application_directory + "modules/" + module_name + "/", module_name);
-    }
-    
-    test_suite_manager.execute();
-    
-    if (this.options.format === "xml") {
-        sys.puts(test_suite_manager.getResultAsJunitXml());
-    } else {
-        sys.puts(test_suite_manager.getResultAsText());
-    }
-    
-    storage_manager.shutdown();
+        for ( var i = 0; i < module_names.length; i++) {
+            (function(i) {
+                var module_name = module_names[i];
+                load_tests_chain.push(function(chain_cb) {
+                    test_suite_manager.loadTests(application_directory + "modules/" + module_name + "/", module_name)(function(){
+                        chain_cb();
+                    });
+                });
+            })(i);
+        }
+        
+        load_tests_chain.push(function() {
+            test_suite_manager.execute();
+            
+            if (self.options.format === "xml") {
+                sys.puts(test_suite_manager.getResultAsJunitXml());
+            } else {
+                sys.puts(test_suite_manager.getResultAsText());
+            }
+            
+            storage_manager.shutdown();
+        });
+        
+        chain.apply(GLOBAL, load_tests_chain);
+        
+    });
 };

@@ -10,6 +10,7 @@
  * @class Is a base application (should be extended).
  * 
  * @extends Options
+ * @extends Logging
  * 
  * @since 0.1
  * @author DracoBlue
@@ -21,7 +22,7 @@ BaseApplication = function(options) {
     }
 };
 
-process.mixin(true, BaseApplication.prototype, Options.prototype);
+process.mixin(true, BaseApplication.prototype, Options.prototype, Logging.prototype);
 
 /**
  * Runs the application.
@@ -36,26 +37,45 @@ BaseApplication.prototype.run = function() {
 BaseApplication.executePath = function(path, context, inner) {
     context = context || {};
     inner = inner || null;
-    
+
     var controller = controller_manager.getController(path);
     
-    var response = controller[0].execute(controller[1], context);
-    
-    if (typeof context.view_name !== "undefined") {
-        /*
-         * We need the view manager, since the view-name is set!
-         */
-        var view = view_manager.getView(context.view_name);
-        response = view.render(controller[1], context, inner);
-    }
-    
-    if (typeof context.layout_name !== "undefined") {
-        /*
-         * We need the view manager, since the view-name is set!
-         */
-        var layout_view = view_manager.getView(context.layout_name);
-        response = layout_view.render(controller[1], context, response);
-    }
-    
-    return response;
+    return function(cb) {
+        var response = "";
+        
+        chain(function(chain_cb) {
+            controller[0].execute(controller[1], context)(function(chain_response) {
+                response = chain_response;
+                chain_cb();
+            });
+        }, function(chain_cb) {
+            if (typeof context.view_name !== "undefined") {
+                /*
+                 * We need the view manager, since the view-name is set!
+                 */
+                var view = view_manager.getView(context.view_name);
+                view.render(controller[1], context, inner)(function(chain_response) {
+                    response = chain_response;
+                    chain_cb();
+                });
+            } else {
+                chain_cb();
+            }
+        }, function(chain_cb) {
+            if (typeof context.layout_name !== "undefined") {
+                /*
+                 * We need the view manager, since the view-name is set!
+                 */
+                var layout_view = view_manager.getView(context.layout_name);
+                layout_view.render(controller[1], context, response)(function(chain_response) {
+                    response = chain_response;
+                    chain_cb();
+                });
+            } else {
+                chain_cb();
+            }
+        }, function() {
+            cb(response);
+        });
+    };
 };

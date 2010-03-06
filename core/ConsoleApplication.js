@@ -23,6 +23,8 @@ ConsoleApplication = function(options) {
 
 process.mixin(true, ConsoleApplication.prototype, BaseApplication.prototype);
 
+
+var sys = require("sys");
 /**
  * Runs the application.
  */
@@ -31,10 +33,11 @@ ConsoleApplication.prototype.run = function() {
     var response = null;
 
     try {
-        response = BaseApplication.executePath(this.options["path"]);
+        BaseApplication.executePath(this.options["path"])(function (response) {
+            sys.puts(response);
+        });
     } catch (e) {
-        response = "Error:\n" + sys.inspect(e);
+        sys.puts("Error:\n" + sys.inspect(e));
     }
 
-    sys.puts(response);
 };

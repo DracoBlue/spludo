@@ -6,84 +6,44 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var fs = require("fs");
+
+function checkEjsRenderVsExpectedFile(ejs_file_name, expected_file_name) {
+    var new_view = new EjsView("plain_html_file", "testdata/" + ejs_file_name);
+
+    var real_contents = fs.readFileSync("testdata/" + expected_file_name);
+
+    new_view.render(function(response) {
+        equal(response, real_contents);
+    });
+}
+
 new TestSuite("core.ejs.PlainHtmlFiles", {
     loadingAPlainHtmlFile: function() {
-        var new_view = new EjsView("plain_html_file", "testdata/plain_html_file.ejs");
-        new_view.promise.wait();
-
-        var posix = require("posix");
-
-        var real_contents = "";
-        posix.cat("testdata/plain_html_file.ejs").addCallback(function(contents) {
-            real_contents = contents;
-        }).wait();
-
-        equal(new_view.render(), real_contents);
+        checkEjsRenderVsExpectedFile("plain_html_file.ejs", "plain_html_file.ejs");
     },
 
     loadingAPlainHtmlFileWithATag: function() {
-        var new_view = new EjsView("plain_html_file", "testdata/plain_html_file_with_beginning_tag.ejs");
-        new_view.promise.wait();
-
-        var posix = require("posix");
-
-        var real_contents = "";
-        posix.cat("testdata/plain_html_file_with_beginning_tag.ejs").addCallback(function(contents) {
-            real_contents = contents;
-        }).wait();
-
-        equal(new_view.render(), real_contents);
+        checkEjsRenderVsExpectedFile("plain_html_file_with_beginning_tag.ejs", "plain_html_file_with_beginning_tag.ejs");
     }
 });
 
 new TestSuite("core.ejs.SimpleEjsFiles", {
     simpleEjsFileWithTwoBlocks: function() {
-        var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_indention_and_two_blocks.ejs");
-        new_view.promise.wait();
-
-        var posix = require("posix");
-
-        var real_contents = "";
-        posix.cat("testdata/ejs_example_with_indention_and_two_blocks.ejs.expected_output.txt").addCallback(
-                function(contents) {
-                    real_contents = contents;
-                }).wait();
-
-        equal(new_view.render(), real_contents);
+        checkEjsRenderVsExpectedFile("ejs_example_with_indention_and_two_blocks.ejs", "ejs_example_with_indention_and_two_blocks.ejs.expected_output.txt");
     },
     simpleEjsFileWithBlockAtBeginning: function() {
-        var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_ejs_at_the_beginning.ejs");
-
-        var posix = require("posix");
-
-        var real_contents = "";
-        posix.cat("testdata/ejs_example_with_ejs_at_the_beginning.ejs.expected_output.txt").addCallback(
-                function(contents) {
-                    real_contents = contents;
-                }).wait();
-
-        equal(new_view.render(), real_contents);
+        checkEjsRenderVsExpectedFile("ejs_example_with_ejs_at_the_beginning.ejs", "ejs_example_with_ejs_at_the_beginning.ejs.expected_output.txt");
     }
 });
 
 new TestSuite("core.ejs.ExpressionEjsFiles", {
     ejsFileWithMultipleExpressionBlocks: function() {
-        var new_view = new EjsView("plain_html_file", "testdata/ejs_example_with_expression.ejs");
-        new_view.promise.wait();
-
-        var posix = require("posix");
-
-        var real_contents = "";
-        posix.cat("testdata/ejs_example_with_expression.ejs.expected_output.txt").addCallback(function(contents) {
-            real_contents = contents;
-        }).wait();
-
-        equal(new_view.render(), real_contents);
+        checkEjsRenderVsExpectedFile("ejs_example_with_expression.ejs", "ejs_example_with_expression.ejs.expected_output.txt");
     },
 
     exceptionWithWrongBlock: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_exception_for_not_closed_expression_tag.ejs");
-        new_view.promise.wait();
 
         try {
             new_view.render()
@@ -97,7 +57,6 @@ new TestSuite("core.ejs.ExpressionEjsFiles", {
 
     exceptionForSemicolonInExpressionBlock: function() {
         var new_view = new EjsView("plain_html_file", "testdata/ejs_exception_for_semicolon_in_expression_tag.ejs");
-        new_view.promise.wait();
 
         try {
             new_view.render();

@@ -6,6 +6,8 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var sys = require("sys");
+
 /**
  * @class The manager for all registered controllers.
  * 
@@ -65,32 +67,39 @@ ControllerManager.prototype.getController = function(path) {
  * Get all available controllers and load them ... .
  */
 ControllerManager.prototype.loadControllers = function(path, module_name) {
-    this.current_module_name = module_name;
+    var self = this;
 
     this.info("loadControllers: module:" + module_name + ", path:" + path);
 
-    var sys = require('sys');
+    var bootstrap_token = bootstrap_manager.createMandatoryElement('ControllerManager.loadControllers ' + module_name + '/' + path);
     var controller_files = [];
     try {
-        sys.exec("ls " + path + "controllers/*.js").addCallback(function(stdout, stderr) {
+        sys.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
             var files_in_folder = stdout.split("\n");
-
+            self.log(arguments);
             for (i in files_in_folder) {
                 if (files_in_folder[i] !== "") {
                     controller_files.push(files_in_folder[i]);
                 }
             }
-        }).wait();
+            
+            self.current_module_name = module_name;
+
+            for (i in controller_files) {
+                require(controller_files[i].substr(0, controller_files[i].length - 3));
+            }
+    
+            delete self.current_module_name;
+        });
+        bootstrap_manager.finishMandatoryElement(bootstrap_token);
     } catch (e) {
         /*
          * controllers folder does not exist!
          */
+        this.log(e);
+        bootstrap_manager.finishMandatoryElement(bootstrap_token);
     }
 
-    for (i in controller_files) {
-        require(controller_files[i].substr(0, controller_files[i].length - 3));
-    }
 
-    delete this.current_module_name;
 };
 

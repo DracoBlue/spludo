@@ -87,33 +87,35 @@ ServerApplication.prototype.run = function() {
         }
         
         context.session_id = session_id;
-
         var response = null;
-        
+
+        var responseHandler = function(response) {
+            if (session_id !== context.session_id) {
+                session_id = context.session_id;
+
+                if (session_id === null) {
+                    ContextToolkit.removeCookie(context, session_key);
+                } else {
+                    ContextToolkit.setCookie(context, session_key, session_id);
+                }
+            }
+
+            ContextToolkit.applyCookiesToHeaders(context);
+
+            res.sendHeader(context.status, context.headers);
+            res.write(response, "utf8");
+
+            res.close();
+        };
+
         try {
-            response = BaseApplication.executePath(req.url.substr(1), context);
+            BaseApplication.executePath(req.url.substr(1), context)(responseHandler);
         } catch (e) {
             context.status = 404;
             response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
             response = response + "Arguments: " + sys.inspect(e.arguments);
+            responseHandler(response);
         }
-
-        if (session_id !== context.session_id) {
-            session_id = context.session_id;
-
-            if (session_id === null) {
-                ContextToolkit.removeCookie(context, session_key);
-            } else {
-                ContextToolkit.setCookie(context, session_key, session_id);
-            }
-        }
-
-        ContextToolkit.applyCookiesToHeaders(context);
-
-        res.sendHeader(context.status, context.headers);
-        res.sendBody(response, context.encoding || "utf8");
-
-        res.finish();
     };
     
     this.server = http.createServer(function(req, res) {
@@ -130,7 +132,7 @@ ServerApplication.prototype.run = function() {
         req.setBodyEncoding("binary");
         
         var stream = multipart.parse(req);
-
+        
         if (stream.isMultiPart) {
             
             var parts = {};
@@ -145,7 +147,7 @@ ServerApplication.prototype.run = function() {
                 };
             });
             
-            stream.addListener("body", function(chunk) {
+            stream.addListener("data", function(chunk) {
                 parts[current_part_name].body.push(chunk);
             });
             
