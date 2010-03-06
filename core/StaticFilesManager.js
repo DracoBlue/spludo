@@ -46,9 +46,9 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
 };
 
 
-StaticFilesManager.prototype.addFile = function(file_name, folder_name) {
-    this.info("StaticFilesManager.addFolder: adding " + file_name + " in " + folder_name + " as static file.");
-    this.files["static/" + file_name] = folder_name + file_name;
+StaticFilesManager.prototype.addFile = function(file_name, absolute_path) {
+    this.info("StaticFilesManager.addFolder: adding " + file_name + " from " + absolute_path + " as static file.");
+    this.files["static/" + file_name] = absolute_path;
 };
 
 StaticFilesManager.prototype.canHandleRequest = function(req) {
