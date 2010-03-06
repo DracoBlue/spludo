@@ -103,7 +103,7 @@ ServerApplication.prototype.run = function() {
             ContextToolkit.applyCookiesToHeaders(context);
 
             res.sendHeader(context.status, context.headers);
-            res.write(response, "utf8");
+            res.write(response, context.encoding || "utf8");
 
             res.close();
         };
@@ -147,7 +147,7 @@ ServerApplication.prototype.run = function() {
                 };
             });
             
-            stream.addListener("data", function(chunk) {
+            stream.addListener("body", function(chunk) {
                 parts[current_part_name].body.push(chunk);
             });
             
