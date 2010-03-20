@@ -123,6 +123,8 @@ DbslayerDatabaseConnection = function(name, options) {
                     element._table = element_type_name;
                     element._server = name;
                     cb(element);
+                } else {
+                    cb(null);
                 }
             });
         };
@@ -130,6 +132,53 @@ DbslayerDatabaseConnection = function(name, options) {
     
     this.retrieveById = function(element_type, id) {
         return this.retrieveByKey(element_type, "id", id);
+    };
+    
+    this.retrieveByKeys = function(element_type_name, key_id, ids, offset, limit) {
+        offset = offset || 0;
+        // FIXME: how to fix the limit problem, when we just need an offset?
+        limit = limit || 230585;
+        
+        return function(cb) {
+            var escaped_ids = [];
+            var ids_length = ids.length;
+            for (var i=0; i<ids_length; i++) {
+                escaped_ids.push("'" + db_escape_string(ids[i]) + "'");
+            }
+            
+            query("SELECT SQL_CALC_FOUND_ROWS * FROM " + db_escape_string(element_type_name) + " WHERE " + db_escape_string(key_id) + "  IN (" + escaped_ids.join(",") + ") LIMIT " + offset + ", " + limit)(function(err, elements) {
+                if (err) {
+                    cb(null);
+                    return ;
+                }
+                
+                if (elements) {
+                    var total_count = 0;
+                    
+                    query("SELECT found_rows() db_connection_found_rows")(function(found_rows_err, found_rows_data) {
+                        if (!found_rows_err) {
+                            total_count = found_rows_data[0]['db_connection_found_rows'];
+                        }
+                        
+                        var elements_length = elements.length;
+                        for (i = 0; i < elements_length; i++) {
+                            var element = elements[i];
+                            element._table = element_type_name;
+                            element._server = name;
+                        }
+                        cb([elements || [], total_count]);
+                    });
+                    
+                    
+                } else {
+                    cb([[], 0]);
+                }
+            });
+        };
+    };    
+    
+    this.retrieveByIds = function(element_type, ids) {
+        return this.retrieveByKey(element_type, "id", ids);
     };
     
     this.retrieve = function(element_type, offset, limit, filters) {
