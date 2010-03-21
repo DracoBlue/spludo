@@ -234,6 +234,34 @@ DbslayerDatabaseConnection = function(name, options) {
         };
     };
     
+    this.deleteByFilter = function(element_type, filters) {
+        var where = "";
+        
+        if (filters && filters.length>0) {
+            where = [];
+            
+            var f = 0;
+            for (f = 0; f < filters.length; f++) {
+                where.push(" "+db_escape_string(filters[f][0])+" " + (filters[f][2] || " = ") + " '" + db_escape_string(filters[f][1]) + "'");
+            }
+            
+            where = " WHERE " + where.join(" AND ");
+        } else {
+            throw new Error("The filter cannot be empty!");
+        }
+        
+        return function(cb) {
+            query("DELETE FROM " + db_escape_string(element_type) + where)(function(err) {
+                if (err) {
+                    cb(false);
+                    return ;
+                }
+                
+                cb(true);
+            });
+        };
+    };    
+    
     this.count = function(element_type) {
         return function(cb) {
             query("SELECT COUNT(*) dbslayer_db_connection_count FROM " + db_escape_string(element_type))(function(err, elements) {
@@ -316,6 +344,28 @@ DbslayerDatabaseConnection = function(name, options) {
                 });
             },
             function() {
+                cb();
+            });
+        };
+    };
+    
+    this.insert = function(element) {
+        var table_name = element._table;
+        delete element._table;
+        
+        var keys = [];
+        var values = [];
+        for (key in element) {
+            if (typeof element[key] !== "string") {
+                element[key] = new String(element[key]);
+            }
+            keys.push('`' + db_escape_string(key) + '`');
+            values.push('\'' + db_escape_string(element[key]) + '\'');
+        }
+
+        return function(cb) {
+            Logging.prototype.log("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(',') + ")");
+            query("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(',') + ")")(function(err, data) {
                 cb();
             });
         };
