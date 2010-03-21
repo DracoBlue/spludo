@@ -57,6 +57,7 @@ StaticFilesManager.prototype.canHandleRequest = function(req) {
 };
 
 var file_extension_to_mime_type_map = {
+        "html": "text/html",
         "js": "application/x-javascript",
         "css": "text/css",
         "jpg": "image/jpeg",
