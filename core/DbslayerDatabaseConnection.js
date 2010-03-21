@@ -29,7 +29,7 @@ DbslayerDatabaseConnection = function(name, options) {
     delete options.host;
     
     var db_escape_string = function(string) {
-        return string.replace(/([\n\r\'\"])/g, "\\$&");
+        return string.replace(/([\\\n\r])/g, "\\$&").replace("'", "''", 'g');
     };
     
     var query = function(sql) {
@@ -61,7 +61,6 @@ DbslayerDatabaseConnection = function(name, options) {
                         cb(true, null, e.message);
                         return ;
                     }
-                    
                     
                     if (typeof data.MYSQL_ERROR !== "undefined") {
                         cb(true, data.MYSQL_ERROR, data.MYSQL_ERRNO);
