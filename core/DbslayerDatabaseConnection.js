@@ -364,7 +364,6 @@ DbslayerDatabaseConnection = function(name, options) {
         }
 
         return function(cb) {
-            Logging.prototype.log("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(',') + ")");
             query("INSERT INTO " + db_escape_string(table_name) + " (" + keys.join(', ') + ") VALUES (" + values.join(',') + ")")(function(err, data) {
                 cb();
             });
