@@ -59,3 +59,16 @@ new Validator("number", {
         return errors;
     }
 });
+
+new Validator("array", {
+    "execute": function (parameter, options) {
+        var errors = [];
+        
+        if (typeof parameter.join !== "function") {
+            errors.push("type");
+            return errors;
+        }
+
+        return errors;
+    }
+});
