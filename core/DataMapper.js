@@ -21,8 +21,9 @@ DataMapper = function(name, options) {
     this.encode = this.options.encode || this.encode;
     this.decode = this.options.decode || this.decode;
     
-    delete this.options.execute;
-
+    this.encodeAsync = this.options.encodeAsync || this.encodeAsync;
+    this.decodeAsync = this.options.decodeAsync || this.decodeAsync;
+    
     data_mapper_manager.addDataMapper(name, this);
 };
 
@@ -34,4 +35,12 @@ DataMapper.prototype.encode = function(parameter, options) {
 
 DataMapper.prototype.decode = function(parameter, options) {
     throw new Error("Implement decode-method me!");
+};
+
+DataMapper.prototype.encodeAsync = function(parameter, options) {
+    throw new Error("Implement encodeAsync-method me!");
+};
+
+DataMapper.prototype.decodeAsync = function(parameter, options) {
+    throw new Error("Implement decodeAsync-method me!");
 };
