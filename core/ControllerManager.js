@@ -21,7 +21,7 @@ ControllerManager = function() {
     this.controllers_regexp = [];
 };
 
-process.mixin(true, ControllerManager.prototype, Logging.prototype);
+extend(true, ControllerManager.prototype, Logging.prototype);
 
 ControllerManager.prototype.addController = function(path, controller) {
     var module_name = this.current_module_name || null;

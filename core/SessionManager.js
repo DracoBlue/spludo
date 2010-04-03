@@ -21,7 +21,7 @@ SessionManager = function(options) {
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
-process.mixin(true, SessionManager.prototype, Logging.prototype);
+extend(true, SessionManager.prototype, Logging.prototype);
 
 SessionManager.prototype.removeSession = function(session_id) {
     this.storage.remove(session_id);

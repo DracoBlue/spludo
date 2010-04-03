@@ -22,7 +22,7 @@ BaseApplication = function(options) {
     }
 };
 
-process.mixin(true, BaseApplication.prototype, Options.prototype, Logging.prototype);
+extend(true, BaseApplication.prototype, Options.prototype, Logging.prototype);
 
 /**
  * Runs the application.

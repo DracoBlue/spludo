@@ -18,7 +18,7 @@ StaticFilesManager = function() {
     this.files = {};
 };
 
-process.mixin(true, StaticFilesManager.prototype, Logging.prototype);
+extend(true, StaticFilesManager.prototype, Logging.prototype);
 
 var sys = require("sys");
 var fs = require("fs");

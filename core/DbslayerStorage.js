@@ -149,7 +149,7 @@ DbslayerStorage = function(name, options) {
     storage_manager.addStorage(name, this);
 };
 
-process.mixin(true, DbslayerStorage.prototype, Options.prototype, Logging.prototype);
+extend(true, DbslayerStorage.prototype, Options.prototype, Logging.prototype);
 
 /**
  * Check whether the storage has a value for this key.

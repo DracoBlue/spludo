@@ -22,7 +22,7 @@ Validator = function(name, options) {
     validator_manager.addValidator(name, this);
 };
 
-process.mixin(true, Validator.prototype, Options.prototype, Logging.prototype);
+extend(true, Validator.prototype, Options.prototype, Logging.prototype);
 
 Validator.prototype.execute = function(parameter, options) {
     throw new Error("Implement execute-method me!");

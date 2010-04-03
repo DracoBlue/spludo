@@ -20,7 +20,7 @@ MemoryStorage = function(name, options) {
     storage_manager.addStorage(name, this);
 };
 
-process.mixin(true, MemoryStorage.prototype, Options.prototype, Logging.prototype);
+extend(true, MemoryStorage.prototype, Options.prototype, Logging.prototype);
 
 MemoryStorage.prototype.set = function(key, value) {
     this.values[key] = value;

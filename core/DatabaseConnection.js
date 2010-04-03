@@ -18,7 +18,7 @@ DatabaseConnection = function(options) {
 
 };
 
-process.mixin(true, DatabaseConnection.prototype, Logging.prototype);
+extend(true, DatabaseConnection.prototype, Logging.prototype);
 
 DatabaseConnection.prototype.retrieveById = function(element_type, id) {
     throw new Error('Implement retrieveById method!');

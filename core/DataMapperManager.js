@@ -18,7 +18,7 @@ DataMapperManager = function() {
     this.data_mappers = {};
 };
 
-process.mixin(true, DataMapperManager.prototype, Logging.prototype);
+extend(true, DataMapperManager.prototype, Logging.prototype);
 
 DataMapperManager.prototype.addDataMapper = function(name, data_mapper) {
     this.info("addDataMapper: name:" + name);

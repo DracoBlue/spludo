@@ -21,7 +21,7 @@ ConsoleApplication = function(options) {
     this.setOptions(options);
 };
 
-process.mixin(true, ConsoleApplication.prototype, BaseApplication.prototype);
+extend(true, ConsoleApplication.prototype, BaseApplication.prototype);
 
 
 var sys = require("sys");

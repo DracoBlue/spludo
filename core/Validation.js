@@ -21,7 +21,7 @@ Validation = function() {
     this.validated_values = {};
 };
 
-process.mixin(true, Validation.prototype, Options.prototype, Logging.prototype);
+extend(true, Validation.prototype, Options.prototype, Logging.prototype);
 
 Validation.prototype.execute = function(values) {
     var errors = [];

@@ -30,7 +30,7 @@ ServerApplication = function(options) {
     this.server = null;
 };
 
-process.mixin(true, ServerApplication.prototype, BaseApplication.prototype);
+extend(true, ServerApplication.prototype, BaseApplication.prototype);
 
 var http = require("http");
 var sys = require("sys");

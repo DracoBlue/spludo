@@ -39,7 +39,7 @@ BootstrapManager = function() {
     });
 };
 
-process.mixin(true, BootstrapManager.prototype, Logging.prototype);
+extend(true, BootstrapManager.prototype, Logging.prototype);
 
 BootstrapManager.prototype.createToken = function() {
     this.info("createToken");

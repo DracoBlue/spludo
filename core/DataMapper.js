@@ -27,7 +27,7 @@ DataMapper = function(name, options) {
     data_mapper_manager.addDataMapper(name, this);
 };
 
-process.mixin(true, DataMapper.prototype, Options.prototype, Logging.prototype);
+extend(true, DataMapper.prototype, Options.prototype, Logging.prototype);
 
 DataMapper.prototype.encode = function(parameter, options) {
     throw new Error("Implement encode-method me!");

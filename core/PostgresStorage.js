@@ -115,7 +115,7 @@ PostgresStorage = function(name, options) {
     storage_manager.addStorage(name, this);
 };
 
-process.mixin(true, PostgresStorage.prototype, Options.prototype, Logging.prototype);
+extend(true, PostgresStorage.prototype, Options.prototype, Logging.prototype);
 
 /**
  * Set a value in the storage.

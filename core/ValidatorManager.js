@@ -18,7 +18,7 @@ ValidatorManager = function() {
     this.validators = {};
 };
 
-process.mixin(true, ValidatorManager.prototype, Logging.prototype);
+extend(true, ValidatorManager.prototype, Logging.prototype);
 
 ValidatorManager.prototype.addValidator = function(name, validator) {
     this.info("addValidator: name:" + name);

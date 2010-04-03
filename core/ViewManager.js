@@ -20,7 +20,7 @@ ViewManager = function() {
     this.views = {};
 };
 
-process.mixin(true, ViewManager.prototype, Logging.prototype);
+extend(true, ViewManager.prototype, Logging.prototype);
 
 ViewManager.prototype.addView = function(name, view, module_name) {
     this.views = this.views || {};

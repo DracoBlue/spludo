@@ -18,7 +18,7 @@ StorageManager = function() {
     this.storages = {};
 };
 
-process.mixin(true, StorageManager.prototype, Logging.prototype);
+extend(true, StorageManager.prototype, Logging.prototype);
 
 StorageManager.prototype.addStorage = function(name, storage) {
     this.info("addStorage: name:" + name);

@@ -375,4 +375,4 @@ DbslayerDatabaseConnection = function(name, options) {
     };
 };
 
-process.mixin(true, DbslayerDatabaseConnection.prototype, DatabaseConnection.prototype);
+extend(true, DbslayerDatabaseConnection.prototype, DatabaseConnection.prototype);

@@ -17,7 +17,7 @@ TestSuiteManager = function() {
     this.suites = [];
 };
 
-process.mixin(true, TestSuiteManager.prototype, Logging.prototype);
+extend(true, TestSuiteManager.prototype, Logging.prototype);
 
 var sys = require('sys');
 

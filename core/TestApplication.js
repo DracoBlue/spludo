@@ -20,7 +20,7 @@
 TestApplication = function(options) {
     this.setOptions(options);
 
-    process.mixin(GLOBAL, require("./../build/testing/qunit"));
+    extend(GLOBAL, require("./../build/testing/qunit"));
 
     require("./TestSuite");
     require("./TestSuiteManager");
@@ -28,7 +28,7 @@ TestApplication = function(options) {
     test_suite_manager = new TestSuiteManager();
 };
 
-process.mixin(true, TestApplication.prototype, BaseApplication.prototype);
+extend(true, TestApplication.prototype, BaseApplication.prototype);
 
 var sys = require("sys");
 var fs = require("fs");
