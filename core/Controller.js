@@ -13,7 +13,7 @@
  * @author DracoBlue
  */
 Controller = function(path, options) {
-    if (process.isFunction(options.execute)) {
+    if (typeof options.execute === "function") {
         this.execute = options.execute;
         delete options.execute;
     }

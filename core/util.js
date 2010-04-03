@@ -7,15 +7,6 @@
  */
 
 /**
- * Check wether a given element is a function or not.
- *
- * @return {boolean}
- */
-process.isFunction = function(element) {
-    return (typeof element == "function") ? true : false;
-};
-
-/**
  * Creates a group of all passed arguments (each of them must be a function)
  * and returns a function, which executes all.
  * 
