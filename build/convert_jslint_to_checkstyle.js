@@ -1,25 +1,22 @@
 /*
  * This file is part of the Spludo Framework.
- * Copyright (c) 2009 DracoBlue, http://dracoblue.net/
+ * Copyright (c) 2009-2010 DracoBlue, http://dracoblue.net/
  *
  * Licensed under the terms of MIT License. For the full copyright and license
  * information, please see the LICENSE file in the root folder.
  */
 
 var sys = require("sys");
-var posix = require("posix");
+var fs = require("fs");
 
 var file_name = process.ARGV[2];
-var file_contents = null;
 
 var i = 0;
 var line = "";
 var incident = null;
 var tmp = null;
 
-posix.cat(file_name).addCallback(function(contents) {
-    file_contents = contents.split("\n");
-}).wait();
+var file_contents = fs.readFileSync(file_name).split("\n");
 
 var output = [];
 
