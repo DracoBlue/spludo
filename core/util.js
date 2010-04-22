@@ -22,11 +22,6 @@ GLOBAL.group = function () {
             return ;
         }
     
-        if (args_length === 1) {
-            cb();
-            return ;
-        }
-        
         var items_left_to_execute = args_length;
         
         var call_group_item = function(arg) {
