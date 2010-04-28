@@ -45,7 +45,7 @@ BaseApplication.executePath = function(path, context, inner) {
         
         chain(function(chain_cb) {
             controller[0].execute(controller[1], context)(function(chain_response) {
-                response = chain_response;
+                response = chain_response || inner;
                 chain_cb();
             });
         }, function(chain_cb) {
@@ -54,7 +54,7 @@ BaseApplication.executePath = function(path, context, inner) {
                  * We need the view manager, since the view-name is set!
                  */
                 var view = view_manager.getView(context.view_name);
-                view.render(controller[1], context, inner)(function(chain_response) {
+                view.render(controller[1], context, response)(function(chain_response) {
                     response = chain_response;
                     chain_cb();
                 });
