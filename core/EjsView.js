@@ -68,7 +68,7 @@ EjsView.prototype.render = function(params, context, inner) {
             body.push("var slot = function(path, context, inner) {");
             body.push("    var slot_id = next_ejs_slot_view_id++;");
             body.push("    slots.push([slot_id, path, context, inner]);");
-            body.push("    return '%%%EJSSLOT%' + slot_id + '%%%';");
+            body.push("    content.push('%%%EJSSLOT%' + slot_id + '%%%');");
             body.push("};");
 
             while (next_js_tag != -1) {
