@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-var sys = require('sys');
+var child_process = require('child_process');
 
 /**
  * @class The manager for all registered views.
@@ -67,7 +67,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
     var js_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.js ' + module_name + '/' + path);
     
     try {
-        sys.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
+        child_process.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
             var view_files = [];
             
             if (!err) {
@@ -100,7 +100,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
     var ejs_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.ejs ' + module_name + '/' + path);
 
     try {
-        sys.exec("ls " + path + "views/*.ejs", function(err, stdout, stderr) {
+        child_process.exec("ls " + path + "views/*.ejs", function(err, stdout, stderr) {
             var view_files = [];
             
             if (!err) {

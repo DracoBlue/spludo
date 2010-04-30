@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-var sys = require("sys");
+var child_process = require("child_process");
 
 /**
  * @class The manager for all registered controllers.
@@ -74,7 +74,7 @@ ControllerManager.prototype.loadControllers = function(path, module_name) {
     var bootstrap_token = bootstrap_manager.createMandatoryElement('ControllerManager.loadControllers ' + module_name + '/' + path);
     var controller_files = [];
     try {
-        sys.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
+        child_process.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
             var files_in_folder = stdout.split("\n");
             self.log(arguments);
             for (i in files_in_folder) {

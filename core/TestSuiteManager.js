@@ -19,7 +19,7 @@ TestSuiteManager = function() {
 
 extend(true, TestSuiteManager.prototype, Logging.prototype);
 
-var sys = require('sys');
+var child_process = require("child_process");
 
 /**
  * Add a suite to the suite manager.
@@ -239,7 +239,7 @@ TestSuiteManager.prototype.loadTests = function(path, module_name) {
         self.info("loadTests: module:" + module_name + ", path:" + path);
         
         try {
-            sys.exec("ls " + path + "tests/*.js", function(err, stdout, stderr) {
+            child_process.exec("ls " + path + "tests/*.js", function(err, stdout, stderr) {
                 var files_in_folder = stdout.split("\n");
     
                 var test_files = [];

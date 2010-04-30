@@ -20,7 +20,7 @@ StaticFilesManager = function() {
 
 extend(true, StaticFilesManager.prototype, Logging.prototype);
 
-var sys = require("sys");
+var child_process = require("child_process");
 var fs = require("fs");
 
 StaticFilesManager.prototype.addFolder = function(folder_name) {
@@ -32,7 +32,7 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
     var file_manager = this;
 
     file_manager.info("StaticFilesManager.addFolder: adding " + folder_name + " as static folder.");
-    sys.exec("cd " + folder_name + " && find -type f", function(err, stdout, stderr) {
+    child_process.exec("cd " + folder_name + " && find -type f", function(err, stdout, stderr) {
         var files = stdout.split("\n");
         var files_length = files.length;
         for ( var f = 0; f < files_length; f++) {
@@ -98,6 +98,6 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
             });
             res.write(content, "binary");
         }
-        res.close();
+        res.end();
     });
 };

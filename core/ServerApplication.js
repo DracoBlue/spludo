@@ -34,7 +34,7 @@ extend(true, ServerApplication.prototype, BaseApplication.prototype);
 
 var http = require("http");
 var sys = require("sys");
-var multipart = require("multipart");
+var multipart = require("./libs/multipart");
 
 /**
  * Runs the application.
@@ -103,9 +103,10 @@ ServerApplication.prototype.run = function() {
             ContextToolkit.applyCookiesToHeaders(context);
 
             res.sendHeader(context.status, context.headers);
-            res.write(response, context.encoding || "utf8");
+            
+            if(response || false) res.write(response, context.encoding || "utf8");
 
-            res.close();
+            res.end();
         };
 
         try {
