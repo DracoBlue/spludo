@@ -38,10 +38,6 @@ DbslayerDatabaseConnection = function(name, options) {
         return function(cb) {
         
             var request = connection.request('GET', '/db?' + escape(JSON.stringify({"SQL":sql})), {'host': host});
-            
-            if (timeout !== 0) {
-                promise.timeout(timeout);
-            }
     
             request.addListener('response', function(response){
                 response.setBodyEncoding("utf8");
