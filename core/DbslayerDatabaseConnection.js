@@ -99,7 +99,7 @@ DbslayerDatabaseConnection = function(name, options) {
                 });
             });
             
-            request.close();
+            request.end();
         };
     };
     
