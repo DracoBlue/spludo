@@ -96,7 +96,7 @@ ServerApplication.prototype.run = function() {
                 if (session_id === null) {
                     ContextToolkit.removeCookie(context, session_key);
                 } else {
-                    ContextToolkit.setCookie(context, session_key, session_id);
+                    ContextToolkit.setCookie(context, session_key, session_id, 0, session_manager.getCookiePath());
                 }
             }
 
