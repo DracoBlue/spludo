@@ -46,24 +46,24 @@ TestApplication.prototype.run = function() {
             });
         });
         
-        var module_names = [];
+        var plugin_names = [];
 
         try {
-            module_names = fs.readdirSync(application_directory + "modules");
+            plugin_names = fs.readdirSync(application_directory + "plugins");
         } catch (e) {
             /*
-             * We can't read the modules directory, cause there is none :(
+             * We can't read the plugins directory, cause there is none :(
              */
         }
         
         /*
-         * For each module, load what needs to be loaded.
+         * For each plugin, load what needs to be loaded.
          */
-        for ( var i = 0; i < module_names.length; i++) {
+        for ( var i = 0; i < plugin_names.length; i++) {
             (function(i) {
-                var module_name = module_names[i];
+                var plugin_name = plugin_names[i];
                 load_tests_chain.push(function(chain_cb) {
-                    test_suite_manager.loadTests(application_directory + "modules/" + module_name + "/", module_name)(function(){
+                    test_suite_manager.loadTests(application_directory + "plugins/" + plugin_name + "/", plugin_name)(function(){
                         chain_cb();
                     });
                 });

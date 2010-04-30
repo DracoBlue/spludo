@@ -24,16 +24,16 @@ var child_process = require("child_process");
 /**
  * Add a suite to the suite manager.
  */
-TestSuiteManager.prototype.addTestSuite = function(name, suite, module_name, file_name) {
-    module_name = this.current_module_name || file_name;
+TestSuiteManager.prototype.addTestSuite = function(name, suite, plugin_name, file_name) {
+    plugin_name = this.current_plugin_name || file_name;
     file_name = this.current_test_file || file_name;
     
-    this.info("addTestSuite: module:" + module_name + ", name:" + name);
+    this.info("addTestSuite: plugin:" + plugin_name + ", name:" + name);
     this.suites.push( {
         name: name,
         suite: suite,
         file_name: file_name,
-        module_name: module_name
+        plugin_name: plugin_name
     });
 };
 
@@ -79,8 +79,8 @@ TestSuiteManager.prototype.getResultAsJunitXml = function() {
             suite_result.push(" assertions=\"" + current_test.stats.assertions + "\"");
             suite_result.push(" failures=\"" + current_test.stats.failures + "\"");
             suite_result.push(" time=\"" + current_test.stats.time + "\"");
-            if (current_suite.module_name) {
-                suite_result.push(" class=\"" + current_suite.module_name + "\"");
+            if (current_suite.plugin_name) {
+                suite_result.push(" class=\"" + current_suite.plugin_name + "\"");
             }
             suite_result.push(" />");
         }
@@ -135,11 +135,11 @@ TestSuiteManager.prototype.getResultAsText = function() {
         overall_stats.errors = overall_stats.errors + current_stats.errors;
 
         /*
-         * We have a module name? Great! Let's put it as [modulename] in front
+         * We have a plugin name? Great! Let's put it as [pluginname] in front
          * of the suite name!
          */
-        if (current_suite.module_name) {
-            suite_result.push("[" + current_suite.module_name + "] ");
+        if (current_suite.plugin_name) {
+            suite_result.push("[" + current_suite.plugin_name + "] ");
         }
         /*
          * Now let's push the suite name
@@ -231,12 +231,12 @@ TestSuiteManager.prototype.getResultAsText = function() {
 /**
  * Get all available views and load them ... .
  */
-TestSuiteManager.prototype.loadTests = function(path, module_name) {
+TestSuiteManager.prototype.loadTests = function(path, plugin_name) {
     var self = this;
     
     return function(cb) {
     
-        self.info("loadTests: module:" + module_name + ", path:" + path);
+        self.info("loadTests: plugin:" + plugin_name + ", path:" + path);
         
         try {
             child_process.exec("ls " + path + "tests/*.js", function(err, stdout, stderr) {
@@ -252,11 +252,11 @@ TestSuiteManager.prototype.loadTests = function(path, module_name) {
                 
                 for (i in test_files) {
                     self.current_test_file = test_files[i];
-                    self.current_module_name = module_name;
+                    self.current_plugin_name = plugin_name;
                     
                     require(test_files[i].substr(0, test_files[i].length - 3));
                     
-                    delete self.current_module_name;
+                    delete self.current_plugin_name;
                 }
                 
                 delete self.current_test_file;

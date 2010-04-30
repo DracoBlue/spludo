@@ -120,22 +120,22 @@ require("./Validation");
 if (!config.get('core', {}).disable_core_validators) {
     require("./core-validators");
 }
-var module_names = [];
+var plugin_names = [];
 
 try {
-    module_names = fs.readdirSync(application_directory + "modules");
+    plugin_names = fs.readdirSync(application_directory + "plugins");
 } catch (e) {
     /*
-     * We can't read the modules directory, cause there is none :(
+     * We can't read the plugins directory, cause there is none :(
      */
 }
 
 /*
- * Find all /lib, modulename/lib folders and append them to the require path.
+ * Find all /lib, plugin_name/lib folders and append them to the require path.
  */
 var lib_folders = [application_directory + "lib"];
-for ( var m = 0; m < module_names.length; m++) {
-    lib_folders.push(application_directory + "modules/" + module_names[m] + "/lib");
+for ( var m = 0; m < plugin_names.length; m++) {
+    lib_folders.push(application_directory + "plugins/" + plugin_names[m] + "/lib");
 }
 
 for ( var f = 0; f < lib_folders.length; f++) {
@@ -196,18 +196,18 @@ controller_manager.loadControllers(application_directory);
 view_manager.loadViews(application_directory);
 
 /*
- * For each module, load what needs to be loaded.
+ * For each plugin, load what needs to be loaded.
  */
-for ( var i = 0; i < module_names.length; i++) {
-    var module_name = module_names[i];
-    var module_folder = application_directory + "modules/" + module_name + "/";
+for ( var i = 0; i < plugin_names.length; i++) {
+    var plugin_name = plugin_names[i];
+    var plugin_folder = application_directory + "plugins/" + plugin_name + "/";
     
-    controller_manager.loadControllers(module_folder, module_name);
-    view_manager.loadViews(module_folder, module_name);
+    controller_manager.loadControllers(plugin_folder, plugin_name);
+    view_manager.loadViews(plugin_folder, plugin_name);
     
     try {
-        module_static_folder_stats = fs.statSync(module_folder + "static/");
-        static_files_manager.addFolder(module_folder + "static/");
+        plugin_static_folder_stats = fs.statSync(plugin_folder + "static/");
+        static_files_manager.addFolder(plugin_folder + "static/");
     } catch (e) {
         /*
         * Folder does not exist!

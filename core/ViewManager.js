@@ -24,14 +24,14 @@ ViewManager = function() {
 
 extend(true, ViewManager.prototype, Logging.prototype);
 
-ViewManager.prototype.addView = function(name, view, module_name) {
+ViewManager.prototype.addView = function(name, view, plugin_name) {
     this.views = this.views || {};
-    module_name = module_name || this.current_module_name;
+    plugin_name = plugin_name || this.current_plugin_name;
 
-    this.info("addView: module:" + module_name + ", name:" + name);
+    this.info("addView: plugin:" + plugin_name + ", name:" + name);
 
-    if (module_name) {
-        this.views[module_name + "." + name] = view;
+    if (plugin_name) {
+        this.views[plugin_name + "." + name] = view;
         if (typeof this.views[name] === "undefined") {
             this.views[name] = view;
         }
@@ -40,19 +40,19 @@ ViewManager.prototype.addView = function(name, view, module_name) {
     }
 };
 
-ViewManager.prototype.getView = function(name, module_name) {
-    module_name = module_name || null;
+ViewManager.prototype.getView = function(name, plugin_name) {
+    plugin_name = plugin_name || null;
 
     var view = null;
 
-    if (module_name !== null) {
-        view = this.views[module_name + "." + name] || this.views[name];
+    if (plugin_name !== null) {
+        view = this.views[plugin_name + "." + name] || this.views[name];
     } else {
         view = this.views[name] || null;
     }
 
     if (view === null) {
-        throw new Error("View not found for name " + name + " (module: " + (module_name || "") + ")!");
+        throw new Error("View not found for name " + name + " (plugin: " + (plugin_name || "") + ")!");
     }
 
     return view;
@@ -61,12 +61,12 @@ ViewManager.prototype.getView = function(name, module_name) {
 /**
  * Get all available views and load them ... .
  */
-ViewManager.prototype.loadViews = function(path, module_name) {
+ViewManager.prototype.loadViews = function(path, plugin_name) {
     var self = this;
     
-    this.info("loadViews: module:" + module_name + ", path:" + path);
+    this.info("loadViews: plugin:" + plugin_name + ", path:" + path);
 
-    var js_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.js ' + module_name + '/' + path);
+    var js_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.js ' + plugin_name + '/' + path);
     
     try {
         child_process.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
@@ -81,14 +81,14 @@ ViewManager.prototype.loadViews = function(path, module_name) {
                     }
                 }
 
-                self.current_module_name = module_name;
+                self.current_plugin_name = plugin_name;
                 
                 
                 for (i in view_files) {
                     require(view_files[i].substr(0, view_files[i].length - 3));
                 }
                 
-                delete self.current_module_name;
+                delete self.current_plugin_name;
             }
             bootstrap_manager.finishMandatoryElement(js_bootstrap_token);
         });
@@ -105,7 +105,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
             var file_extension = view_engine_options[0];
             var engine = GLOBAL[view_engine_options[1]];
             
-            var mandatory_element_name = 'ViewManager.loadViews+*.' + file_extension + ' ' + module_name + '/' + path;
+            var mandatory_element_name = 'ViewManager.loadViews+*.' + file_extension + ' ' + plugin_name + '/' + path;
             var bootstrap_token = bootstrap_manager.createMandatoryElement(mandatory_element_name);
     
             try {
@@ -122,7 +122,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
                         }
                     }
                     
-                    self.current_module_name = module_name;
+                    self.current_plugin_name = plugin_name;
                     
                     for (i in view_files) {
                         var view_name = view_files[i].substr(path.length + "views/".length);
@@ -131,7 +131,7 @@ ViewManager.prototype.loadViews = function(path, module_name) {
                         new engine(view_name, view_files[i]);
                     }
                     
-                    delete self.current_module_name;
+                    delete self.current_plugin_name;
                     
                     bootstrap_manager.finishMandatoryElement(bootstrap_token);
                 });

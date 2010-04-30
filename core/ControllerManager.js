@@ -24,16 +24,16 @@ ControllerManager = function() {
 extend(true, ControllerManager.prototype, Logging.prototype);
 
 ControllerManager.prototype.addController = function(path, controller) {
-    var module_name = this.current_module_name || null;
+    var plugin_name = this.current_plugin_name || null;
 
     if (typeof path === "function") {
         /*
          * Handle those pretty regexp objects as path!
          */
-        this.info("addController: type:RegExp, module:" + module_name + ", path:" + path);
+        this.info("addController: type:RegExp, plugin:" + plugin_name + ", path:" + path);
         this.controllers_regexp = this.controllers_regexp || [];
 
-        this.controllers_regexp.push( [ path, controller, module_name ]);
+        this.controllers_regexp.push( [ path, controller, plugin_name ]);
 
         return;
     }
@@ -44,8 +44,8 @@ ControllerManager.prototype.addController = function(path, controller) {
         throw new Error("Path already served by " + this.controllers[path]);
     }
 
-    this.info("addController: type:String, module:" + module_name + ", path:" + path);
-    this.controllers_string[path] = [ controller, module_name ];
+    this.info("addController: type:String, plugin:" + plugin_name + ", path:" + path);
+    this.controllers_string[path] = [ controller, plugin_name ];
 };
 
 ControllerManager.prototype.getController = function(path) {
@@ -66,12 +66,12 @@ ControllerManager.prototype.getController = function(path) {
 /**
  * Get all available controllers and load them ... .
  */
-ControllerManager.prototype.loadControllers = function(path, module_name) {
+ControllerManager.prototype.loadControllers = function(path, plugin_name) {
     var self = this;
 
-    this.info("loadControllers: module:" + module_name + ", path:" + path);
+    this.info("loadControllers: plugin:" + plugin_name + ", path:" + path);
 
-    var bootstrap_token = bootstrap_manager.createMandatoryElement('ControllerManager.loadControllers ' + module_name + '/' + path);
+    var bootstrap_token = bootstrap_manager.createMandatoryElement('ControllerManager.loadControllers ' + plugin_name + '/' + path);
     var controller_files = [];
     try {
         child_process.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
@@ -83,13 +83,13 @@ ControllerManager.prototype.loadControllers = function(path, module_name) {
                 }
             }
             
-            self.current_module_name = module_name;
+            self.current_plugin_name = plugin_name;
 
             for (i in controller_files) {
                 require(controller_files[i].substr(0, controller_files[i].length - 3));
             }
     
-            delete self.current_module_name;
+            delete self.current_plugin_name;
         });
         bootstrap_manager.finishMandatoryElement(bootstrap_token);
     } catch (e) {
