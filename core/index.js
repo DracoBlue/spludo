@@ -89,6 +89,7 @@ require("./ViewManager");
  * @type ViewManager
  */
 view_manager = new ViewManager();
+view_manager.addViewEngine('ejs', 'EjsView');
 
 require("./DataMapper");
 require("./DataMapperManager");
