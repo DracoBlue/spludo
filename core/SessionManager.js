@@ -76,5 +76,5 @@ SessionManager.prototype.getCookiePath = function() {
         return this.cookie_path;
     }
     
-    return ;
-}
+    return null;
+};
