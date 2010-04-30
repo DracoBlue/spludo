@@ -219,6 +219,6 @@ ContextToolkit = {
      */
     applyRedirect: function(context, path) {
         context.status = 302;
-        context.headers["Location"] = "/" + (path);
+        context.headers["Location"] = path;
     }
 };
