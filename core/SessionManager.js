@@ -18,6 +18,13 @@ SessionManager = function(options) {
     options = options || {};
 
     var engine = GLOBAL[options.engine || "MemoryStorage"];
+    
+    if (typeof options.cookie_path !== "undefined") {
+        this.cookie_path = options.cookie_path;
+    } else {
+        this.cookie_path = null;
+    }
+    
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
@@ -62,3 +69,12 @@ SessionManager.prototype.createSession = function(session) {
 
     return session_id;
 };
+
+
+SessionManager.prototype.getCookiePath = function() {
+    if (this.cookie_path) {
+        return this.cookie_path;
+    }
+    
+    return ;
+}
