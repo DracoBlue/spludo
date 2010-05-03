@@ -25,6 +25,12 @@ SessionManager = function(options) {
         this.cookie_path = null;
     }
     
+    if (typeof options.cookie_key !== "undefined") {
+        this.cookie_key = options.cookie_key;
+    } else {
+        this.cookie_key = "s";
+    }
+    
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
@@ -74,6 +80,14 @@ SessionManager.prototype.createSession = function(session) {
 SessionManager.prototype.getCookiePath = function() {
     if (this.cookie_path) {
         return this.cookie_path;
+    }
+    
+    return null;
+};
+
+SessionManager.prototype.getCookieKey = function() {
+    if (this.cookie_key) {
+        return this.cookie_key;
     }
     
     return null;

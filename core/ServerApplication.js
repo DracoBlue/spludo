@@ -11,16 +11,17 @@
  * 
  * @extends BaseApplication
  * 
- * @param {Object} options Options to specify the behaviour
- * @param {Number} options.port The port, which should be used when launching the application server.
+ * @param {Object}
+ *            options Options to specify the behaviour
+ * @param {Number}
+ *            options.port The port, which should be used when launching the
+ *            application server.
  * 
  * @since 0.1
  * @author DracoBlue
  */
 ServerApplication = function(options) {
     this.setOptions(options);
-
-    this.options.session_key = this.options.session_key || "s";
 
     /**
      * The Http-Server listening for new connections.
@@ -40,8 +41,8 @@ var multipart = require("./libs/multipart");
  * Runs the application.
  */
 ServerApplication.prototype.run = function() {
-    
-    var session_key = this.options.session_key;
+    var session_cookie_key = session_manager.getCookieKey();
+    var session_cookie_path = session_manager.getCookiePath();
 
     var finishRequest = function(req, res, body, params) {
         var context = {
@@ -56,8 +57,8 @@ ServerApplication.prototype.run = function() {
         
         if (body !== null) {
             /*
-             * Ok, we need to parse that!
-             */
+			 * Ok, we need to parse that!
+			 */
              var body_entries = body.split("&");
              var body_entries_length = body_entries.length;
              var i = 0;
@@ -72,16 +73,17 @@ ServerApplication.prototype.run = function() {
 
         ContextToolkit.applyRequestHeaders(context, req.headers);
 
-        var session_id = (context.cookies && context.cookies[session_key]) || null;
+        var session_id = (context.cookies && context.cookies[session_cookie_key]) || null;
         
         if (session_id) {
             try {
                 context.session = session_manager.getSession(session_id);
             } catch (e) {
                 /*
-                 * Seems like that cookie is invalid by now. Let's remove the cookie.
+                 * Seems like that cookie is invalid by now. Let's remove the
+                 * cookie.
                  */
-                ContextToolkit.removeCookie(context, session_key);
+                ContextToolkit.removeCookie(context, session_cookie_key);
                 session_id = null;
             }
         }
@@ -94,9 +96,9 @@ ServerApplication.prototype.run = function() {
                 session_id = context.session_id;
 
                 if (session_id === null) {
-                    ContextToolkit.removeCookie(context, session_key);
+                    ContextToolkit.removeCookie(context, session_cookie_key);
                 } else {
-                    ContextToolkit.setCookie(context, session_key, session_id, 0, session_manager.getCookiePath());
+                    ContextToolkit.setCookie(context, session_cookie_key, session_id, 0, session_cookie_path);
                 }
             }
 
