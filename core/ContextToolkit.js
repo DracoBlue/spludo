@@ -135,8 +135,8 @@ ContextToolkit = {
             try {
                 cookie_key = decodeURIComponent(raw_line[0]);
                 cookie_value = raw_line[1] || "";
-                cookie_value = decodeURIComponent(raw_line[1]);
-
+                cookie_value = decodeURIComponent(raw_line.splice(1).join("="));
+                
                 context.clean_cookies[cookie_key] = JSON.parse(cookie_value, true);
                 context.cookies[cookie_key] = context.clean_cookies[cookie_key];
             } catch (e) {
