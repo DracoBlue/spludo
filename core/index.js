@@ -182,12 +182,14 @@ try {
     */
 }
 
+var session_manager_engine = GLOBAL[config.get("session_manager_engine", "SessionManager")];
+
 /**
  * The global session manager.
  * 
  * @type SessionManager
  */
-session_manager = new SessionManager(config.get("session", {}));
+session_manager = new session_manager_engine(config.get("session", {}));
 
 /*
  * Load controllers and views
