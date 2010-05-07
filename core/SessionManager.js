@@ -17,12 +17,10 @@
 SessionManager = function(options) {
     options = options || {};
 
-    var engine = GLOBAL[options.engine || "MemoryStorage"];
-    
     if (typeof options.cookie_path !== "undefined") {
         this.cookie_path = options.cookie_path;
     } else {
-        this.cookie_path = null;
+        this.cookie_path = '/';
     }
     
     if (typeof options.cookie_key !== "undefined") {
@@ -31,64 +29,105 @@ SessionManager = function(options) {
         this.cookie_key = "s";
     }
     
+    var engine = GLOBAL[options.engine || "MemoryStorage"];
+    
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
 extend(true, SessionManager.prototype, Logging.prototype);
 
 SessionManager.prototype.removeSession = function(session_id) {
-    this.storage.remove(session_id);
-    this.info("removeSession: " + session_id);
+    var self = this;
+    return function(cb) {
+        self.info("removeSession: " + session_id);
+        self.storage.remove(session_id);
+        cb();
+    };
 };
 
 SessionManager.prototype.getSession = function(session_id) {
-    var session = this.storage.get(session_id) || null;
+    var self = this;
+    return function(cb) {
+        var session = self.storage.get(session_id) || null;
 
-    if (session === null) {
-        throw new Error("Session for id " + session_id + " not found!");
-    }
-
-    return JSON.parse(session);
+        if (session === null) {
+            cb(null);
+        } else {
+            cb(JSON.parse(session));
+        }
+    };
 };
 
 SessionManager.prototype.setSession = function(session_id, session) {
-    this.storage.set(session_id, JSON.stringify(session));
+    var self = this;
+    return function(cb) {
+        self.storage.set(session_id, JSON.stringify(session));
+        cb();
+    };
 };
 
 SessionManager.prototype.createSession = function(session) {
-    var session_id = null;
+    var self = this;
+    return function(cb) {
+        var session_id = null;
 
-    /*
-     * FIXME: This is an ugly solution. Guess what happens if we have lots
-     * of session. We need some way better function here.
-     */
-    while (session_id === null) {
-        session_id = new String(Math.floor(Math.random()*999999999));
-        if (this.storage.has(session_id)) {
-            session_id = null;
+        /*
+         * FIXME: This is an ugly solution. Guess what happens if we have lots
+         * of session. We need some way better function here.
+         */
+        while (session_id === null) {
+            session_id = new String(Math.floor(Math.random()*999999999));
+            if (self.storage.has(session_id)) {
+                session_id = null;
+            }
         }
-    }
-    
-    this.storage.set(session_id, JSON.stringify(session));
-    
-    this.info("createSession: " + session_id);
+        
+        self.storage.set(session_id, JSON.stringify(session));
+        
+        self.info("createSession: " + session_id);
 
-    return session_id;
+        cb(session_id);
+    };
 };
 
 
-SessionManager.prototype.getCookiePath = function() {
-    if (this.cookie_path) {
-        return this.cookie_path;
-    }
-    
-    return null;
+SessionManager.prototype.initializeWebContextSession = function (context, request) {
+    var self = this;
+    var session_id = (context.cookies && context.cookies[this.cookie_key]) || null;
+
+    return function(cb) {
+        if (session_id) {
+            self.getSession(session_id)(function(session) {
+                if (session) {
+                    context.session = session;
+                    cb(session_id);
+                } else {
+                    /*
+                     * Seems like that cookie is invalid by now. Let's remove the
+                     * cookie.
+                     */
+                    ContextToolkit.removeCookie(context, self.cookie_key);
+                    cb(null);
+                }
+            });
+        } else {
+            cb(null);
+        }
+    };
 };
 
-SessionManager.prototype.getCookieKey = function() {
-    if (this.cookie_key) {
-        return this.cookie_key;
-    }
+SessionManager.prototype.finishWebContextSession = function (session_id, context, request) {
+    var self = this;
+    return function(cb) {
+        if (session_id !== context.session_id) {
+            session_id = context.session_id;
     
-    return null;
+            if (session_id === null) {
+                ContextToolkit.removeCookie(context, self.cookie_key);
+            } else {
+                ContextToolkit.setCookie(context, self.cookie_key, session_id, 0, self.cookie_path);
+            }
+        }
+        cb();
+    };
 };

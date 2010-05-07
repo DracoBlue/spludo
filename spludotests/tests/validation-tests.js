@@ -88,7 +88,7 @@ new TestSuite("core.validation.Validation", {
         val.add("key1", "string", {"min":2},{"min":"lalala"});
 
         var params = {
-            "key1": "1",
+            "key1": "1"
         }
 
         var errors = val.execute(params);

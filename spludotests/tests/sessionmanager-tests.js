@@ -13,24 +13,27 @@ new TestSuite("core.session.SessionManager", {
         session.name = "test";
         session.value = "value";
 
-        session_manager.setSession("testid", session);
-        
-        delete session.name;
-        delete session.value;
-        delete session;
-
-        var get_session = session_manager.getSession("testid");
-        equal(get_session.name, "test");
-        equal(get_session.value, "value");
-        
-        session_manager.removeSession("testid");
-        
-        try {
-            session_manager.getSession("testid");
-            fail("the session testid should not exist!");
-        } catch (e) {
-            
-        }
+        return function(cb) {
+            session_manager.setSession("testid", session)(function() {
+                delete session.name;
+                delete session.value;
+                delete session;
+    
+                session_manager.getSession("testid")(function(get_session) {
+                    equal(get_session.name, "test");
+                    equal(get_session.value, "value");
+                    
+                    session_manager.removeSession("testid")(function() {
+                        session_manager.getSession("testid")(function(non_existant_session) {
+                            if (non_existant_session) {
+                                ok(false, "the session testid should not exist!");
+                            }
+                            cb();
+                        });
+                    });
+                });
+            });
+        };
     }
 
 });

@@ -41,9 +41,6 @@ var multipart = require("./libs/multipart");
  * Runs the application.
  */
 ServerApplication.prototype.run = function() {
-    var session_cookie_key = session_manager.getCookieKey();
-    var session_cookie_path = session_manager.getCookiePath();
-
     var finishRequest = function(req, res, body, params) {
         var context = {
             status: 200,
@@ -70,55 +67,38 @@ ServerApplication.prototype.run = function() {
                 context.params[key] = value;
              }
         }
-
+        
         ContextToolkit.applyRequestHeaders(context, req.headers);
+        Logging.prototype.log(context, req.headers);
 
-        var session_id = (context.cookies && context.cookies[session_cookie_key]) || null;
-        
-        if (session_id) {
-            try {
-                context.session = session_manager.getSession(session_id);
-            } catch (e) {
-                /*
-                 * Seems like that cookie is invalid by now. Let's remove the
-                 * cookie.
-                 */
-                ContextToolkit.removeCookie(context, session_cookie_key);
-                session_id = null;
-            }
-        }
-        
-        context.session_id = session_id;
         var response = null;
+        
+        var session_id = null;
 
         var responseHandler = function(response) {
-            if (session_id !== context.session_id) {
-                session_id = context.session_id;
+            session_manager.finishWebContextSession(session_id, context, req.headers)(function() {
+                ContextToolkit.applyCookiesToHeaders(context);
 
-                if (session_id === null) {
-                    ContextToolkit.removeCookie(context, session_cookie_key);
-                } else {
-                    ContextToolkit.setCookie(context, session_cookie_key, session_id, 0, session_cookie_path);
-                }
-            }
+                res.sendHeader(context.status, context.headers);
+                
+                if(response || false) res.write(response, context.encoding || "utf8");
 
-            ContextToolkit.applyCookiesToHeaders(context);
-
-            res.sendHeader(context.status, context.headers);
-            
-            if(response || false) res.write(response, context.encoding || "utf8");
-
-            res.end();
+                res.end();
+            });
         };
 
-        try {
-            BaseApplication.executePath(req.url.substr(1), context)(responseHandler);
-        } catch (e) {
-            context.status = 404;
-            response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
-            response = response + "Arguments: " + sys.inspect(e.arguments);
-            responseHandler(response);
-        }
+        session_manager.initializeWebContextSession(context, req)(function(real_session_id) {
+            session_id = real_session_id;
+            context.session_id = session_id;
+            try {
+                BaseApplication.executePath(req.url.substr(1), context)(responseHandler);
+            } catch (e) {
+                context.status = 404;
+                response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
+                response = response + "Arguments: " + sys.inspect(e.arguments);
+                responseHandler(response);
+            }
+        });
     };
     
     this.server = http.createServer(function(req, res) {
