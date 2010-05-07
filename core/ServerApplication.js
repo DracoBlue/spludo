@@ -69,7 +69,6 @@ ServerApplication.prototype.run = function() {
         }
         
         ContextToolkit.applyRequestHeaders(context, req.headers);
-        Logging.prototype.log(context, req.headers);
 
         var response = null;
         
