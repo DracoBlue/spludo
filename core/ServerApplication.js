@@ -23,6 +23,8 @@
 ServerApplication = function(options) {
     this.setOptions(options);
 
+    this.server_name = options.server_name || ('Spludo 0.1, node.JS ' + process.version);
+    
     /**
      * The Http-Server listening for new connections.
      * 
@@ -41,12 +43,14 @@ var multipart = require("./libs/multipart");
  * Runs the application.
  */
 ServerApplication.prototype.run = function() {
+    var self = this;
+    
     var finishRequest = function(req, res, body, params) {
         var context = {
             status: 200,
             headers: {
                 'Content-Type': 'text/plain',
-                'Server': 'Spludo 0.1'
+                'Server': self.server_name
             }
         };
         
