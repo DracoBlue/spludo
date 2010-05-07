@@ -75,7 +75,18 @@ TestSuite.prototype.execute = function() {
         this.current_test_name = current_test.name;
         this.stats.tests++;
         var before_time = (new Date()).getMilliseconds();
-        QUnit.test(current_test.name, current_test.execute);
+        QUnit.test(current_test.name, function() {
+            var test_result = current_test.execute();
+            if (typeof test_result === 'function') {
+                /*
+                 * It's an asynchronous test!
+                 */
+                stop();
+                test_result(function() {
+                    start();
+                });
+            }
+        });
 
         if (this.stats.failures != stats_before_test.failures) {
             /*
