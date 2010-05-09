@@ -70,13 +70,18 @@ ControllerManager.prototype.loadControllers = function(path, plugin_name) {
     var self = this;
 
     this.info("loadControllers: plugin:" + plugin_name + ", path:" + path);
+    
+    var bootstrap_token_name = "controllers";
+    
+    if (plugin_name) {
+        bootstrap_token_name = "plugin." + plugin_name + '.controllers';
+    }
 
-    var bootstrap_token = bootstrap_manager.createMandatoryElement('ControllerManager.loadControllers ' + plugin_name + '/' + path);
+    var bootstrap_token = bootstrap_manager.createMandatoryElement(bootstrap_token_name);
     var controller_files = [];
     try {
         child_process.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
             var files_in_folder = stdout.split("\n");
-            self.log(arguments);
             for (i in files_in_folder) {
                 if (files_in_folder[i] !== "") {
                     controller_files.push(files_in_folder[i]);
@@ -96,7 +101,7 @@ ControllerManager.prototype.loadControllers = function(path, plugin_name) {
         /*
          * controllers folder does not exist!
          */
-        this.log(e);
+//        this.log(e);
         bootstrap_manager.finishMandatoryElement(bootstrap_token);
     }
 

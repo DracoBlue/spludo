@@ -66,7 +66,19 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     
     this.info("loadViews: plugin:" + plugin_name + ", path:" + path);
 
-    var js_bootstrap_token = bootstrap_manager.createMandatoryElement('ViewManager.loadViews+*.js ' + plugin_name + '/' + path);
+    var bootstrap_token_name = "views";
+    
+    if (plugin_name) {
+        bootstrap_token_name = "plugin." + plugin_name + '.views';
+    }
+
+    var views_bootstrap_token = bootstrap_manager.createMandatoryElement(bootstrap_token_name);
+    var views_bootstrap_parts = [];
+    
+    var js_bootstrap_token_name = bootstrap_token_name + '.js';
+    views_bootstrap_parts.push(js_bootstrap_token_name);
+    
+    var js_bootstrap_token = bootstrap_manager.createMandatoryElement(js_bootstrap_token_name);
     
     try {
         child_process.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
@@ -105,8 +117,10 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
             var file_extension = view_engine_options[0];
             var engine = GLOBAL[view_engine_options[1]];
             
-            var mandatory_element_name = 'ViewManager.loadViews+*.' + file_extension + ' ' + plugin_name + '/' + path;
-            var bootstrap_token = bootstrap_manager.createMandatoryElement(mandatory_element_name);
+            var part_bootstrap_token_name = bootstrap_token_name + '.' + file_extension;
+            views_bootstrap_parts.push(part_bootstrap_token_name);
+            
+            var part_bootstrap_token = bootstrap_manager.createMandatoryElement(part_bootstrap_token_name);
     
             try {
                 child_process.exec("ls " + path + "views/*." + file_extension, function(err, stdout, stderr) {
@@ -133,16 +147,21 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     
                     delete self.current_plugin_name;
                     
-                    bootstrap_manager.finishMandatoryElement(bootstrap_token);
+                    bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
                 });
             } catch (e) {
                 /*
                  * views folder does not exist!
                  */
-                bootstrap_manager.finishMandatoryElement(bootstrap_token);
+                bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
             }
         })(this.view_engines[i]);
+        
     }
+    
+    bootstrap_manager.whenReady(views_bootstrap_parts, function() {
+        bootstrap_manager.finishMandatoryElement(views_bootstrap_token);
+    });
 };
 
 /**
