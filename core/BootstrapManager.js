@@ -22,6 +22,7 @@ BootstrapManager = function() {
     this.mandatory_elements_missing_count = 0;
     this.mandatory_elements_missing = {};
     this.token_name_map = {};
+    this.name_token_map = {};
     
     this.taken_tokens = {};
     
@@ -67,6 +68,7 @@ BootstrapManager.prototype.createMandatoryElement = function(name) {
     this.mandatory_elements_missing_count++;
     
     this.token_name_map[token] = name;
+    this.name_token_map[name] = token;
     
     return token;
 };
@@ -79,6 +81,39 @@ BootstrapManager.prototype.finishMandatoryElement = function(token) {
     
     delete this.mandatory_elements_missing[token];
     
-    this.event_emitter.emit("finishPart", token);
+    this.event_emitter.emit("finishPart", this.token_name_map[token], token);
 };
 
+BootstrapManager.prototype.whenReady = function(parts, callback) {
+    this.info("whenReady: " + parts.join(','));
+    
+    var self = this;
+    
+    var check_if_ready_timer = null;
+    
+    var parts_length = parts.length;
+    var checkIfReadyHandler = function() {
+        var tokens_missing = 0;
+        var parts_waiting = 0;
+        for (var i=0; i<parts_length; i++) {
+            if (typeof self.name_token_map[parts[i]] === 'undefined') {
+                tokens_missing++;
+            } else {
+                var part_token = self.name_token_map[parts[i]];
+                if (typeof self.mandatory_elements_missing[part_token] !== 'undefined') {
+                    parts_waiting++;
+                }
+            }
+        }
+        
+        if (tokens_missing === 0 && parts_waiting === 0) {
+            check_if_ready_timer = null;
+            clearInterval(check_if_ready_timer);
+            callback();
+        } else {
+            setTimeout(checkIfReadyHandler, 100);
+        }
+    };
+    
+    setTimeout(checkIfReadyHandler, 100);
+};
