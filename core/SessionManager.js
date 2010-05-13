@@ -42,53 +42,63 @@ SessionManager.prototype.removeSession = function(session_id) {
     var self = this;
     return function(cb) {
         self.info("removeSession: " + session_id);
-        self.storage.remove(session_id);
-        cb();
+        self.storage.remove(session_id)(function() {
+            cb();
+        });
     };
 };
 
 SessionManager.prototype.getSession = function(session_id) {
     var self = this;
     return function(cb) {
-        var session = self.storage.get(session_id) || null;
-
-        if (session === null) {
-            cb(null);
-        } else {
-            cb(JSON.parse(session));
-        }
+        self.storage.get(session_id)(function(session_data) {
+            if (!session_data) {
+                cb(null);
+            } else {
+                self.log('getSession found', session_data);
+                cb(JSON.parse(session_data));
+            }
+        });
     };
 };
 
 SessionManager.prototype.setSession = function(session_id, session) {
     var self = this;
     return function(cb) {
-        self.storage.set(session_id, JSON.stringify(session));
-        cb();
+        self.storage.set(session_id, JSON.stringify(session))(function() {
+            cb();
+        });
     };
 };
 
 SessionManager.prototype.createSession = function(session) {
     var self = this;
     return function(cb) {
-        var session_id = null;
-
+        var withUniqueSessionHandler = function(session_id) {
+            self.info("createSession: " + session_id);
+            self.storage.set(session_id, JSON.stringify(session))(function() {
+                cb(session_id);
+            });
+        };
+        
         /*
          * FIXME: This is an ugly solution. Guess what happens if we have lots
          * of session. We need some way better function here.
          */
-        while (session_id === null) {
-            session_id = new String(Math.floor(Math.random()*999999999));
-            if (self.storage.has(session_id)) {
-                session_id = null;
-            }
-        }
+        var tryToFindAnUnusedSessionId = function() {
+            var session_id = new String(Math.floor(Math.random()*999999999));
+            self.storage.has(session_id)(function(is_in_use) {
+                if (is_in_use) {
+                    session_id = null;
+                    tryToFindAnUnusedSessionId();
+                } else {
+                    withUniqueSessionHandler(session_id);
+                }
+            });
+            
+        };
         
-        self.storage.set(session_id, JSON.stringify(session));
-        
-        self.info("createSession: " + session_id);
-
-        cb(session_id);
+        tryToFindAnUnusedSessionId();
     };
 };
 
@@ -100,16 +110,16 @@ SessionManager.prototype.initializeWebContextSession = function (context, reques
     return function(cb) {
         if (session_id) {
             self.getSession(session_id)(function(session) {
-                if (session) {
-                    context.session = session;
-                    cb(session_id);
-                } else {
+                if (typeof session === 'undefined') {
                     /*
                      * Seems like that cookie is invalid by now. Let's remove the
                      * cookie.
                      */
                     ContextToolkit.removeCookie(context, self.cookie_key);
                     cb(null);
+                } else {
+                    context.session = session;
+                    cb(session_id);
                 }
             });
         } else {
