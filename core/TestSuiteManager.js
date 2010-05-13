@@ -6,6 +6,8 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var child_process = require("child_process");
+
 /**
  * @class The TestSuite Manager.
  * 
@@ -19,7 +21,7 @@ TestSuiteManager = function() {
 
 extend(true, TestSuiteManager.prototype, Logging.prototype);
 
-var child_process = require("child_process");
+TestSuiteManager.prototype.logging_prefix = 'TestSuiteManager';
 
 /**
  * Add a suite to the suite manager.

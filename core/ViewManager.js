@@ -24,6 +24,8 @@ ViewManager = function() {
 
 extend(true, ViewManager.prototype, Logging.prototype);
 
+ViewManager.prototype.logging_prefix = 'ViewManager';
+
 ViewManager.prototype.addView = function(name, view, plugin_name) {
     this.views = this.views || {};
     plugin_name = plugin_name || this.current_plugin_name;

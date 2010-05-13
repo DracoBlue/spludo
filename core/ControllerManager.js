@@ -23,6 +23,8 @@ ControllerManager = function() {
 
 extend(true, ControllerManager.prototype, Logging.prototype);
 
+ControllerManager.prototype.logging_prefix = 'ControllerManager';
+
 ControllerManager.prototype.addController = function(path, controller) {
     var plugin_name = this.current_plugin_name || null;
 

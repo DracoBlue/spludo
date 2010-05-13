@@ -25,6 +25,8 @@ extend(true, StaticFilesManager.prototype, Logging.prototype);
 var child_process = require("child_process");
 var fs = require("fs");
 
+StaticFilesManager.prototype.logging_prefix = 'StaticFilesManager';
+
 StaticFilesManager.prototype.addFolder = function(folder_name) {
     if (this.folders[folder_name]) {
         throw new Error("Folder " + folder_name + " already added!");

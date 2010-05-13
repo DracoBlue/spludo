@@ -20,6 +20,8 @@ ValidatorManager = function() {
 
 extend(true, ValidatorManager.prototype, Logging.prototype);
 
+ValidatorManager.prototype.logging_prefix = 'ValidatorManager';
+
 ValidatorManager.prototype.addValidator = function(name, validator) {
     this.info("addValidator: name:" + name);
     this.validators[name] = validator;

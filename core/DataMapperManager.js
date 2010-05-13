@@ -20,6 +20,8 @@ DataMapperManager = function() {
 
 extend(true, DataMapperManager.prototype, Logging.prototype);
 
+DataMapperManager.prototype.logging_prefix = 'DataMapperManager';
+
 DataMapperManager.prototype.addDataMapper = function(name, data_mapper) {
     this.info("addDataMapper: name:" + name);
     this.data_mappers[name] = data_mapper;

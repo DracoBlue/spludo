@@ -20,6 +20,8 @@ StorageManager = function() {
 
 extend(true, StorageManager.prototype, Logging.prototype);
 
+StorageManager.prototype.logging_prefix = 'StorageManager';
+
 StorageManager.prototype.addStorage = function(name, storage) {
     this.info("addStorage: name:" + name);
     this.storages[name] = storage;

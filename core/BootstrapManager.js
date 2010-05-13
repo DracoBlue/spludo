@@ -42,6 +42,8 @@ BootstrapManager = function() {
 
 extend(true, BootstrapManager.prototype, Logging.prototype);
 
+BootstrapManager.prototype.logging_prefix = 'BootstrapManager';
+
 BootstrapManager.prototype.createToken = function() {
     this.info("createToken");
     

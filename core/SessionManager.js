@@ -36,6 +36,8 @@ SessionManager = function(options) {
 
 extend(true, SessionManager.prototype, Logging.prototype);
 
+SessionManager.prototype.logging_prefix = 'SessionManager';
+
 SessionManager.prototype.removeSession = function(session_id) {
     var self = this;
     return function(cb) {

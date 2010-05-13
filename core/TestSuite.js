@@ -9,6 +9,8 @@
 /**
  * @class A test suite.
  * 
+ * @extends Logging
+ * 
  * @since 0.1
  * @author DracoBlue
  */
@@ -24,6 +26,10 @@ TestSuite = function(name, tests) {
 
     test_suite_manager.addTestSuite(name, this);
 };
+
+extend(true, TestSuite.prototype, Logging.prototype);
+
+TestSuite.prototype.logging_prefix = 'TestSuite';
 
 TestSuite.prototype.addTest = function(name, test_function) {
     this.tests.push( {

@@ -143,7 +143,6 @@ for ( var f = 0; f < lib_folders.length; f++) {
     try {
         var lib_folder_stats = fs.statSync(lib_folders[f]);
         if (lib_folder_stats.isDirectory()) {
-            Logging.prototype.info("index: Adding "+lib_folders[f]+" as lib.");
             require.paths.push(lib_folders[f]);
             lib_folder_exists = true;
         }
@@ -164,7 +163,6 @@ for ( var f = 0; f < lib_folders.length; f++) {
         }
         
         if (lib_index_file_exists) {
-            Logging.prototype.info("index: Loading "+lib_folders[f]+"/index.js.");
             require(lib_folders[f] + "/index");
         }
     }
