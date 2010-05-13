@@ -10,23 +10,47 @@ new TestSuite("core.storage.MemoryStorage", {
 
     simpleSetAndGet: function() {
         var storage = new MemoryStorage("simple_set_and_get_storage");
-        equal(storage.has("key"), false);
-        equal(storage.get("key") || true, true);
-        equal(storage.get("key") || false, false);
-        equal(storage.get("key") || null, null);
-        equal(storage.get("key"), undefined);
+        
+        return function(cb) {
+            storage.has("key")(function(value) {
+                equal(value, false);
+                storage.get("key")(function(value) {
+                    equal(value || true, true);
+                    equal(value || false, false);
+                    equal(value || null, null);
+                    equal(value, undefined);
+                    cb();
+                });
+            });
+        };
     },
 
     setNullAsValue: function() {
         var storage = new MemoryStorage("set_null_as_value_storage");
-        equal(storage.has("key"), false);
-        equal(storage.get("key") || undefined, undefined);
-        storage.set("key",null);
-        equal(storage.has("key"), true);
-        equal(storage.get("key"), null);
-        storage.remove("key",null);
-        equal(storage.has("key"), false);
-        equal(storage.get("key") || undefined, undefined);
+        return function(cb) {
+            storage.has("key")(function(value) {
+                equal(value, false);
+                storage.get("key")(function(value) {
+                    equal(value || undefined, undefined);
+                    storage.set("key", null)(function(was_possible) {
+                        equal(was_possible, true);
+                        storage.get("key")(function(value) {
+                            equal(value, null);
+                            storage.remove("key")(function(was_possible) {
+                                equal(was_possible, true);
+                                storage.has("key")(function(value) {
+                                    equal(value, false);
+                                    storage.get("key")(function(value) {
+                                        equal(value || undefined, undefined);
+                                        cb();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        };
     }
 
 });
