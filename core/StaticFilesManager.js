@@ -6,6 +6,8 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var Buffer = require('buffer').Buffer;
+
 /**
  * @class A manager for static files. It will automatically dispatch the static
  *        files (from the core/plugins' static folders).
@@ -51,6 +53,16 @@ StaticFilesManager.prototype.addFile = function(file_name, absolute_path) {
     this.files["static/" + file_name] = absolute_path;
 };
 
+StaticFilesManager.prototype.removeFile = function(file_name) {
+    this.info("removeFile:", file_name);
+    delete this.files["static/" + file_name];
+};
+
+StaticFilesManager.prototype.getFileAbsolutePath = function(file_name) {
+    this.info("getFileAbsolutePath", file_name);
+    return this.files[file_name];
+};
+
 StaticFilesManager.prototype.canHandleRequest = function(req) {
     var uri = req.url.substr(1);
     return typeof this.files[uri] === "undefined" ? false : true;
@@ -92,10 +104,26 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
             res.sendHeader(404, {
             });
         } else {
-            res.sendHeader(200, {
+            var content_buffer_length = Buffer.byteLength(content, "binary");
+            
+            res.writeHead(200, {
                 "Content-Type": mime_type,
-                "Cache-Control": "public, max-age=300"
+                "Cache-Control": "public, max-age=300",
+                "Content-Length": content_buffer_length
             });
+            
+//            var content_buffer = new Buffer(content_buffer_length);
+//            content_buffer.write(content, 'binary', 0);  
+//            res.write(content_buffer, "binary");
+            
+//            var content_length = content.length;
+//            
+//            var i = 0;
+//            
+//            while (i<content_length) {
+//                res.write(content.substr(i,2048), "binary");
+//                i = i + 2048;
+//            }
             res.write(content, "binary");
         }
         res.end();
