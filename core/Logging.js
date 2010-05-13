@@ -35,23 +35,27 @@ Logging.LEVEL_OFF = 0;
     var log_configuration = config.get("logging", {
         "level": Logging.LEVEL_WARN
     });
+    
+    log_configuration.hide_classes = ' ' + (log_configuration.hide_classes || []).join(' ') + ' ';
 
     /**
      * Logs with a specific prefix. Should not be used directly at all!
      * @private
      */
-    var logWithPrefix = function(prefix, args) {
+    var logWithPrefix = function(log_level, log_prefix, args) {
         var message = "null";
-        if (args.length > 1) {
-            message = sys.inspect(args);
+        if (log_configuration.hide_classes.indexOf(' ' + log_prefix + ' ') == '-1') {
+            if (args.length > 1) {
+                message = sys.inspect(args);
+            } else if (args.length === 1) {
+                message = (typeof args[0] === "string") ? args[0] : sys.inspect(args[0]);
+            }
+        
+            sys.debug(log_level + ' [' + log_prefix + '] : ' + message);
         }
-    
-        if (args.length === 1) {
-            message = (typeof args[0] === "string") ? args[0] : sys.inspect(args[0]);
-        }
-    
-        sys.debug(prefix + ': ' + message);
     };
+    
+    Logging.prototype.logging_prefix = 'Please configure: this.logging_prefix in this class!';
     
     /**
      * Empty function which is just available to allow calling a log method without effect!
@@ -62,7 +66,7 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_TRACE) {
         Logging.prototype.trace = function() {
-            logWithPrefix("TRACE", arguments);
+            logWithPrefix("TRACE", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.trace = doNotLog;
@@ -70,10 +74,10 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_DEBUG) {
         Logging.prototype.log = function() {
-            logWithPrefix("LOG  ", arguments);
+            logWithPrefix("LOG  ", this.logging_prefix, arguments);
         };
         Logging.prototype.debug = function() {
-            logWithPrefix("DEBUG", arguments);
+            logWithPrefix("DEBUG", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.debug = doNotLog;
@@ -82,7 +86,7 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_INFO) {
         Logging.prototype.info = function() {
-            logWithPrefix("INFO ", arguments);
+            logWithPrefix("INFO ", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.info = doNotLog;
@@ -90,7 +94,7 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_WARN) {
         Logging.prototype.warn = function() {
-            logWithPrefix("WARN ", arguments);
+            logWithPrefix("WARN ", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.warn = doNotLog;
@@ -98,7 +102,7 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_ERROR) {
         Logging.prototype.error = function() {
-            logWithPrefix("ERROR", arguments);
+            logWithPrefix("ERROR", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.error = doNotLog;
@@ -106,7 +110,7 @@ Logging.LEVEL_OFF = 0;
     
     if (log_configuration.level >= Logging.LEVEL_FATAL) {
         Logging.prototype.fatal = function() {
-            logWithPrefix("FATAL", arguments);
+            logWithPrefix("FATAL", this.logging_prefix, arguments);
         };
     } else {
         Logging.prototype.fatal = doNotLog;
