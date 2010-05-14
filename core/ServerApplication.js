@@ -82,7 +82,7 @@ ServerApplication.prototype.run = function() {
             session_manager.finishWebContextSession(session_id, context, req.headers)(function() {
                 ContextToolkit.applyCookiesToHeaders(context);
 
-                res.sendHeader(context.status, context.headers);
+                res.writeHead(context.status, context.headers);
                 
                 if(response || false) res.write(response, context.encoding || "utf8");
 

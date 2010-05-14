@@ -92,7 +92,7 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
     }
     
     if (this.files[uri] === "undefined") {
-        res.sendHeader(500, {
+        res.writeHead(500, {
             "Content-Type": "text/plain"
         });
         res.sendBody("cannot find static file " + uri);
@@ -103,7 +103,7 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
 
     fs.readFile(this.files[uri], "binary", function(err, content) {
         if (err) {
-            res.sendHeader(404, {
+            res.writeHead(404, {
             });
         } else {
             var content_buffer_length = Buffer.byteLength(content, "binary");
@@ -113,19 +113,7 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
                 "Cache-Control": "public, max-age=300",
                 "Content-Length": content_buffer_length
             });
-            
-//            var content_buffer = new Buffer(content_buffer_length);
-//            content_buffer.write(content, 'binary', 0);  
-//            res.write(content_buffer, "binary");
-            
-//            var content_length = content.length;
-//            
-//            var i = 0;
-//            
-//            while (i<content_length) {
-//                res.write(content.substr(i,2048), "binary");
-//                i = i + 2048;
-//            }
+
             res.write(content, "binary");
         }
         res.end();
