@@ -36,17 +36,38 @@ StorageManager.prototype.getStorage = function(name) {
 };
 
 StorageManager.prototype.shutdown = function() {
-    for (name in this.storages) {
-        /*
-         * Check wether this storage has a shutdown method.
-         */
-        if (typeof this.storages[name].shutdown === "function") {
-            try {
-                this.storages[name].shutdown();
-            } catch (e) {
-                this.warn("Exception when trying to shutdown storage " + name);
-                this.warn(e);
+    var self = this;
+    
+    return function(cb) {
+        var shutdown_chain = [];
+        
+        for (name in self.storages) {
+            /*
+             * Check wether this storage has a shutdown method.
+             */
+            if (typeof self.storages[name].shutdown === "function") {
+                (function(current_storage) {
+                    shutdown_chain.push(function(chain_cb) {
+                        try {
+                            self.storages[name].shutdown()(function() {
+                                chain_cb();
+                            });
+                        } catch (e) {
+                            self.warn("Exception when trying to shutdown storage " + name);
+                            self.warn(e);
+                            chain_cb();
+                        }
+                    });
+                })(self.storages[name]);
             }
         }
-    }
+        
+        if (shutdown_chain.length) {
+            group.apply(GLOBAL, shutdown_chain)(function() {
+                cb();
+            });
+        } else {
+            cb();
+        }
+    };
 };
