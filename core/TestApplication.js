@@ -70,16 +70,22 @@ TestApplication.prototype.run = function() {
             })(i);
         }
         
+        load_tests_chain.push(function(chain_cb) {
+            self.log('Running all suites');
+            test_suite_manager.execute()(function() {
+                if (self.options.format === "xml") {
+                    sys.puts(test_suite_manager.getResultAsJunitXml());
+                } else {
+                    sys.puts(test_suite_manager.getResultAsText());
+                }
+                chain_cb();
+            });
+        });
+
         load_tests_chain.push(function() {
-            test_suite_manager.execute();
-            
-            if (self.options.format === "xml") {
-                sys.puts(test_suite_manager.getResultAsJunitXml());
-            } else {
-                sys.puts(test_suite_manager.getResultAsText());
-            }
-            
-            storage_manager.shutdown();
+            self.log('Shutting down the storage manager');
+            storage_manager.shutdown()(function() {
+            });
         });
         
         chain.apply(GLOBAL, load_tests_chain);

@@ -43,13 +43,30 @@ TestSuiteManager.prototype.addTestSuite = function(name, suite, plugin_name, fil
  * Execute all registered suites.
  */
 TestSuiteManager.prototype.execute = function() {
+    var self = this;
+    
     var suites_count = this.suites.length;
     var current_suite = null;
-
-    for ( var i = 0; i < suites_count; i++) {
-        current_suite = this.suites[i];
-        current_suite.suite.execute();
-    }
+    
+    return function(cb) {
+        var suite_chain = [];
+        
+        for ( var i = 0; i < suites_count; i++) {
+            (function(current_suite) {
+                suite_chain.push(function(chain_cb) {
+                    current_suite.suite.execute()(function() {
+                        chain_cb();
+                    });
+                });
+            })(self.suites[i]);
+        }
+        
+        suite_chain.push(function() {
+            cb();
+        });
+        
+        chain.apply(GLOBAL, suite_chain);
+    };
 };
 
 /**
