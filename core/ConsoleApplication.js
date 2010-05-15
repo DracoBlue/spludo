@@ -29,15 +29,20 @@ var sys = require("sys");
  * Runs the application.
  */
 ConsoleApplication.prototype.run = function() {
-    var sys = require("sys");
+    var self = this;
     var response = null;
 
-    try {
-        BaseApplication.executePath(this.options["path"])(function (response) {
+    bootstrap_manager.event_emitter.addListener('end', function() {
+        try {
+            BaseApplication.executePath(self.options["path"])(function (response) {
+                sys.puts(response);
+                storage_manager.shutdown();
+            });
+        } catch (e) {
+            response = "Error\n" + (e.stack || e.message) + "\n\n";
+            response = response + "Arguments: " + sys.inspect(e.arguments);
             sys.puts(response);
-        });
-    } catch (e) {
-        sys.puts("Error:\n" + sys.inspect(e));
-    }
-
+            storage_manager.shutdown();
+        }
+    });
 };
