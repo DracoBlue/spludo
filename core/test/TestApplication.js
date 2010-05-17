@@ -20,7 +20,7 @@
 TestApplication = function(options) {
     this.setOptions(options);
 
-    extend(GLOBAL, require("./../build/testing/qunit"));
+    extend(GLOBAL, require("./../../build/testing/qunit"));
 
     require("./TestSuite");
     require("./TestSuiteManager");

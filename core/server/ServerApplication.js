@@ -37,7 +37,7 @@ extend(true, ServerApplication.prototype, BaseApplication.prototype);
 
 var http = require("http");
 var sys = require("sys");
-var multipart = require("./libs/multipart");
+var multipart = require("./lib/multipart");
 
 /**
  * Runs the application.

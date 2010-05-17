@@ -64,9 +64,9 @@ require("./StorageManager");
  */
 storage_manager = new StorageManager();
 
-require("./SessionManager");
+require("./server/SessionManager");
 
-require("./StaticFilesManager");
+require("./server/StaticFilesManager");
 static_files_manager = new StaticFilesManager();
 
 require("./Controller");
@@ -226,6 +226,6 @@ for ( var i = 0; i < plugin_names.length; i++) {
 }
 
 require("./BaseApplication");
-require("./ServerApplication");
-require("./ConsoleApplication");
-require("./TestApplication");
+require("./server/ServerApplication");
+require("./console/ConsoleApplication");
+require("./test/TestApplication");
