@@ -49,10 +49,7 @@ require("./ContextToolkit");
 require("./Context");
 
 
-require("./DatabaseConnection");
-
 require("./MemoryStorage");
-require("./PostgresStorage");
 require("./StorageManager");
 
 /**
