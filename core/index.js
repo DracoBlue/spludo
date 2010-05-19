@@ -50,11 +50,9 @@ require("./Context");
 
 
 require("./DatabaseConnection");
-require("./DbslayerDatabaseConnection");
 
 require("./MemoryStorage");
 require("./PostgresStorage");
-require("./DbslayerStorage");
 require("./StorageManager");
 
 /**
