@@ -115,7 +115,7 @@ ServerApplication.prototype.run = function() {
             return ;
         }
 
-        req.setBodyEncoding("binary");
+        req.setEncoding("binary");
         
         var stream = multipart.parse(req);
         
