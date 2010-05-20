@@ -43,13 +43,13 @@ StorageManager.prototype.shutdown = function() {
         
         for (name in self.storages) {
             /*
-             * Check wether this storage has a shutdown method.
+             * Check whether this storage has a shutdown method.
              */
             if (typeof self.storages[name].shutdown === "function") {
                 (function(current_storage) {
                     shutdown_chain.push(function(chain_cb) {
                         try {
-                            self.storages[name].shutdown()(function() {
+                            current_storage.shutdown()(function() {
                                 chain_cb();
                             });
                         } catch (e) {
