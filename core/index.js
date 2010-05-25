@@ -33,6 +33,32 @@ try {
      */
 }
 
+if (!config.get('logging', {}).log_core) {
+    (function() {
+        var logging_config = config.get('logging', {});
+        logging_config.hide_classes = logging_config.hide_classes || [];
+
+        var core_classes = [
+            "BootstrapManager",
+            "ControllerManager",
+            "DataMapperManager",
+            "StaticFilesManager",
+            "StorageManager",
+            "ViewManager",
+            "ValidatorManager",
+            'TestSuiteManager'
+        ];
+
+        var core_classes_length = core_classes.length;
+
+        for (var i = 0; i < core_classes_length; i++) {
+            logging_config.hide_classes.push(core_classes[i]);
+        }
+
+        config.setValues('logging', logging_config);
+    })();
+}
+
 require("./Options");
 require("./Logging");
 
