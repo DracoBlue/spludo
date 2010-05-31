@@ -25,6 +25,15 @@
  *            [headers={}] The headers for the context.
  * @property {Number}
  *            [status=200] The status of the context (usually HTTP-Codes).
+ * @property {Object}
+ *            [session=] The current sessions content. Is undefined, if not
+ *            available.
+ * @property {String}
+ *            [session_id=null] The current session_id.
+ * @property {String}
+ *            [encoding="utf8"] The encoding of the response (can be ascii, utf8 or binary).
+ * @property {Object}
+ *            [params={}] The GET+POST parameters.
  * 
  * @example
  * 
