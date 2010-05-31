@@ -45,7 +45,7 @@
         <mkdir dir="${build}/core/api" />
         <exec executable="java" dir="${spludo.directory}">
             <arg
-                line="-jar ${jsdoctoolkit.directory}/jsrun.jar ${jsdoctoolkit.directory}/app/run.js -p -a -t=${jsdoctoolkit.directory}/templates/jsdoc -d=${build}/core/api core/" />
+                line="-jar ${jsdoctoolkit.directory}/jsrun.jar ${jsdoctoolkit.directory}/app/run.js -p -a -t=${jsdoctoolkit.directory}/templates/jsdoc -d=${build}/core/api core/ core/server core/console core/test" />
         </exec>
     </target>
     
