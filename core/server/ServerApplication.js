@@ -38,6 +38,8 @@ extend(true, ServerApplication.prototype, BaseApplication.prototype);
 var http = require("http");
 var sys = require("sys");
 var multipart = require("./lib/multipart");
+var url = require("url");
+var querystring = require("querystring");
 
 /**
  * Runs the application.
@@ -55,21 +57,19 @@ ServerApplication.prototype.run = function() {
         };
         
         context.params = params || {};
+
+        var execution_path = null;
+        
+        var request_url = url.parse(req.url, true);
+        extend(true, context.params, request_url.query);
+
+        execution_path = request_url.pathname.substr(1);
         
         if (body !== null) {
             /*
 			 * Ok, we need to parse that!
 			 */
-             var body_entries = body.split("&");
-             var body_entries_length = body_entries.length;
-             var i = 0;
-
-             for (i=0; i<body_entries_length; i++) {
-                var row = body_entries[i].split("=");
-                var key = decodeURIComponent(row[0]);
-                var value = decodeURIComponent(row[1] || "");
-                context.params[key] = value;
-             }
+            extend(true, context.params, querystring.parse(body));
         }
         
         ContextToolkit.applyRequestHeaders(context, req.headers);
@@ -94,7 +94,7 @@ ServerApplication.prototype.run = function() {
             session_id = real_session_id;
             context.session_id = session_id;
             try {
-                BaseApplication.executePath(req.url.substr(1), context)(responseHandler);
+                BaseApplication.executePath(execution_path, context)(responseHandler);
             } catch (e) {
                 context.status = 404;
                 response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
