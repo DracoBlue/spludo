@@ -33,6 +33,14 @@ try {
      */
 }
 
+try {
+    require(application_directory + "local.config");
+} catch (e) {
+    /*
+     * It's a pitty, we don't have a local.config file :(.
+     */
+}
+
 if (!config.get('logging', {}).log_core) {
     (function() {
         var logging_config = config.get('logging', {});
