@@ -23,6 +23,7 @@ ConsoleApplication = function(options) {
 
 extend(true, ConsoleApplication.prototype, BaseApplication.prototype);
 
+ConsoleApplication.prototype.logging_prefix = 'ConsoleApplication';
 
 var sys = require("sys");
 /**

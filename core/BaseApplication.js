@@ -24,6 +24,8 @@ BaseApplication = function(options) {
 
 extend(true, BaseApplication.prototype, Options.prototype, Logging.prototype);
 
+BaseApplication.prototype.logging_prefix = 'BaseApplication';
+
 /**
  * Runs the application.
  */

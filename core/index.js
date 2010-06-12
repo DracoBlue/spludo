@@ -48,14 +48,18 @@ if (!config.get('logging', {}).log_core) {
         logging_config.hide_classes = logging_config.hide_classes || [];
 
         var core_classes = [
+            "BaseApplication",
             "BootstrapManager",
             "ControllerManager",
+            "ConsoleApplication",
             "DataMapperManager",
+            "ServerApplication",
             "StaticFilesManager",
             "StorageManager",
+            'TestApplication',
+            'TestSuiteManager',
             "ViewManager",
-            "ValidatorManager",
-            'TestSuiteManager'
+            "ValidatorManager"
         ];
 
         var core_classes_length = core_classes.length;

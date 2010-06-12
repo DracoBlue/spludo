@@ -41,6 +41,8 @@ ServerApplication = function(options) {
 
 extend(true, ServerApplication.prototype, BaseApplication.prototype);
 
+ServerApplication.prototype.logging_prefix = 'ServerApplication';
+
 var http = require("http");
 var sys = require("sys");
 var multipart = require("./lib/multipart");

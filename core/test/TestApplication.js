@@ -30,6 +30,8 @@ TestApplication = function(options) {
 
 extend(true, TestApplication.prototype, BaseApplication.prototype);
 
+TestApplication.prototype.logging_prefix = 'TestApplication';
+
 var sys = require("sys");
 var fs = require("fs");
 
