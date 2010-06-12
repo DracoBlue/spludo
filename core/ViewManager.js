@@ -27,10 +27,9 @@ extend(true, ViewManager.prototype, Logging.prototype);
 ViewManager.prototype.logging_prefix = 'ViewManager';
 
 ViewManager.prototype.addView = function(name, view, plugin_name) {
+    this.trace('addView', arguments);
     this.views = this.views || {};
     plugin_name = plugin_name || this.current_plugin_name;
-
-    this.info("addView: plugin:" + plugin_name + ", name:" + name);
 
     if (plugin_name) {
         this.views[plugin_name + "." + name] = view;
@@ -43,6 +42,7 @@ ViewManager.prototype.addView = function(name, view, plugin_name) {
 };
 
 ViewManager.prototype.getView = function(name, plugin_name) {
+    this.trace('getView', arguments);
     plugin_name = plugin_name || null;
 
     var view = null;
@@ -64,10 +64,9 @@ ViewManager.prototype.getView = function(name, plugin_name) {
  * Get all available views and load them ... .
  */
 ViewManager.prototype.loadViews = function(path, plugin_name) {
+    this.trace('loadViews', arguments);
     var self = this;
     
-    this.info("loadViews: plugin:" + plugin_name + ", path:" + path);
-
     var bootstrap_token_name = "views";
     
     if (plugin_name) {
@@ -83,6 +82,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     var js_bootstrap_token = bootstrap_manager.createMandatoryElement(js_bootstrap_token_name);
     
     try {
+        this.debug('loadViews',"loading views for file extension: js");
         child_process.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
             var view_files = [];
             
@@ -116,6 +116,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     var view_engines_length = this.view_engines.length;
     for (var i=0; i<view_engines_length; i++) {
         (function(view_engine_options) {
+            self.debug('loadViews',"loading views for file extension: " + file_extension);
             var file_extension = view_engine_options[0];
             var engine = GLOBAL[view_engine_options[1]];
             
@@ -170,6 +171,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
  * Add a new view engine by file pattern.
  */
 ViewManager.prototype.addViewEngine = function(file_pattern, engine_name) {
+    this.trace('addViewEngine', arguments);
     this.view_engines.push([
         file_pattern, engine_name
     ]);

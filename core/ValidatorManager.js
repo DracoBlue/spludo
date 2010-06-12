@@ -23,7 +23,7 @@ extend(true, ValidatorManager.prototype, Logging.prototype);
 ValidatorManager.prototype.logging_prefix = 'ValidatorManager';
 
 ValidatorManager.prototype.addValidator = function(name, validator) {
-    this.info("addValidator: name:" + name);
+    this.trace("addValidator", arguments);
     this.validators[name] = validator;
 };
 
@@ -36,6 +36,7 @@ ValidatorManager.prototype.getValidator = function(name) {
 };
 
 ValidatorManager.prototype.shutdown = function() {
+    this.trace("shutdown", arguments);
     for (name in this.validators) {
         /*
          * Check wether this validator has a shutdown method.

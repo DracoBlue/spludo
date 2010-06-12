@@ -23,7 +23,7 @@ extend(true, StorageManager.prototype, Logging.prototype);
 StorageManager.prototype.logging_prefix = 'StorageManager';
 
 StorageManager.prototype.addStorage = function(name, storage) {
-    this.info("addStorage: name:" + name);
+    this.trace("addStorage", arguments);
     this.storages[name] = storage;
 };
 
@@ -36,6 +36,7 @@ StorageManager.prototype.getStorage = function(name) {
 };
 
 StorageManager.prototype.shutdown = function() {
+    this.trace("shutdown", arguments);
     var self = this;
     
     return function(cb) {

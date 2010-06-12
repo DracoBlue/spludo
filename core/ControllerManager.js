@@ -26,13 +26,14 @@ extend(true, ControllerManager.prototype, Logging.prototype);
 ControllerManager.prototype.logging_prefix = 'ControllerManager';
 
 ControllerManager.prototype.addController = function(path, controller) {
+    this.trace("addController", arguments);
     var plugin_name = this.current_plugin_name || null;
 
     if (typeof path === "function") {
         /*
          * Handle those pretty regexp objects as path!
          */
-        this.info("addController: type:RegExp, plugin:" + plugin_name + ", path:" + path);
+        this.debug("addController", "type:RegExp, plugin:" + plugin_name + ", path:" + path);
         this.controllers_regexp = this.controllers_regexp || [];
 
         this.controllers_regexp.push( [ path, controller, plugin_name ]);
@@ -46,11 +47,12 @@ ControllerManager.prototype.addController = function(path, controller) {
         throw new Error("Path already served by " + this.controllers[path]);
     }
 
-    this.info("addController: type:String, plugin:" + plugin_name + ", path:" + path);
+    this.debug("addController", "type:String, plugin:" + plugin_name + ", path:" + path);
     this.controllers_string[path] = [ controller, plugin_name ];
 };
 
 ControllerManager.prototype.getController = function(path) {
+    this.trace("getController", arguments);
     if (this.controllers_string[path]) {
         return [ this.controllers_string[path][0], [ path ], this.controllers_string[path][1] ];
     }
@@ -69,9 +71,8 @@ ControllerManager.prototype.getController = function(path) {
  * Get all available controllers and load them ... .
  */
 ControllerManager.prototype.loadControllers = function(path, plugin_name) {
+    this.trace("loadControllers", arguments);
     var self = this;
-
-    this.info("loadControllers: plugin:" + plugin_name + ", path:" + path);
     
     var bootstrap_token_name = "controllers";
     
@@ -103,7 +104,7 @@ ControllerManager.prototype.loadControllers = function(path, plugin_name) {
         /*
          * controllers folder does not exist!
          */
-//        this.log(e);
+        this.log(e);
         bootstrap_manager.finishMandatoryElement(bootstrap_token);
     }
 

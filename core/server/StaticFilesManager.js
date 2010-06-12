@@ -28,22 +28,22 @@ var fs = require("fs");
 StaticFilesManager.prototype.logging_prefix = 'StaticFilesManager';
 
 StaticFilesManager.prototype.addFolder = function(folder_name) {
+    this.trace('addFolder', arguments);
+    var self = this;
+    
     if (this.folders[folder_name]) {
         throw new Error("Folder " + folder_name + " already added!");
     }
     this.folders[folder_name] = true;
 
-    var file_manager = this;
-
-    file_manager.info("StaticFilesManager.addFolder: adding " + folder_name + " as static folder.");
+    self.debug("addFolder","adding " + folder_name + " as static folder.");
     child_process.exec("cd " + folder_name + " && find -type f", function(err, stdout, stderr) {
         var files = stdout.split("\n");
         var files_length = files.length;
         for ( var f = 0; f < files_length; f++) {
             if (files[f] !== "") {
                 var file_name = files[f].substr(2);
-                file_manager.info("StaticFilesManager.addFolder: adding " + file_name + " as static file.");
-                file_manager.files["static/" + file_name] = folder_name + file_name;
+                self.addFile(file_name, folder_name + file_name);
             }
         }
     });
@@ -51,21 +51,22 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
 
 
 StaticFilesManager.prototype.addFile = function(file_name, absolute_path) {
-    this.info("StaticFilesManager.addFolder: adding " + file_name + " from " + absolute_path + " as static file.");
+    this.trace('addFile', arguments);
     this.files["static/" + file_name] = absolute_path;
 };
 
 StaticFilesManager.prototype.removeFile = function(file_name) {
-    this.info("removeFile:", file_name);
+    this.trace("removeFile", arguments);
     delete this.files["static/" + file_name];
 };
 
 StaticFilesManager.prototype.getFileAbsolutePath = function(file_name) {
-    this.info("getFileAbsolutePath", file_name);
+    this.trace("getFileAbsolutePath", arguments);
     return this.files[file_name];
 };
 
 StaticFilesManager.prototype.canHandleRequest = function(req) {
+    this.trace("canHandleRequest", arguments);
     var uri = req.url.substr(1);
     return typeof this.files[uri] === "undefined" ? false : true;
 };
@@ -80,9 +81,9 @@ var file_extension_to_mime_type_map = {
 };
 
 StaticFilesManager.prototype.handleRequest = function(req, res) {
+    this.trace("handleRequest", arguments);
     var uri = req.url.substr(1);
     
-    this.info('static: ' + uri);
     var file_extension = /\.([\w]+)$/.exec(uri);
 
     var mime_type = "application/octet-stream";

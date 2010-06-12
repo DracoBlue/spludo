@@ -23,7 +23,7 @@ extend(true, DataMapperManager.prototype, Logging.prototype);
 DataMapperManager.prototype.logging_prefix = 'DataMapperManager';
 
 DataMapperManager.prototype.addDataMapper = function(name, data_mapper) {
-    this.info("addDataMapper: name:" + name);
+    this.trace("addDataMapper", arguments);
     this.data_mappers[name] = data_mapper;
 };
 
@@ -36,6 +36,7 @@ DataMapperManager.prototype.getDataMapper = function(name) {
 };
 
 DataMapperManager.prototype.shutdown = function() {
+    this.trace("shutdown", arguments);
     for (name in this.data_mappers) {
         /*
          * Check wether this data_mapper has a shutdown method.

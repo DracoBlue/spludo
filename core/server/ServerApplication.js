@@ -172,7 +172,7 @@ ServerApplication.prototype.run = function() {
         
     });
     
-    this.info("Listenin on port " + this.options["port"]);
+    this.info("Listening on port " + this.options["port"]);
 
     this.server.listen(this.options["port"]);
 };

@@ -29,12 +29,12 @@ BootstrapManager = function() {
     this.event_emitter = new events.EventEmitter();
     
     this.event_emitter.addListener("finishPart", function() {
-        self.info("Event: finishPart");
+        self.trace("finishPart");
         self.mandatory_elements_missing_count--;
 
-        self.trace("There are: " + self.mandatory_elements_missing_count + " to go");
+        self.trace("finishPart", "there are " + self.mandatory_elements_missing_count + " to go");
         if (self.mandatory_elements_missing_count === 0) {
-            self.info("Event: end");
+            self.info("All necessary parts loaded.");
             self.event_emitter.emit("end");
         }
     });
@@ -45,7 +45,7 @@ extend(true, BootstrapManager.prototype, Logging.prototype);
 BootstrapManager.prototype.logging_prefix = 'BootstrapManager';
 
 BootstrapManager.prototype.createToken = function() {
-    this.info("createToken");
+    this.trace("createToken", arguments);
     
     var token = false;
     
@@ -63,7 +63,7 @@ BootstrapManager.prototype.createToken = function() {
 };
 
 BootstrapManager.prototype.createMandatoryElement = function(name) {
-    this.info("createMandatoryElement:" +name);
+    this.trace("createMandatoryElement", arguments);
     var token = this.createToken();
     
     this.mandatory_elements_missing[token] = true;
@@ -76,7 +76,7 @@ BootstrapManager.prototype.createMandatoryElement = function(name) {
 };
 
 BootstrapManager.prototype.finishMandatoryElement = function(token) {
-    this.info("finishMandatoryElement: " +this.token_name_map[token]);
+    this.trace("finishMandatoryElement", arguments);
     if (typeof this.mandatory_elements_missing[token] === "undefined") {
         throw new Error("Cannot finish mandatory element for token " + token + ", because it is not missing.");
     }
@@ -87,7 +87,7 @@ BootstrapManager.prototype.finishMandatoryElement = function(token) {
 };
 
 BootstrapManager.prototype.whenReady = function(parts, callback) {
-    this.info("whenReady: " + parts.join(','));
+    this.trace("whenReady", arguments);
     
     var self = this;
     
