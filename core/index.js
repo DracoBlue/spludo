@@ -30,7 +30,7 @@ try {
     require(application_directory + "config");
 } catch (e) {
     /*
-     * It's a pitty, we don't have a config file :(.
+     * It's a pity, we don't have a config file :(.
      */
 }
 
@@ -38,7 +38,7 @@ try {
     require(application_directory + "local.config");
 } catch (e) {
     /*
-     * It's a pitty, we don't have a local.config file :(.
+     * It's a pity, we don't have a local.config file :(.
      */
 }
 
