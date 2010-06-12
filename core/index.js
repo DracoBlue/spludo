@@ -15,6 +15,7 @@ var application_directory = process.cwd() + "/";
 require('./util');
 
 require("./StringToolkit");
+require("./ObjectToolkit");
 
 require("./Config");
 
