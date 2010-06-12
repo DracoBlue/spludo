@@ -46,7 +46,7 @@ Logging.LEVEL_OFF = 0;
         var message = "null";
         if (log_configuration.hide_classes.indexOf(' ' + log_prefix + ' ') == '-1') {
             if (args.length > 1) {
-                if (args.length === 2 && log_level === "TRACE" && args[1][0]) {
+                if (args.length === 2 && log_level === "TRACE" && (args[1][0] || args[1].length === 0)) {
                     log_prefix = log_prefix + "." + args[0];
                     message = sys.inspect(args[1]);
                 } else {
