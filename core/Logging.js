@@ -46,12 +46,17 @@ Logging.LEVEL_OFF = 0;
         var message = "null";
         if (log_configuration.hide_classes.indexOf(' ' + log_prefix + ' ') == '-1') {
             if (args.length > 1) {
-                message = sys.inspect(args);
+                if (args.length === 2 && log_level === "TRACE" && args[1][0]) {
+                    log_prefix = log_prefix + "." + args[0];
+                    message = sys.inspect(args[1]);
+                } else {
+                    message = sys.inspect(args);
+                }
             } else if (args.length === 1) {
                 message = (typeof args[0] === "string") ? args[0] : sys.inspect(args[0]);
             }
         
-            sys.debug(log_level + ' [' + log_prefix + '] : ' + message);
+            sys.puts(log_level + ' [' + log_prefix + '] ' + message);
         }
     };
     
