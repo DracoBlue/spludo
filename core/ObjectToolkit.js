@@ -69,7 +69,7 @@ ObjectToolkit = {
      * @return {Object|String|Number|null} The value or undefined
      */
     getPathValue: function(entity, path) {
-        return this.rawGetPathValue(entity || {}, path, 0, path.length);
+        return this.rawGetPathValue(entity, path, 0, path.length);
     },
 
     /**
@@ -125,15 +125,15 @@ ObjectToolkit = {
      * @return {Object|String|Number|null} The value or undefined
      */
     rawGetPathValue: function(entity, path, path_position, path_length) {
+        if (!entity) {
+            return entity;
+        }
+
         /*
          * It's the final one, let's retrieve the value and we're done!
          */
         if (path_position + 1 === path_length) {
             return entity[path[path_position]];
-        }
-
-        if (!entity) {
-            return entity;
         }
 
         return this.rawGetPathValue(entity[path[path_position]], path, path_position + 1, path_length);
