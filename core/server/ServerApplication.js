@@ -23,7 +23,13 @@
 ServerApplication = function(options) {
     this.setOptions(options);
 
-    this.server_name = options.server_name || ('Spludo 0.1, node.JS ' + process.version);
+    if (typeof this.options.port === "undefined") {
+        this.options.port = config.getPathValue(["server", "port"], 8000);
+    }
+    
+    if (typeof this.options.server_name === "undefined") {
+        this.options.server_name = config.getPathValue(["server", "name"], 'Spludo 0.1, node.JS ' + process.version);
+    }
     
     /**
      * The Http-Server listening for new connections.
@@ -163,6 +169,8 @@ ServerApplication.prototype.run = function() {
         }
         
     });
+    
+    this.info("Listenin on port " + this.options["port"]);
 
     this.server.listen(this.options["port"]);
 };
