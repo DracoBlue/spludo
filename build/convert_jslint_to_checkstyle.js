@@ -16,7 +16,7 @@ var line = "";
 var incident = null;
 var tmp = null;
 
-var file_contents = fs.readFileSync(file_name).split("\n");
+var file_contents = fs.readFileSync(file_name).toString().split("\n");
 
 var output = [];
 
