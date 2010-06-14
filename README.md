@@ -15,13 +15,13 @@ fast V8-Engine.
 Resources
 ----------
 
-Site: <http://spludo.com/>
-Contributing: <http://spludo.com/source/>
-Mailing List: <http://groups.google.com/group/spludo>
-Issue Tracker: <http://github.com/DracoBlue/spludo/issues>
-Plugins: <http://spludo.com/plugins/>
-Tutorial: <http://docsforit.spludo.com/>
-User-Guide: <http://spludo.com/user-guide/>
+* Site: <http://spludo.com/>
+* Contributing: <http://spludo.com/source/>
+* Mailing List: <http://groups.google.com/group/spludo>
+* Issue Tracker: <http://github.com/DracoBlue/spludo/issues>
+* Plugins: <http://spludo.com/plugins/>
+* Tutorial: <http://docsforit.spludo.com/>
+* User-Guide: <http://spludo.com/user-guide/>
 
 License
 --------
