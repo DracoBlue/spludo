@@ -1,6 +1,8 @@
 Spludo Framework README
 =======================
 
+Version: 1.0-dev
+
 Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
@@ -27,5 +29,3 @@ License
 --------
 
 Spludo is licensed under the terms of MIT. See LICENSE for more information.
-
-
