@@ -5,8 +5,8 @@
     <!-- Licensed under the terms of MIT License. For the full copyright and license -->
     <!-- information, please see the LICENSE file in the root folder. -->
 
-    <loadproperties srcFile="build.properties" />
-
+    <property file="build.properties" />
+	
     <description>
         Spludo Core Build-Targets, should be included in a project specific build.xml!
     </description>
