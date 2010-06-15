@@ -104,6 +104,7 @@ require("./server/StaticFilesManager");
 static_files_manager = new StaticFilesManager();
 
 require("./Controller");
+require("./SyncController");
 require("./ControllerManager");
 
 /**
