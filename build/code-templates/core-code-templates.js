@@ -11,6 +11,8 @@ var fs = require("fs");
 var path = require("path");
 
 SpludoGenerator.addCodeTemplate("new-project", {
+    description: "Create a new plain spludo project.",
+
     parameters: [
         {
             "name": "project.name",

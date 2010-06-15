@@ -175,8 +175,19 @@ var code_template = process.ARGV[2];
 sys.puts("  ");
 sys.puts(" Spludo-Generator - http://spludo.com/ - Copyright 2009-2010 by DracoBlue <http://dracoblue.net>");
 sys.puts("  ");
+
+if (!code_template || code_template === "help") {
+    for (var name in SpludoGenerator.code_templates) {
+        sys.puts("    spludo/spludo-gen " + name);
+        sys.puts("      " + SpludoGenerator.code_templates[name].description);
+        sys.puts(" ");
+    }
+    process.exit(0);
+}
+
 sys.puts("   Template: " + code_template);
 sys.puts("");
+
 
 if (typeof SpludoGenerator.code_templates[code_template] === "undefined") {
     sys.puts("   Error: Unsupported code template: " + code_template);
