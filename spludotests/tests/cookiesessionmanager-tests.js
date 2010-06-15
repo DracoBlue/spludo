@@ -6,7 +6,7 @@
  * information, please see the LICENSE file in the root folder.
  */
 
-new TestSuite("core.session.SessionManager", {
+new TestSuite("core.session.CookieSessionManager", {
 
     settingGettingAndRemove: function() {
         var session = {};

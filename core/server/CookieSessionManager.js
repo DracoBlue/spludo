@@ -14,7 +14,7 @@
  * @since 0.1 
  * @author DracoBlue
  */
-SessionManager = function(options) {
+CookieSessionManager = function(options) {
     options = options || {};
 
     if (typeof options.cookie_path !== "undefined") {
@@ -34,11 +34,11 @@ SessionManager = function(options) {
     this.storage = new engine("session_manager", options.engine_options || {});
 };
 
-extend(true, SessionManager.prototype, Logging.prototype);
+extend(true, CookieSessionManager.prototype, Logging.prototype);
 
-SessionManager.prototype.logging_prefix = 'SessionManager';
+CookieSessionManager.prototype.logging_prefix = 'CookieSessionManager';
 
-SessionManager.prototype.removeSession = function(session_id) {
+CookieSessionManager.prototype.removeSession = function(session_id) {
     var self = this;
     return function(cb) {
         self.info("removeSession: " + session_id);
@@ -48,7 +48,7 @@ SessionManager.prototype.removeSession = function(session_id) {
     };
 };
 
-SessionManager.prototype.getSession = function(session_id) {
+CookieSessionManager.prototype.getSession = function(session_id) {
     var self = this;
     return function(cb) {
         self.storage.get(session_id)(function(session_data) {
@@ -62,7 +62,7 @@ SessionManager.prototype.getSession = function(session_id) {
     };
 };
 
-SessionManager.prototype.setSession = function(session_id, session) {
+CookieSessionManager.prototype.setSession = function(session_id, session) {
     var self = this;
     return function(cb) {
         self.storage.set(session_id, JSON.stringify(session))(function() {
@@ -71,7 +71,7 @@ SessionManager.prototype.setSession = function(session_id, session) {
     };
 };
 
-SessionManager.prototype.createSession = function(session) {
+CookieSessionManager.prototype.createSession = function(session) {
     var self = this;
     return function(cb) {
         var withUniqueSessionHandler = function(session_id) {
@@ -103,7 +103,7 @@ SessionManager.prototype.createSession = function(session) {
 };
 
 
-SessionManager.prototype.initializeWebContextSession = function (context, request) {
+CookieSessionManager.prototype.initializeWebContextSession = function (context, request) {
     var self = this;
     var session_id = (context.cookies && context.cookies[this.cookie_key]) || null;
 
@@ -128,7 +128,7 @@ SessionManager.prototype.initializeWebContextSession = function (context, reques
     };
 };
 
-SessionManager.prototype.finishWebContextSession = function (session_id, context, request) {
+CookieSessionManager.prototype.finishWebContextSession = function (session_id, context, request) {
     var self = this;
     return function(cb) {
         if (session_id !== context.session_id) {

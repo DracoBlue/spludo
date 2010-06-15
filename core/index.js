@@ -98,7 +98,7 @@ require("./StorageManager");
  */
 storage_manager = new StorageManager();
 
-require("./server/SessionManager");
+require("./server/CookieSessionManager");
 
 require("./server/StaticFilesManager");
 static_files_manager = new StaticFilesManager();
@@ -215,7 +215,7 @@ try {
     */
 }
 
-var session_manager_engine = GLOBAL[config.get("session_manager_engine", "SessionManager")];
+var session_manager_engine = GLOBAL[config.get("session_manager_engine", "CookieSessionManager")];
 
 /**
  * The global session manager.
