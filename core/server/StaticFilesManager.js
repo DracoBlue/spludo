@@ -37,7 +37,7 @@ StaticFilesManager.prototype.addFolder = function(folder_name) {
     this.folders[folder_name] = true;
 
     self.debug("addFolder","adding " + folder_name + " as static folder.");
-    child_process.exec("cd " + folder_name + " && find -type f", function(err, stdout, stderr) {
+    child_process.exec("cd " + folder_name + " && find . -type f", function(err, stdout, stderr) {
         var files = stdout.split("\n");
         var files_length = files.length;
         for ( var f = 0; f < files_length; f++) {
