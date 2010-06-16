@@ -128,7 +128,7 @@ SpludoGenerator.performCodeTemplate = function(template_directory, values) {
     var files = [];
     
     chain(function(chain_cb) {
-        child_process.exec("cd " + template_directory + " && find", function(err, raw_files) {
+        child_process.exec("cd " + template_directory + " && find .", function(err, raw_files) {
             if (err) {
                 sys.puts("Could not list code-template from: " + template_directory);
                 process.exit(1);
