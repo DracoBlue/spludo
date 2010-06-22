@@ -92,8 +92,9 @@ ServerApplication.prototype.run = function() {
 
                 res.writeHead(context.status, context.headers);
                 
-                if(response || false) res.write(response, context.encoding || "utf8");
-
+                if (req.method !== "HEAD") {
+                    if(response || false) res.write(response, context.encoding || "utf8");
+                }
                 res.end();
             });
         };
