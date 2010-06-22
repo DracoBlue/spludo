@@ -9,9 +9,10 @@ Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
 
 What is Spludo?
 ----------------
-Spludo is a high performance evented, server side Javascript Webframework with
-MVC, prototype based, includes DI+AOP and a Convention-Over-Configuration
-Approach. It's running on the node.JS-platform, which employs the lightning
+Spludo is high performance, evented, server side, prototype based, javascript
+mvc web framework. It includes DI+AOP and a Convention-Over-Configuration
+Approach.
+The framework is running on the node.JS-platform, which employs the lightning
 fast V8-Engine.
 
 New Project in 3 Steps
