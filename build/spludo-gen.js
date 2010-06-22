@@ -154,9 +154,15 @@ SpludoGenerator.performCodeTemplate = function(template_directory, values) {
                 fs.mkdirSync(self.target_directory + token_replacer(file), 0755);
                 sys.puts("Created folder: " + self.target_directory + token_replacer(file));
             } else {
-                var raw_file_contents = fs.readFileSync(template_directory + file).toString();
-                fs.writeFileSync(self.target_directory + token_replacer(file), token_replacer(raw_file_contents));
-                sys.puts("Created file: " + self.target_directory + token_replacer(file));
+                if (path.extname(file) === '.jpg' || path.extname(file) === '.png') {
+                    var raw_file_contents = fs.readFileSync(template_directory + file, 'binary').toString();
+                    fs.writeFileSync(self.target_directory + token_replacer(file), raw_file_contents, 'binary');
+                    sys.puts("Created (binary) file: " + self.target_directory + token_replacer(file));
+                } else {
+                    var raw_file_contents = fs.readFileSync(template_directory + file).toString();
+                    fs.writeFileSync(self.target_directory + token_replacer(file), token_replacer(raw_file_contents));
+                    sys.puts("Created file: " + self.target_directory + token_replacer(file));
+                }
             }
         }
         
