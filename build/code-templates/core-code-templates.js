@@ -16,7 +16,11 @@ SpludoGenerator.addCodeTemplate("new-project", {
     parameters: [
         {
             "name": "project.name",
-            "caption": "Name of the Project (e.g. myapp)"
+            "caption": "Name of the Project Folder (e.g. myapp)"
+        },
+        {
+            "name": "project.title",
+            "caption": "Title of the Project (e.g. My Super App)"
         },
         {
             "name": "spludo.directory",
@@ -45,6 +49,13 @@ SpludoGenerator.addCodeTemplate("new-project", {
                         cb(false, value);
                     }
                 }
+            } else if (name === "project.title") {
+                    if (!value.toLowerCase().match(/^[A-Za-z0-9\ \_\-]+$/)) {
+                        sys.puts("Unsupported project title (expected: [A-Za-z0-9\\ \\_\\-]+): " + value);
+                        cb(true);
+                    } else {
+                        cb(false, value);
+                    }
             } else if (name === "spludo.directory") {
                 try {
                     /*
