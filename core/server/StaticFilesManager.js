@@ -107,7 +107,7 @@ StaticFilesManager.prototype.handleRequest = function(req, res) {
             res.writeHead(404, {
             });
         } else {
-            var content_buffer_length = Buffer.byteLength(content, "binary");
+            var content_buffer_length = content.length;
             
             res.writeHead(200, {
                 "Content-Type": mime_type,
