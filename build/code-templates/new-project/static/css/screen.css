@@ -1,0 +1,48 @@
+#body {
+    background-image:url(../images/spludo_template_bg.png);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#page_margins {
+    width: 990px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+}
+
+
+
+#page_header {
+    padding: 10px;
+}
+
+#page_header a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#page_header h1 {
+    padding: 0;
+    margin: 0;
+}
+
+#page_footer {
+    text-align: center;
+    padding: 10px;
+    font-size: auto;
+    color: #BBBBBB;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.6em;
+}
+
+#page_footer a {
+    text-decoration: none;
+    color: #DDDDDD;
+}
+
+
+#page_main {
+    padding: 10px;
+    background-color: #E4EFC2;
+}

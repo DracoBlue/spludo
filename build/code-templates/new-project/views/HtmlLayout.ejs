@@ -1,0 +1,52 @@
+<%
+
+    context.headers = context.headers || {};
+    context.headers["Content-Type"] = "text/html; charset=UTF-8";
+    
+    var base_url = "http://" + context.request_headers["host"] + "/";
+
+    var application_title = "%%%project.title%%%";
+    
+%><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xml:lang="en">
+<head>
+    <title><%= StringToolkit.encodeXml(application_title) %></title>
+
+    <base href="<%= base_url %>" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link rel="stylesheet" type="text/css" href="static/css/screen.css" />
+
+<%  
+    if (context.javascripts) {
+        var javascripts = context.javascripts;
+        var javascripts_length = javascripts.length;
+        for (var i = 0; i < javascripts_length; i++) {
+ %>
+        <script type="text/javascript" src="<%= javascripts[i] %>"> </script>
+<% 
+ 
+        }
+    }
+%>
+    </head>
+    <body id="body">
+        <div id="page_margins">
+            <div id="page_header">
+                <h1><a href="<%= base_url %>"><%= StringToolkit.encodeXml(application_title) %></a></h1>
+            </div>
+            <div id="page_main">
+                <%= inner %>
+            </div> <!-- /#main -->
+            
+            <div id="page_footer">
+                © 2010 by You | Powered by <a href="http://spludo.com">Spludo</a>
+            </div> <!-- /#page_footer -->
+        </div> <!-- /#page_margins -->
+    </body>
+</html>
