@@ -19,24 +19,24 @@ New Project in 3 Steps
 
 1. Create the new project
 
-    $ spludo/spludo-gen new-project
+        $ spludo/spludo-gen new-project
 
 2. Enter the folder
 
-    $ cd myapp
+        $ cd myapp
 
 3. Run
 
  In Server Mode
 
-    $ node run_server.js
+        $ node run_server.js
 
   and open your browser at <http://localhost:8000/>
 
  In Console Mode
 
-    $ node run_console.js shell.hello
-    Hello, back!
+        $ node run_console.js shell.hello
+        Hello, back!
 
 Resources
 ----------
