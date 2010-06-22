@@ -14,6 +14,30 @@ MVC, prototype based, includes DI+AOP and a Convention-Over-Configuration
 Approach. It's running on the node.JS-platform, which employs the lightning
 fast V8-Engine.
 
+New Project in 3 Steps
+----------------------
+
+1. Create the new project
+
+    $ spludo/spludo-gen new-project
+
+2. Enter the folder
+
+    $ cd myapp
+
+3. Run
+
+ In Server Mode
+
+    $ node run_server.js
+
+  and open your browser at <http://localhost:8000/>
+
+ In Console Mode
+
+    $ node run_console.js shell.hello
+    Hello, back!
+
 Resources
 ----------
 
