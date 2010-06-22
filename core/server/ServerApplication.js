@@ -60,7 +60,7 @@ ServerApplication.prototype.run = function() {
             status: 200,
             headers: {
                 'Content-Type': 'text/plain',
-                'Server': self.server_name
+                'Server': self.options.server_name
             }
         };
         
