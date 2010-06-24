@@ -165,6 +165,8 @@ try {
      */
 }
 
+var lib_token = bootstrap_manager.createMandatoryElement('lib');
+
 /*
  * Find all /lib, plugin_name/lib folders and append them to the require path.
  */
@@ -202,6 +204,8 @@ for ( var f = 0; f < lib_folders.length; f++) {
         }
     }
 }
+
+bootstrap_manager.finishMandatoryElement(lib_token);
 
 /*
  * Load the static folder, if the core has one.
