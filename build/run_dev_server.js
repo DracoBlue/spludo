@@ -1,0 +1,68 @@
+/*
+ * This file is part of the Spludo Framework.
+ * Copyright (c) 2009-2010 DracoBlue, http://dracoblue.net/
+ *
+ * Licensed under the terms of MIT License. For the full copyright and license
+ * information, please see the LICENSE file in the root folder.
+ */
+
+var child_process = require('child_process');
+var fs = require("fs");
+var sys = require("sys");
+
+dev_server = {
+
+    process: null,
+
+    restarting: false,
+
+    "restart": function() {
+        this.restarting = true;
+        sys.debug('DEVSERVER: Stopping server for restart');
+        this.process.kill();
+    },
+
+    "start": function() {
+        var self = this;
+        sys.debug('DEVSERVER: Starting server');
+
+        this.process = child_process.spawn(process.ARGV[0], ['run_server.js']);
+
+        this.process.stdout.addListener('data', function (data) {
+            process.stdout.write(data);
+        });
+
+        this.process.stderr.addListener('data', function (data) {
+            process.stderr.write(data);
+        });
+
+        this.process.addListener('exit', function (code) {
+            sys.debug('DEVSERVER: Child process exited: ' + code);
+            this.process = null;
+            if (self.restarting) {
+                self.restarting = true;
+                self.start();
+            }
+        });
+
+    }
+}
+
+dev_server.start();
+
+child_process.exec('find . | grep "\.js$"', function(error, stdout, stderr) {
+    var files = stdout.trim().split("\n");
+
+    files.forEach(function(file) {
+        fs.watchFile(file, {interval : 500}, function(curr, prev) {
+            if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
+                sys.debug('DEVSERVER: Restarting because of changed file at ' + file);
+                dev_server.restart();
+            }
+        });
+    });
+
+});
+
+
+
