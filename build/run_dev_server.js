@@ -36,7 +36,7 @@ dev_server = {
         });
 
         this.process.stderr.addListener('data', function (data) {
-            process.stderr.write(data);
+            sys.debug(data);
         });
 
         this.process.addListener('exit', function (code) {
