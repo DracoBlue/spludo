@@ -14,6 +14,8 @@ dev_server = {
 
     process: null,
 
+    files: [],
+
     restarting: false,
 
     "restart": function() {
@@ -25,6 +27,7 @@ dev_server = {
     "start": function() {
         var self = this;
         sys.debug('DEVSERVER: Starting server');
+        self.watchFiles();
 
         this.process = child_process.spawn(process.ARGV[0], ['run_server.js']);
 
@@ -41,28 +44,42 @@ dev_server = {
             this.process = null;
             if (self.restarting) {
                 self.restarting = true;
+                self.unwatchFiles();
                 self.start();
             }
         });
 
+    },
+
+    "watchFiles": function() {
+        var self = this;
+
+        child_process.exec('find . | grep "\.js$"', function(error, stdout, stderr) {
+            var files = stdout.trim().split("\n");
+
+            files.forEach(function(file) {
+                self.files.push(file);
+                fs.watchFile(file, {interval : 500}, function(curr, prev) {
+                    if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
+                        sys.debug('DEVSERVER: Restarting because of changed file at ' + file);
+                        dev_server.restart();
+                    }
+                });
+            });
+        });
+   },
+
+    "unwatchFiles": function() {
+        this.files.forEach(function(file) {
+            fs.unwatchFile(file);
+        });
+        this.files = [];
     }
 }
 
+
 dev_server.start();
 
-child_process.exec('find . | grep "\.js$"', function(error, stdout, stderr) {
-    var files = stdout.trim().split("\n");
-
-    files.forEach(function(file) {
-        fs.watchFile(file, {interval : 500}, function(curr, prev) {
-            if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
-                sys.debug('DEVSERVER: Restarting because of changed file at ' + file);
-                dev_server.restart();
-            }
-        });
-    });
-
-});
 
 
 
