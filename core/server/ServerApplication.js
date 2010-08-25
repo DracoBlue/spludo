@@ -130,11 +130,24 @@ ServerApplication.prototype.run = function() {
         
         if (stream.isMultiPart) {
             
+            var parts_base_name_last_index = {};
+            
             var parts = {};
             var current_part_name = null;
             
             stream.addListener("partBegin", function (part) {
                 current_part_name = part.name;
+                if (current_part_name.substr(-2) === '[]') {
+                    var current_part_base_name = current_part_name.substr(0, current_part_name.length - 2);
+                    if (typeof parts_base_name_last_index[current_part_base_name] === "undefined") {
+                        parts_base_name_last_index[current_part_base_name] = 0;
+                    } else {
+                        parts_base_name_last_index[current_part_base_name]++;
+                    }
+                    
+                    current_part_name = current_part_base_name + '[' + parts_base_name_last_index[current_part_base_name] + ']';
+                }
+                
                 parts[current_part_name] = {
                     "name": current_part_name,
                     "filename": part.filename,
