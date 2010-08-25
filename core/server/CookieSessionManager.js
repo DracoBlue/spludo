@@ -40,8 +40,8 @@ CookieSessionManager.prototype.logging_prefix = 'CookieSessionManager';
 
 CookieSessionManager.prototype.removeSession = function(session_id) {
     var self = this;
+    self.trace("removeSession", arguments);
     return function(cb) {
-        self.info("removeSession: " + session_id);
         self.storage.remove(session_id)(function() {
             cb();
         });
@@ -73,9 +73,9 @@ CookieSessionManager.prototype.setSession = function(session_id, session) {
 
 CookieSessionManager.prototype.createSession = function(session) {
     var self = this;
+    self.trace("createSession", arguments);
     return function(cb) {
         var withUniqueSessionHandler = function(session_id) {
-            self.info("createSession: " + session_id);
             self.storage.set(session_id, JSON.stringify(session))(function() {
                 cb(session_id);
             });
