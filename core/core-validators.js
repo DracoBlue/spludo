@@ -8,67 +8,77 @@
 
 new Validator("string", {
     "execute": function (parameter, options) {
-        var errors = [];
-
-        if (typeof options.max !== "undefined") {
-            if (parameter.length > options.max) {
-                errors.push("max");
+    
+        return function(cb) {
+            var errors = [];
+    
+            if (typeof options.max !== "undefined") {
+                if (parameter.length > options.max) {
+                    errors.push("max");
+                }
             }
-        }
-        
-        if (typeof options.min !== "undefined") {
-            if (parameter.length < options.min) {
-                errors.push("min");
+            
+            if (typeof options.min !== "undefined") {
+                if (parameter.length < options.min) {
+                    errors.push("min");
+                }
             }
-        }
-
-        return errors;
+    
+            cb(errors);
+        };
     }
 });
 
 new Validator("number", {
     "execute": function (parameter, options) {
-        var errors = [];
-        
-        var num_parameter = 0;
-
-        try {
-            num_parameter = new Number(parameter);
-        } catch (e) {
-            errors.push("type");
-            return errors;
-        }
-
-        if (String(num_parameter) !== String(parameter)) {
-            errors.push("type");
-            return errors;
-        }
-
-        if (typeof options.max !== "undefined") {
-            if (num_parameter > options.max) {
-                errors.push("max");
+        return function(cb) {
+            var errors = [];
+            
+            var num_parameter = 0;
+    
+            try {
+                num_parameter = new Number(parameter);
+            } catch (e) {
+                errors.push("type");
+                cb(errors);
+                return ;
             }
-        }
-
-        if (typeof options.min !== "undefined") {
-            if (num_parameter < options.min) {
-                errors.push("min");
+    
+            if (String(num_parameter) !== String(parameter)) {
+                errors.push("type");
+                cb(errors);
+                return ;
             }
-        }
-
-        return errors;
+    
+            if (typeof options.max !== "undefined") {
+                if (num_parameter > options.max) {
+                    errors.push("max");
+                }
+            }
+    
+            if (typeof options.min !== "undefined") {
+                if (num_parameter < options.min) {
+                    errors.push("min");
+                }
+            }
+    
+            cb(errors);
+        };
     }
 });
 
 new Validator("array", {
     "execute": function (parameter, options) {
-        var errors = [];
-        
-        if (typeof parameter.join !== "function") {
-            errors.push("type");
-            return errors;
-        }
-
-        return errors;
+        return function(cb) {
+            var errors = [];
+            
+            if (typeof parameter.join !== "function") {
+                errors.push("type");
+                cb(errors);
+                return ;
+            }
+    
+            cb(errors);
+        };
     }
 });
