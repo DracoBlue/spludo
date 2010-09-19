@@ -7,7 +7,7 @@
  */
 
 new DataMapper("json", {
-    "decode": function (value, options) {
+    "decodeSync": function (value, options) {
         var result = null;
         try {
             result = JSON.parse(value);
@@ -17,28 +17,71 @@ new DataMapper("json", {
         return result;
     },
 
-    "encode": function (value, options) {
+    "encodeSync": function (value, options) {
         return JSON.stringify(value);
+    },
+
+    "decode": function (value, options) {
+        return function(cb) {
+            var result = null;
+            try {
+                result = JSON.parse(value);
+            } catch (e) {
+                cb(null, "Could not decode JSON-String to object: " + e.message);
+                return ;
+            }
+            cb(result);
+        };
+    },
+
+    "encode": function (value, options) {
+        return function(cb) {
+            cb(JSON.stringify(value));
+        };
     }
 });
 
 new DataMapper("string", {
-    "decode": function (value, options) {
+    "decodeSync": function (value, options) {
         return value;
     },
 
-    "encode": function (value, options) {
+    "encodeSync": function (value, options) {
         return String(value);
+    },
+
+    "decode": function (value, options) {
+        return function(cb) {
+            cb(value);
+        };
+    },
+
+    "encode": function (value, options) {
+        return function(cb) {
+            cb(String(value));
+        };
     }
 });
 
 new DataMapper("number", {
-    "decode": function (value, options) {
+    "decodeSync": function (value, options) {
         return Number(value);
     },
 
-    "encode": function (value, options) {
+    "encodeSync": function (value, options) {
         return String(value);
+    },
+
+    "decode": function (value, options) {
+        return function(cb) {
+            cb(Number(value));
+        };
+    },
+
+    "encode": function (value, options) {
+        return function(cb) {
+            cb(value);
+        };
     }
 });
 
