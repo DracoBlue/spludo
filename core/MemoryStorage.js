@@ -8,9 +8,6 @@
 
 /**
  * @class The memory storage.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 MemoryStorage = function(name, options) {
     this.values = {};

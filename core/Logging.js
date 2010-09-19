@@ -14,9 +14,6 @@ var sys = require('sys');
  * powerful if you extend an other class with it.
  * 
  * @class Offers logging facility.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 Logging = function() {
 };

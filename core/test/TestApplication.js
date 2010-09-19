@@ -13,9 +13,6 @@
  * 
  * @param {Object} options Options to specify the behaviour
  * @param {String} [options.format=console] The format of the output (can be console or xml).
- * 
- * @since 0.1
- * @author DracoBlue
  */
 TestApplication = function(options) {
     this.setOptions(options);

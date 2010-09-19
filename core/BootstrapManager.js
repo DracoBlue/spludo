@@ -12,9 +12,6 @@ var events = require("events");
  * @class The bootstrap manager. Register to it's end-event, before starting any action on the application!
  * 
  * @extends Logging
- * 
- * @since 0.1
- * @author dracoblue
  */
 BootstrapManager = function() {
     var self = this;

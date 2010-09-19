@@ -8,9 +8,6 @@
 
 /**
  * @class A simple controller with either String or RegExp-Path
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 Controller = function(path, options) {
     if (typeof options.execute === "function") {

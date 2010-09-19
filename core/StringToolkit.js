@@ -28,9 +28,6 @@ var escaped_one_to_xml_special_map = {
 
 /**
  * @class A toolkit for convenient functions to de-/encode uri, html and so on.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 StringToolkit = {
         

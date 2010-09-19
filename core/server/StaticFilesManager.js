@@ -11,9 +11,6 @@ var Buffer = require('buffer').Buffer;
 /**
  * @class A manager for static files. It will automatically dispatch the static
  *        files (from the core/plugins' static folders).
- * 
- * @since 0.1
- * @author DracoBlue
  */
 StaticFilesManager = function() {
     this.folders = [];

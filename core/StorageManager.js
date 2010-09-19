@@ -10,9 +10,6 @@
  * @class The manager for all registered storages.
  * 
  * @extends Logging
- * 
- * @since 0.1
- * @author DracoBlue
  */
 StorageManager = function() {
     this.storages = {};

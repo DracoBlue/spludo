@@ -13,9 +13,6 @@
  * 
  * @param {Object} options Options to specify the behaviour
  * @param {String} options.path The initial path to launch (when {@link ConsoleApplication#run} gets called)
- * 
- * @since 0.1
- * @author DracoBlue
  */
 ConsoleApplication = function(options) {
     this.setOptions(options);

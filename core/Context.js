@@ -43,9 +43,6 @@
  * ContextToolkit.setCookie(context, "key", "value");
  * // and so on ..
  * </pre>
- * 
- * @since 0.1
- * @author DracoBlue
  */
 Context = function() {
     return {};

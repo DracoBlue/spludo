@@ -9,9 +9,6 @@
 /**
  * @class A simple JavascriptView, which needs a render function as parameter
  *        for the real business logic.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 JsView = function(name, render_function) {
     if (typeof render_function === "function") {

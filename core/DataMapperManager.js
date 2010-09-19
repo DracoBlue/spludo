@@ -10,9 +10,6 @@
  * @class The manager for all registered data_mappers.
  * 
  * @extends Logging
- * 
- * @since 0.1
- * @author DracoBlue
  */
 DataMapperManager = function() {
     this.data_mappers = {};

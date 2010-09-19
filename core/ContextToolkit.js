@@ -8,9 +8,6 @@
 
 /**
  * @class A toolkit for convenient functions to work on the context.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 ContextToolkit = {
 

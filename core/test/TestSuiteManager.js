@@ -12,8 +12,6 @@ var child_process = require("child_process");
  * @class The TestSuite Manager.
  * 
  * @extends Logging
- * @since 0.1
- * @author DracoBlue
  */
 TestSuiteManager = function() {
     this.suites = [];

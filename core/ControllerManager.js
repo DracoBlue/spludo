@@ -12,9 +12,6 @@ var child_process = require("child_process");
  * @class The manager for all registered controllers.
  * 
  * @extends Logging
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 ControllerManager = function() {
     this.controllers_string = {};

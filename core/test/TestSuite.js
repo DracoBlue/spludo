@@ -10,9 +10,6 @@
  * @class A test suite.
  * 
  * @extends Logging
- * 
- * @since 0.1
- * @author DracoBlue
  */
 TestSuite = function(name, tests) {
     this.name = name;

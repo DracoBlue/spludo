@@ -8,9 +8,6 @@
 
 /**
  * @class The base for all validators.
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 Validator = function(name, options) {
     this.setOptions(options);

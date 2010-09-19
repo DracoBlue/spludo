@@ -7,10 +7,8 @@
  */
 
 /**
- * @class The base for all validators.
- * 
- * @since 0.1
- * @author DracoBlue
+ * @class The validation, which can be filled with multiple validators and
+ *        finally validate the input.
  */
 Validation = function() {
     this.validators = {};

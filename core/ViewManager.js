@@ -12,9 +12,6 @@ var child_process = require('child_process');
  * @class The manager for all registered views.
  * 
  * @extends Logging
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 ViewManager = function() {
     this.views = {};

@@ -8,9 +8,6 @@
 
 /**
  * @class A toolkit for convenient functions on javascript objects.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 ObjectToolkit = {
     /**

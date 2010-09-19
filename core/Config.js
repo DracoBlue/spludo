@@ -8,9 +8,6 @@
 
 /**
  * @class The configuration.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 Config = function() {
     this.values = {};

@@ -10,9 +10,6 @@
  * @class A sync controller with either String or RegExp-Path
  * 
  * @extends Controller
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 SyncController = function(path, sync_function) {
     var options = [ 

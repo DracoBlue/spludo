@@ -17,8 +17,6 @@ var next_ejs_slot_view_id = 1;
  * @param {String} name
  * @param {String} content_file
  * @param {String} [encoding="utf8"]
- * @since 0.1
- * @author DracoBlue
  */
 EjsView = function(name, content_file, encoding) {
     encoding = encoding || "utf8";

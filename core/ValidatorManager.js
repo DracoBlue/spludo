@@ -10,9 +10,6 @@
  * @class The manager for all registered validators.
  * 
  * @extends Logging
- * 
- * @since 0.1
- * @author DracoBlue
  */
 ValidatorManager = function() {
     this.validators = {};

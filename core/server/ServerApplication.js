@@ -16,9 +16,6 @@
  * @param {Number}
  *            options.port The port, which should be used when launching the
  *            application server.
- * 
- * @since 0.1
- * @author DracoBlue
  */
 ServerApplication = function(options) {
     this.setOptions(options);

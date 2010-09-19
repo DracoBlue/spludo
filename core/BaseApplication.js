@@ -11,9 +11,6 @@
  * 
  * @extends Options
  * @extends Logging
- * 
- * @since 0.1
- * @author DracoBlue
  */
 BaseApplication = function(options) {
     this.setOptions(options);

@@ -10,9 +10,6 @@
  * @class The manager for all registered sessions.
  * 
  * @extends Logging
- * 
- * @since 0.1 
- * @author DracoBlue
  */
 CookieSessionManager = function(options) {
     options = options || {};

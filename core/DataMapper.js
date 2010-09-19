@@ -11,9 +11,6 @@
  *
  * @extends Options
  * @extends Logging
- *
- * @since 0.1 
- * @author DracoBlue
  */
 DataMapper = function(name, options) {
     this.setOptions(options);
