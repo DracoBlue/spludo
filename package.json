@@ -1,0 +1,39 @@
+{
+    "name" : "spludo",
+    "version": "1.0-dev",
+
+    "engines": { "node": ">= 0.2.2" },
+
+    "homepage": "http://spludo.com",
+
+    "author": "DracoBlue <JanS@DracoBlue.de>",
+    "contributors": [
+        { "name": "DracoBlue", "email": "JanS@DracoBlue.de" }
+    ],
+
+    "keywords": ["framework", "mvc", "rest", "web", "configuration", "routing", "templating"],
+
+    "directories" : {
+        "." : "."
+    },
+
+    "main" : "./core",
+
+    "bin" : {
+        "spludo-gen" : "./build/spludo-gen.js"
+    },
+
+    "repository": {
+        "type": "git",
+        "web": "http://github.com/DracoBlue/spludo.git"
+    },
+
+    "bugs": {
+        "mail": "spludo@googlegroups.com",
+        "web": "http://github.com/DracoBlue/spludo/issues"
+    },
+
+    "licenses" : [
+        { "type" : "MIT",  "url" : "http://spludo.com/license/" }
+    ]
+}
