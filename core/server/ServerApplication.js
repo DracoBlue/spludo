@@ -25,7 +25,7 @@ ServerApplication = function(options) {
     }
     
     if (typeof this.options.server_name === "undefined") {
-        this.options.server_name = config.getPathValue(["server", "name"], 'Spludo 1.0-dev, node.JS ' + process.version);
+        this.options.server_name = config.getPathValue(["server", "name"], 'Spludo ' + config.get('core').version + ', node.JS ' + process.version);
     }
     
     /**

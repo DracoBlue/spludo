@@ -26,6 +26,11 @@ require("./Config");
  */
 config = new Config();
 
+config.setValues({
+    "core": {
+        "version": '1.0.0-dev'
+    }
+});
 try {
     require(application_directory + "config");
 } catch (e) {
