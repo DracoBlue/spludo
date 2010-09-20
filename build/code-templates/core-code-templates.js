@@ -9,6 +9,7 @@
 var sys = require("sys");
 var fs = require("fs");
 var path = require("path");
+var child_process = require("child_process");
 
 SpludoGenerator.addCodeTemplate("new-project", {
     description: "Create a new plain spludo project.",
@@ -103,5 +104,24 @@ SpludoGenerator.addCodeTemplate("new-project", {
             sys.puts("Directory created: " + SpludoGenerator.target_directory);
             cb();
         }
+    },
+
+    postExecuteHook: function(values) {
+        return function(cb) {
+            child_process.exec('chmod +x "' + SpludoGenerator.target_directory + 'run_dev_server.bash"', function(error) {
+                if (error) {
+                    sys.puts("Could chmod run_dev_server.bash");
+                    process.exit(1);
+                    return ;
+                }
+
+                sys.puts("   Launch with this 2 steps:");
+                sys.puts("      $ cd " + SpludoGenerator.target_directory);
+                sys.puts("      $ ./run_dev_server.bash");
+                sys.puts("");
+                
+                cb();
+            });
+        };
     }
 });
