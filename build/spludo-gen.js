@@ -204,7 +204,7 @@ sys.puts("  ");
 
 if (!code_template || code_template === "help") {
     for (var name in SpludoGenerator.code_templates) {
-        sys.puts("    spludo/spludo-gen " + name);
+        sys.puts("    $ spludo-gen " + name);
         sys.puts("      " + SpludoGenerator.code_templates[name].description);
         sys.puts(" ");
     }
