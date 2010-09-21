@@ -18,19 +18,21 @@ GLOBAL.group = function () {
     
     return function(cb) {
         if (args_length === 0) {
-            cb();
+            process.nextTick(cb);
             return ;
         }
     
         var items_left_to_execute = args_length;
         
+        var after_group_item = function() {
+            items_left_to_execute--;
+            if (!items_left_to_execute) {
+                process.nextTick(cb);
+            }
+        };
+        
         var call_group_item = function(arg) {
-            arg(function() {
-                items_left_to_execute--;
-                if (!items_left_to_execute) {
-                    cb();
-                }
-            });
+            arg(after_group_item);
         };
     
         for ( var i = 0; i < args_length; i++) {
@@ -58,12 +60,12 @@ GLOBAL.chain = function () {
         args[args_pos](function() {
             args_pos++;
             if (args_length > args_pos) {
-                start_func();
+                process.nextTick(start_func);
             }
         });
     };
     
-    start_func();
+    process.nextTick(start_func);
 };
 
 /**
