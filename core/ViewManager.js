@@ -80,15 +80,18 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     
     try {
         this.debug('loadViews',"loading views for file extension: js");
-        child_process.exec("ls " + path + "views/*.js", function(err, stdout, stderr) {
+        child_process.exec("cd " + path + "views && find . -name '*.js'", function(err, stdout, stderr) {
             var view_files = [];
             
             if (!err) {
                 var files_in_folder = stdout.split("\n");
     
                 for (i in files_in_folder) {
-                    if (files_in_folder[i] !== "") {
-                        view_files.push(files_in_folder[i]);
+                    for (i in files_in_folder) {
+                        var file = files_in_folder[i].substr(2);
+                        if (file !== "") {
+                            view_files.push(file);
+                        }
                     }
                 }
 
@@ -96,7 +99,8 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                 
                 
                 for (i in view_files) {
-                    require(view_files[i].substr(0, view_files[i].length - 3));
+                    var view_file_name = view_files[i];
+                    require(path + 'views/' + view_file_name);
                 }
                 
                 delete self.current_plugin_name;
@@ -113,8 +117,8 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     var view_engines_length = this.view_engines.length;
     for (var i=0; i<view_engines_length; i++) {
         (function(view_engine_options) {
-            self.debug('loadViews',"loading views for file extension: " + file_extension);
             var file_extension = view_engine_options[0];
+            self.debug('loadViews',"loading views for file extension: " + file_extension);
             var engine = GLOBAL[view_engine_options[1]];
             
             var part_bootstrap_token_name = bootstrap_token_name + '.' + file_extension;
@@ -123,15 +127,16 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
             var part_bootstrap_token = bootstrap_manager.createMandatoryElement(part_bootstrap_token_name);
     
             try {
-                child_process.exec("ls " + path + "views/*." + file_extension, function(err, stdout, stderr) {
+                child_process.exec("cd " + path + "views && find . -name '*." + file_extension + "'", function(err, stdout, stderr) {
                     var view_files = [];
                     
                     if (!err) {
                         var files_in_folder = stdout.split("\n");
-            
+                        
                         for (i in files_in_folder) {
-                            if (files_in_folder[i] !== "") {
-                                view_files.push(files_in_folder[i]);
+                            var file = files_in_folder[i].substr(2);
+                            if (file !== "") {
+                                view_files.push(file);
                             }
                         }
                     }
@@ -139,10 +144,9 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     self.current_plugin_name = plugin_name;
                     
                     for (i in view_files) {
-                        var view_name = view_files[i].substr(path.length + "views/".length);
-                        view_name = view_name.substr(0, view_name.length - file_extension.length - 1);
-                        
-                        new engine(view_name, view_files[i]);
+                        var view_file_name = view_files[i];
+                        view_name = view_file_name.substr(0, view_file_name.length - file_extension.length - 1);
+                        new engine(view_name, path + 'views/' + view_file_name);
                     }
                     
                     delete self.current_plugin_name;
