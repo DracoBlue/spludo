@@ -32,7 +32,25 @@ EjsView = function(name, content_file, encoding) {
         throw new Error("Cannot read Ejs-File at " + content_file);
     }
     
-    view.content = file_content;
+    fs.watchFile(content_file, {interval : 500}, function(curr, prev) {
+        /*
+         * The file changed, let's trigger a recompile, by reading the contents
+         * and invalidating the cache at ejs_view_format.
+         */
+        fs.readFile(content_file, encoding, function(err, new_file_content) {
+            if (err) {
+                throw new Error("Cannot read updated Ejs-File at " + content_file);
+            }
+            new_file_content = new_file_content.toString();
+
+            if (view.content !== new_file_content) {
+                view.content = new_file_content;
+                delete ejs_view_format[content_file];
+            }
+        });
+    });
+    
+    view.content = file_content.toString();
     view_manager.addView(name, view);
 };
 
@@ -65,7 +83,17 @@ EjsView.prototype.render = function(params, context, inner) {
             body.push("var slots = [];");
             body.push("var slot = function(path, context, inner) {");
             body.push("    var slot_id = next_ejs_slot_view_id++;");
-            body.push("    slots.push([slot_id, path, context, inner]);");
+            body.push("    slots.push(['slot', slot_id, path, context, inner]);");
+            body.push("    content.push('%%%EJSSLOT%' + slot_id + '%%%');");
+            body.push("};");
+            body.push("var partial = function(partial_name, params, inner) {");
+            body.push("    var slot_id = next_ejs_slot_view_id++;");
+            body.push("    slots.push(['partial', slot_id, partial_name, params, inner]);");
+            body.push("    content.push('%%%EJSSLOT%' + slot_id + '%%%');");
+            body.push("};");
+            body.push("var partials = function(partial_name, array_of_params, inner) {");
+            body.push("    var slot_id = next_ejs_slot_view_id++;");
+            body.push("    slots.push(['partials', slot_id, partial_name, array_of_params, inner]);");
             body.push("    content.push('%%%EJSSLOT%' + slot_id + '%%%');");
             body.push("};");
 
@@ -124,18 +152,65 @@ EjsView.prototype.render = function(params, context, inner) {
         var slots = ejs_view_response[1];
         
         if (slots.length > 0) {
-            next_ejs_slot_view_id += slots.length;
             
             var chain_elements = [];
-            slots.forEach(function(element) {
-                chain_elements.push(function (chain_cb) {
-                    var slot_id = element[0];
-                    BaseApplication.executePath(element[1], element[2], element[3])(function(slot_response) {
-                        response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", slot_response);
-                        chain_cb();
+            
+            if (slots.length > 0) {
+                next_ejs_slot_view_id += slots.length;
+                
+                slots.forEach(function(element) {
+                    chain_elements.push(function (chain_cb) {
+                        var slot_type = element[0];
+                        var slot_id = element[1];
+                        
+                        if (slot_type === 'slot') {
+                            BaseApplication.executePath(element[2], element[3], element[4])(function(slot_response) {
+                                response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", slot_response);
+                                chain_cb();
+                            });
+                        } else if (slot_type === 'partial') {
+                            var view_name = element[2];
+                            var params = element[3];
+                            var inner = element[4];
+
+                            var view = view_manager.getView('partials/' + view_name);
+                            view.render(params, context, inner)(function(slot_response) {
+                                response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", slot_response);
+                                chain_cb();
+                            });
+                        } else if (slot_type === 'partials') {
+                            var view_name = element[2];
+                            var array_of_params = element[3];
+                            var inner = element[4];
+
+                            var view = view_manager.getView('partials/' + view_name);
+                            
+                            var sub_chain = [];
+                            
+                            var sub_responses = [];
+                            
+                            array_of_params.forEach(function(params) {
+                                sub_chain.push(function(sub_chain_cb) {
+                                    view.render(params, context, inner)(function(slot_response) {
+                                        sub_responses.push(slot_response);
+                                        sub_chain_cb();
+                                    });
+                                });
+                            });
+                            
+                            sub_chain.push(function() {
+                                response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", sub_responses.join(''));
+                                chain_cb();
+                            });
+                            
+                            chain.apply(GLOBAL, sub_chain);
+                        } else {
+                            throw new Error('Unknown slot_type ' + slot_type + ' found!');
+                        }
                     });
                 });
-            });
+            }
+            
             chain_elements.push(function () {
                 cb(response);
             });
