@@ -32,7 +32,25 @@ EjsView = function(name, content_file, encoding) {
         throw new Error("Cannot read Ejs-File at " + content_file);
     }
     
-    view.content = file_content;
+    fs.watchFile(content_file, {interval : 500}, function(curr, prev) {
+        /*
+         * The file changed, let's trigger a recompile, by reading the contents
+         * and invalidating the cache at ejs_view_format.
+         */
+        fs.readFile(content_file, encoding, function(err, new_file_content) {
+            if (err) {
+                throw new Error("Cannot read updated Ejs-File at " + content_file);
+            }
+            new_file_content = new_file_content.toString();
+
+            if (view.content !== new_file_content) {
+                view.content = new_file_content;
+                delete ejs_view_format[content_file];
+            }
+        });
+    });
+    
+    view.content = file_content.toString();
     view_manager.addView(name, view);
 };
 
