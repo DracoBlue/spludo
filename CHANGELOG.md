@@ -1,14 +1,13 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 1.0.1-dev
+Version: 1.0.2-dev
 
 Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
 
-
-## 1.0.1 (tbd)
+## 1.0.1 (2010/09/26)
 
 * group and chain are truely async now
 * added "spludo-gen controller" (wizard to create a new controller)
