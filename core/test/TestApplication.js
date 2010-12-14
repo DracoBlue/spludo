@@ -84,6 +84,12 @@ TestApplication.prototype.run = function() {
         load_tests_chain.push(function() {
             self.log('Shutting down the storage manager');
             storage_manager.shutdown()(function() {
+                /*
+                 * We need to call this, because for instance watchFile does not
+                 * allows the process to exit.
+                 * @see https://github.com/DracoBlue/spludo/issues/issue/1
+                 */
+                process.exit(0);
             });
         });
         
