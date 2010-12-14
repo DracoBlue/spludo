@@ -31,7 +31,11 @@ EjsView = function(name, content_file, encoding) {
     } catch (e) {
         throw new Error("Cannot read Ejs-File at " + content_file);
     }
-    
+   
+    /*
+     * TODO: This function keeps the process from exiting.
+     * @see https://github.com/DracoBlue/spludo/issues/issue/1
+     */ 
     fs.watchFile(content_file, {interval : 500}, function(curr, prev) {
         /*
          * The file changed, let's trigger a recompile, by reading the contents

@@ -30,17 +30,28 @@ ConsoleApplication.prototype.run = function() {
     var self = this;
     var response = null;
 
+    var finish_handler = function() {
+        storage_manager.shutdown()(function() {
+            /*
+             * We need to call this, because for instance watchFile does not
+             * allows the process to exit.
+             * @see https://github.com/DracoBlue/spludo/issues/issue/1
+             */
+            process.exit(0);
+        });
+    }
+
     bootstrap_manager.event_emitter.addListener('end', function() {
         try {
             BaseApplication.executePath(self.options["path"])(function (response) {
                 sys.puts(response);
-                storage_manager.shutdown();
+                finish_handler();
             });
         } catch (e) {
             response = "Error\n" + (e.stack || e.message) + "\n\n";
             response = response + "Arguments: " + sys.inspect(e.arguments);
             sys.puts(response);
-            storage_manager.shutdown();
+            finish_handler();
         }
     });
 };
