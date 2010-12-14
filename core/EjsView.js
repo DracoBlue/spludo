@@ -166,6 +166,10 @@ EjsView.prototype.render = function(params, context, inner) {
                     chain_elements.push(function (chain_cb) {
                         var slot_type = element[0];
                         var slot_id = element[1];
+
+                        var view_name = null;
+                        var inner = null;
+                        var view = null;
                         
                         if (slot_type === 'slot') {
                             BaseApplication.executePath(element[2], element[3], element[4])(function(slot_response) {
@@ -173,21 +177,21 @@ EjsView.prototype.render = function(params, context, inner) {
                                 chain_cb();
                             });
                         } else if (slot_type === 'partial') {
-                            var view_name = element[2];
+                            view_name = element[2];
                             var params = element[3];
-                            var inner = element[4];
+                            inner = element[4];
 
-                            var view = view_manager.getView('partials/' + view_name);
+                            view = view_manager.getView('partials/' + view_name);
                             view.render(params, context, inner)(function(slot_response) {
                                 response = response.replace("%%%EJSSLOT%" + slot_id + "%%%", slot_response);
                                 chain_cb();
                             });
                         } else if (slot_type === 'partials') {
-                            var view_name = element[2];
+                            view_name = element[2];
                             var array_of_params = element[3];
-                            var inner = element[4];
+                            inner = element[4];
 
-                            var view = view_manager.getView('partials/' + view_name);
+                            view = view_manager.getView('partials/' + view_name);
                             
                             var sub_chain = [];
                             
