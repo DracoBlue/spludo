@@ -1,11 +1,15 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 1.0.2-dev
+Version: 1.0.2
 
 Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
+
+## 1.0.2 (2010/12/14)
+
+* bug #1: console and test application hang because of fs.watchFile in EjsView
 
 ## 1.0.1 (2010/09/26)
 
