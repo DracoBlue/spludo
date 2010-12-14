@@ -28,7 +28,7 @@ config = new Config();
 
 config.setValues({
     "core": {
-        "version": '1.0.2-dev'
+        "version": '1.0.2'
     }
 });
 try {
