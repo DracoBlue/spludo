@@ -1,7 +1,7 @@
 Spludo Framework README
 =======================
 
-Version: 1.0.3-dev
+Version: 1.0.4-dev
 
 Official Site: <http://spludo.com/>
 
