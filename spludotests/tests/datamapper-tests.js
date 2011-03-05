@@ -28,7 +28,7 @@ new TestSuite("datamapper.JsonMapperTests", {
     simpleEncodeOfUtf8Data: function() {
         var data_mapper = data_mapper_manager.getDataMapper('json');
         
-        equal(data_mapper.encodeSync("Dateigröße (in KB)"), "\"Dateigr\\u00f6\\u00dfe (in KB)\"");
+        equal(data_mapper.encodeSync("Dateigröße (in KB)"), "\"Dateigröße (in KB)\"");
         equal(data_mapper.decodeSync("\"Dateigr\\u00f6\\u00dfe (in KB)\""), "Dateigröße (in KB)");
         equal(data_mapper.decodeSync(data_mapper.encodeSync("Dateigröße (in KB)")), "Dateigröße (in KB)");
     }
