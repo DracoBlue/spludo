@@ -180,12 +180,15 @@ for ( var m = 0; m < plugin_names.length; m++) {
     lib_folders.push(application_directory + "plugins/" + plugin_names[m] + "/lib");
 }
 
+var f = 0;
+var lib_folder_stats = null;
+
 /*
  * append all lib folders to the require path.
  */
-for ( var f = 0; f < lib_folders.length; f++) {
+for (f = 0; f < lib_folders.length; f++) {
     try {
-        var lib_folder_stats = fs.statSync(lib_folders[f]);
+        lib_folder_stats = fs.statSync(lib_folders[f]);
         if (lib_folder_stats.isDirectory()) {
             require.paths.push(lib_folders[f]);
         }
@@ -199,10 +202,10 @@ for ( var f = 0; f < lib_folders.length; f++) {
 /*
  * Initialize all lib/index.js files
  */
-for ( var f = 0; f < lib_folders.length; f++) {
+for (f = 0; f < lib_folders.length; f++) {
     var lib_folder_exists = false;
     try {
-        var lib_folder_stats = fs.statSync(lib_folders[f]);
+        lib_folder_stats = fs.statSync(lib_folders[f]);
         if (lib_folder_stats.isDirectory()) {
             lib_folder_exists = true;
         }
