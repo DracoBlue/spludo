@@ -5,10 +5,11 @@ Version: 1.0.3-dev
 
 Official Site: <http://spludo.com/>
 
-Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
+Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
-## 1.0.3 (tbd)
+## 1.0.3 (2011/03/05)
 
+* added dependency to node >=0.4.0
 * putting plugin's lib folder to require path before bootstrap of the index.js files
 
 ## 1.0.2 (2010/12/14)

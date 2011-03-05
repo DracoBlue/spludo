@@ -5,7 +5,7 @@ Version: 1.0.3-dev
 
 Official Site: <http://spludo.com/>
 
-Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
+Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 What is Spludo?
 ----------------
