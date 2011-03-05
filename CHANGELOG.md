@@ -7,6 +7,10 @@ Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2010 by DracoBlue <http://dracoblue.net>
 
+## 1.0.3 (tbd)
+
+* putting plugin's lib folder to require path before bootstrap of the index.js files
+
 ## 1.0.2 (2010/12/14)
 
 * bug #1: console and test application hang because of fs.watchFile in EjsView
