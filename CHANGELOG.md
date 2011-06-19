@@ -7,8 +7,11 @@ Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
-## 1.0.4
+## 1.1.0-dev
 
+* Codegeneration loads the spludo application now (this enables the developer
+  to generate code against the base of the application)
+* Codegeneration #validateParameter receives the validated parameters now
 * TestCases are now able to call .debug+.log and so on, because the execute
   method is applied to the TestSuite.
 

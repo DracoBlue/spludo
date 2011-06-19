@@ -11,6 +11,15 @@ var fs = require("fs");
 var child_process = require("child_process");
 var path = require("path");
 
+try {
+    require("./../core");
+} catch (error) {
+    /*
+     * Wasn't able to load core, so we are not in a spludo project
+     * and thus can't use all features of spludo-gen
+     */
+}
+
 require("./../core/util");
 
 var working_directory = process.cwd() + '/';
@@ -76,7 +85,7 @@ SpludoGenerator.handleCodeTemplate = function(name) {
                             value = default_value;
                         }
                         
-                        code_template.validateParameter(parameter.name, value)(function(err, valid_value) {
+                        code_template.validateParameter(parameter.name, value, values)(function(err, valid_value) {
                             if (err) {
                                 validate_paramter_handler(chain_cb);
                             } else {
@@ -170,8 +179,13 @@ SpludoGenerator.performCodeTemplate = function(template_directory, values) {
                 var file_stat = fs.statSync(template_directory + file);
                 
                 if (file_stat.isDirectory()) {
-                    fs.mkdirSync(self.target_directory + token_replacer(file), 0755);
-                    sys.puts("Created folder: " + self.target_directory + token_replacer(file));
+                    try {
+                        fs.mkdirSync(self.target_directory + token_replacer(file), 0755);
+                        sys.puts("Created folder: " + self.target_directory + token_replacer(file));
+                    } catch (error)
+                    {
+                        sys.puts("Folder already exists: " + self.target_directory + token_replacer(file));
+                    }
                 } else {
                     if (path.extname(file) === '.jpg' || path.extname(file) === '.png') {
                         var raw_file_contents = fs.readFileSync(template_directory + file, 'binary').toString();
@@ -199,7 +213,7 @@ require("./code-templates/core-code-templates");
 var code_template = process.ARGV[2];
 
 sys.puts("  ");
-sys.puts(" Spludo 1.0.4-dev Generator - http://spludo.com/ - Copyright 2009-2010 by DracoBlue <http://dracoblue.net>");
+sys.puts(" Spludo 1.1.0-dev Generator - http://spludo.com/ - Copyright 2009-2010 by DracoBlue <http://dracoblue.net>");
 sys.puts("  ");
 
 if (!code_template || code_template === "help") {
