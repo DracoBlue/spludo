@@ -226,15 +226,15 @@ SpludoGenerator.addCodeTemplate("controller", {
             var controller_file_name = controllers_folder + values_object['controller.file'];
             fs.stat(controller_file_name, function (err, stats) {
                 var new_controller_source = "new Controller(" + values_object['controller.path'] + ", {\n" +
-                		"    execute: function(params, context, inner) {\n" +
-                		"        return function(cb) {\n" +
+                        "    execute: function(params, context, inner) {\n" +
+                        "        return function(cb) {\n" +
                         "            // context.view_name = 'ChooseYourView';\n" +
-                		"            context.layout_name = 'HtmlLayout';\n" +
-                		"            cb();\n" +
-                		"        };\n" +
-                		"    }\n" +
-                		"});\n" +
-                		"\n";
+                        "            context.layout_name = 'HtmlLayout';\n" +
+                        "            cb();\n" +
+                        "        };\n" +
+                        "    }\n" +
+                        "});\n" +
+                        "\n";
                 var file_content_handler = function() {
                     fs.writeFile(controller_file_name, new_controller_source, function (err, data) {
                         if (err) {
@@ -285,6 +285,178 @@ SpludoGenerator.addCodeTemplate("controller", {
             sys.puts("      $ vim " + controller_folder + values_object['controller.file']);
             sys.puts("");
             sys.puts("   You can view the result in your browser at: " + values_object['controller.path']);
+            sys.puts("");
+            
+            cb();
+        };
+    }
+});
+
+
+
+SpludoGenerator.addCodeTemplate("service", {
+    description: "Create a new service for your application.",
+
+    parameters: [
+        {
+            "name": "database_connection_name",
+            "caption": "The database connection name"
+        },
+        {
+            "name": "service_name",
+            "caption": "The name for your service (e.g. User)"
+        },
+        {
+            "name": "database_table_name",
+            "caption": "The database table name (e.g. users)"
+        },
+        {
+            "name": "id_key",
+            "caption": "The table field for the id"
+        }
+    ],
+
+    validateParameter: function(name, value, validated_values_array) {
+        return function(cb) {
+            var database = null;
+            var validated_values = {};
+            validated_values_array.forEach(function(validated_value_data) {
+                validated_values[validated_value_data[0]] = validated_value_data[1];
+            });
+
+            if (name === "database_connection_name") {
+                try {
+                    database = database_manager.getDatabase(value);
+                    cb(false, value);
+                } catch (error) {
+                    sys.puts("This database connection is not configured!");
+                    cb(true);
+                }
+            } else if (name === "service_name") {
+                cb(false, value);
+            } else if (name === "database_table_name") {
+                database = database_manager.getDatabase(validated_values["database_connection_name"]);
+
+                database.getTableMeta(value)(function(error, meta_data) {
+                    if (error) {
+                        sys.puts("Database found, but could not get table meta data for: " + value);
+                        cb(true);
+                    } else {
+                        cb(false, value);
+                    }
+                });
+            } else if (name === "id_key") {
+                database = database_manager.getDatabase(validated_values["database_connection_name"]);
+                database.getTableMeta(validated_values["database_table_name"])(function(error, meta_data) {
+                    var is_id_key_available = false;
+
+                    meta_data.forEach(function(meta_data_field) {
+                        if (meta_data_field.name == value) {
+                            is_id_key_available = true;
+                        }
+                    });
+                        
+                    if (is_id_key_available) {
+                        cb(false, value);
+                    } else {
+                        sys.puts("Database and Table found, but could not find field: " + value);
+                        cb(true);
+                    }
+                });
+            } else {
+                cb(true);
+            }
+        };
+    },
+
+    getParameterDefault: function(name) {
+        return function(cb) {
+            if (name === 'database_connection_name') {
+                cb(false, "default");
+            } else if (name === 'id_key') {
+               cb(false, "id");
+            } else {
+                cb(true, "");
+            }
+        };
+    },
+    
+    preExecuteHook: function(values) {
+        return function(cb) {
+            var values_object = {};
+            
+            values.forEach(function(pair) {
+                values_object[pair[0]] = pair[1];
+            });
+
+            var toCamelCase = function(input) {
+                var result_parts = [];
+                input.split('_').forEach(function(part_name, pos) {
+                    part_name = part_name.toLowerCase();
+                    if (pos != 0)
+                    {
+                        part_name = part_name.substr(0,1).toUpperCase() + part_name.substr(1);
+                    }
+                    result_parts.push(part_name);
+                });
+                return result_parts.join('');
+            };
+            
+            values.push(['service_name_lower_case', values_object['service_name'].toLowerCase()]);
+
+            var database = database_manager.getDatabase(values_object["database_connection_name"]);
+
+            database.getTableMeta(values_object["database_table_name"])(function(error, meta_data) {
+                var service_object_definition_parts = [];
+
+                var has_already_id_field = false;
+
+                meta_data.forEach(function(field) {
+                    if (field.name === 'id') {
+                        has_already_id_field = true;
+                    }
+                });
+
+                if (values_object["id_key"] !== "id" && !has_already_id_field) {
+                    meta_data.unshift({
+                        "name": "id"
+                    });
+                }
+
+                meta_data.forEach(function(field) {
+                    var field_name = field.name;
+                    var getter_name = toCamelCase("get_" + field.name);
+
+                    if (field_name === "id") {
+                        field_name = values_object["id_key"];
+                    }
+                    
+                    var field_parts = [];
+                    service_object_definition_parts.push("");
+                    service_object_definition_parts.push(values_object['service_name'] + ".prototype." + getter_name + " = function() {");
+                    service_object_definition_parts.push("    return this.values['" + field_name +"'];");
+                    service_object_definition_parts.push("};");
+                });
+                values.push(['service_object_definition', service_object_definition_parts.join("\n")]);
+                cb();
+            });
+        };
+    },    
+    
+    postExecuteHook: function(values) {
+        return function(cb) {
+            var values_object = {};
+            
+            values.forEach(function(pair) {
+                values_object[pair[0]] = pair[1];
+            });
+            
+            sys.puts("   User your new service now with:");
+            sys.puts("   ");
+            sys.puts("      var " + values_object['service_name_lower_case'] + "_service = service_manager.get('" + values_object['service_name'] + "');");
+            sys.puts("      " + values_object['service_name_lower_case'] + "_service.get" + values_object['service_name'] + 'ById(function(' + values_object['service_name_lower_case'] + ') {');
+            sys.puts('          console.log(' + values_object['service_name_lower_case'] + ');');
+            sys.puts("      }, 1234);");
             sys.puts("");
             
             cb();
