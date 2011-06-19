@@ -333,6 +333,19 @@ SpludoGenerator.addCodeTemplate("service", {
                     cb(true);
                 }
             } else if (name === "service_name") {
+                if (value.length === 0) {
+                    sys.puts("Please type in a name!");
+                    cb(true);
+                    return ;
+                }
+                
+                if (value.substr(0, 1).toUpperCase() != value.substr(0, 1))
+                {
+                    sys.puts("First character must be upper case!");
+                    cb(true);
+                    return ;
+                }
+                
                 cb(false, value);
             } else if (name === "database_table_name") {
                 database = database_manager.getDatabase(validated_values["database_connection_name"]);
@@ -438,7 +451,24 @@ SpludoGenerator.addCodeTemplate("service", {
                     service_object_definition_parts.push("};");
                 });
                 values.push(['service_object_definition', service_object_definition_parts.join("\n")]);
-                cb();
+                
+                fs.readFile(SpludoGenerator.target_directory + 'config.js', function(error, data_buffer) {
+                    if (error) {
+                        sys.puts("Oops, failed while reading the config.js. Please create a blank config.js file in your project directory.");
+                        process.exit(1);
+                        return ;
+                    }
+                    var data_string = "config.setPathValue([" + JSON.stringify(values_object['service_name_lower_case']);
+                    data_string = data_string + ", \"database_connection\"], " + JSON.stringify(values_object["database_connection_name"])
+                    data_string = data_string + ");\n" + data_buffer.toString();
+                    fs.writeFile(SpludoGenerator.target_directory + 'config.js', data_string, function(error) {
+                        if (error) {
+                            sys.puts("Oops, failed to write the service config in config.js. Please make sure it's writeable!");
+                            process.exit(1);
+                        }
+                        cb();
+                    });
+                });
             });
         };
     },    
