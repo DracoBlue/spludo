@@ -8,7 +8,11 @@
 
 /**
  * @class A database driver for mysql.
- * 
+ *
+ * This driver needs the mysql-module installed. Install by using: <pre>
+ *   npm install mysql
+ * </pre>
+ *
  * @extends Logging
  */
 MysqlDatabaseDriver = function(name, options) {
