@@ -1,7 +1,7 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 1.0.4-dev
+Version: 1.1.0-dev
 
 Official Site: <http://spludo.com/>
 
