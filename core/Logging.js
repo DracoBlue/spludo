@@ -70,8 +70,37 @@ Logging.LEVEL_OFF = 0;
         Logging.prototype.trace = function() {
             logWithPrefix("TRACE", this.logging_prefix, arguments);
         };
+        Logging.prototype.addTracing = function(included_names, excluded_names) {
+            var that = this;
+
+            excluded_logging_names = ['trace', 'error', 'log', 'debug', 'warn', 'info', 'addTracing'];
+            excluded_names = excluded_names || [];
+            if (!included_names)
+            {
+                included_names = [];
+                for (var key in this)
+                {
+                    if (this.hasOwnProperty(key) && typeof this[key] === 'function' && excluded_names.indexOf(key) === -1)
+                    {
+                        if (excluded_logging_names.indexOf(key) === -1)
+                        {
+                            included_names.push(key);
+                        }
+                    }
+                }
+            }
+
+            included_names.forEach(function(function_name) {
+                var original_function = that[function_name];
+                that[function_name] = function() {
+                    that.trace(function_name, arguments);
+                    return original_function.apply(that, arguments);
+                };
+            });
+        };
     } else {
         Logging.prototype.trace = doNotLog;
+        Logging.prototype.addTracing = doNotLog;
     }
     
     if (log_configuration.level >= Logging.LEVEL_DEBUG) {

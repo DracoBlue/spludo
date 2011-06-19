@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* added Logging#addTracing (makes the this.trace(function_name) obsolete)
 * Codegeneration loads the spludo application now (this enables the developer
   to generate code against the base of the application)
 * Codegeneration #validateParameter receives the validated parameters now
