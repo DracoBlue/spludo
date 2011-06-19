@@ -28,7 +28,7 @@ config = new Config();
 
 config.setValues({
     "core": {
-        "version": '1.0.4-dev'
+        "version": '1.1.0-dev'
     }
 });
 try {
@@ -92,6 +92,14 @@ bootstrap_manager = new BootstrapManager();
 require("./ContextToolkit");
 require("./Context");
 
+require("./ServiceManager");
+
+/**
+ * The global service manager
+ * 
+ * @type ServiceManager
+ */
+service_manager = new ServiceManager();
 
 require("./MemoryStorage");
 require("./StorageManager");
@@ -102,6 +110,15 @@ require("./StorageManager");
  * @type StorageManager
  */
 storage_manager = new StorageManager();
+
+require("./DatabaseManager");
+
+/**
+ * The global database manager
+ * 
+ * @type DatabaseManager
+ */
+database_manager = new DatabaseManager();
 
 require("./server/CookieSessionManager");
 
