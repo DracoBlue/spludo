@@ -7,6 +7,11 @@ Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
+## 1.0.4
+
+* TestCases are now able to call .debug+.log and so on, because the execute
+  method is applied to the TestSuite.
+
 ## 1.0.3 (2011/03/05)
 
 * added dependency to node >=0.4.0

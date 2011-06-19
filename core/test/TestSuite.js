@@ -108,7 +108,7 @@ TestSuite.prototype.execute = function() {
                     self.current_test_name = current_test.name;
                     self.stats.tests++;
                     var before_time = (new Date()).getMilliseconds();
-                    var test_result = current_test.execute();
+                    var test_result = current_test.execute.apply(self, []);
                     if (typeof test_result === 'function') {
                         /*
                          * It's an asynchronous test!
