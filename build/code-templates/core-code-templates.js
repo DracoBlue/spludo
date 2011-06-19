@@ -415,7 +415,9 @@ SpludoGenerator.addCodeTemplate("service", {
                 return result_parts.join('');
             };
             
-            values.push(['service_name_lower_case', values_object['service_name'].toLowerCase()]);
+            values_object['service_name_lower_case'] = values_object['service_name'].toLowerCase();
+            
+            values.push(['service_name_lower_case', values_object['service_name_lower_case']]);
 
             var database = database_manager.getDatabase(values_object["database_connection_name"]);
 
