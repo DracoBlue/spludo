@@ -120,6 +120,11 @@ require("./database/DatabaseManager");
  */
 database_manager = new DatabaseManager();
 
+/*
+ * Databases:
+ */
+require("./database/MysqlDatabaseDriver");
+
 require("./server/CookieSessionManager");
 
 require("./server/StaticFilesManager");
