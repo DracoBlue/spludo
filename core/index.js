@@ -101,8 +101,8 @@ require("./ServiceManager");
  */
 service_manager = new ServiceManager();
 
-require("./MemoryStorage");
-require("./StorageManager");
+require("./storage/MemoryStorage");
+require("./storage/StorageManager");
 
 /**
  * The global storage manager.
@@ -111,7 +111,7 @@ require("./StorageManager");
  */
 storage_manager = new StorageManager();
 
-require("./DatabaseManager");
+require("./database/DatabaseManager");
 
 /**
  * The global database manager
