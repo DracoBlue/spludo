@@ -1,4 +1,4 @@
-<project name="SpludoCore" default="list" basedir=".">
+<project name="SpludoCore" default="" basedir=".">
     <!-- This file is part of the Spludo Framework. -->
     <!-- Copyright (c) 2009-2010 DracoBlue, http://dracoblue.net/ -->
     <!-- -->
@@ -11,13 +11,13 @@
         Spludo Core Build-Targets, should be included in a project specific build.xml!
     </description>
     
-    <target name="core-test">
+    <target name="core-test" description="Execute the core tests">
         <exec executable="bash" dir="${spludo.directory}/spludotests">
             <arg line="-c &quot;node ../build/run_tests.js&quot;" />
         </exec>
     </target>
     
-    <target name="core-test-xml">
+    <target name="core-test-xml" description="Execute the core tests (with xml output)">
         <mkdir dir="${build}/core" />
         <exec executable="bash" dir="${spludo.directory}/spludotests">
             <arg line="-c &quot;node ../build/run_tests.js xml > ${build}/core/test_results.xml &quot;" />
@@ -25,7 +25,7 @@
     </target>
     
     
-    <target name="core-lint-xml">
+    <target name="core-lint-xml" description="Execute jslint on the spludo core (with xml output)">
         <mkdir dir="${build}/core" />
         <exec executable="bash" dir="${spludo.directory}">
             <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -process 'core/*.js' -nologo -nofilelisting -nocontext -nosummary > ${build}/core/jslint_report.txt &quot;" />
@@ -35,13 +35,13 @@
         </exec>
     </target>
 
-    <target name="core-lint">
+    <target name="core-lint" description="Execute jslint on the spludo core">
         <exec executable="bash" dir="${spludo.directory}">
             <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -nologo -nofilelisting -process 'core/*.js'&quot;" />
         </exec>
     </target>
 
-    <target name="core-api">
+    <target name="core-api" description="Generate the spludo core api">
         <mkdir dir="${build}/core/api" />
         <exec executable="java" dir="${spludo.directory}">
             <arg
@@ -49,7 +49,7 @@
         </exec>
     </target>
     
-    <target name="core-clean">
+    <target name="core-clean" description="Clean the spludo core build folder">
         <delete dir="${build}/core"/>
     </target>
 </project>
