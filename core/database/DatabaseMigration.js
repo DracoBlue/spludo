@@ -62,7 +62,7 @@ DatabaseMigration.prototype.migrateAll = function() {
                 that.connection.query("CREATE TABLE executed_migrations ("
                 + "`name` VARCHAR( 255 ) NOT NULL,"
                 + "UNIQUE ( `name` )"
-                + ") ENGINE = MYISAM")(function(error) {
+                + ");")(function(error) {
                     that.migrateFiles(not_yet_migrated_files)(cb);
                 });
             });
