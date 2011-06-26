@@ -123,6 +123,7 @@ database_manager = new DatabaseManager();
 /*
  * Databases:
  */
+require("./database/DatabaseMigration");
 require("./database/MysqlDatabaseDriver");
 
 require("./server/CookieSessionManager");

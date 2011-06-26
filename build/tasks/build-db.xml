@@ -1,0 +1,54 @@
+<project name="SpludoCoreDb" basedir=".">
+    <!-- This file is part of the Spludo Framework. -->
+    <!-- Copyright (c) 2009-2011 DracoBlue, http://dracoblue.net/ -->
+    <!-- -->
+    <!-- Licensed under the terms of MIT License. For the full copyright and license -->
+    <!-- information, please see the LICENSE file in the root folder. -->
+
+    <description>
+        Spludo Core Database Build-Targets, should be included in a project specific build.xml!
+    </description>
+    
+    <target name="db:bootstrap" description="Load the fixtures and execute pending migrations.">
+        <antcall target="db:fixtures:load" />
+        <antcall target="db:migrate" />
+    </target>
+    
+    <target name="db:migrate" description="Execute all pending migrations and create a structure dump.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js migrate&quot;" />
+        </exec>
+        <antcall target="db:structure:dump" />
+    </target>
+
+    <target name="db:rollback" description="Rollback all migrations.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js rollback&quot;" />
+        </exec>
+    </target>
+
+    <target name="db:structure:dump" description="Dump the current database structure to a structure dump.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js structure:dump&quot;" />
+        </exec>
+    </target>
+
+    <target name="db:structure:load" description="Load the current database structure from a structure dump.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js structure:load&quot;" />
+        </exec>
+    </target>
+    
+    <target name="db:fixtures:dump" description="Dump the current database as fixtures.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js fixtures:dump&quot;" />
+        </exec>
+    </target>
+
+    <target name="db:fixtures:load" description="Load the fixtures into the database structure.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js fixtures:load&quot;" />
+        </exec>
+    </target>
+    
+</project>

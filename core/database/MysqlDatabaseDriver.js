@@ -6,6 +6,8 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+var child_process = require('child_process');
+
 /**
  * @class A database driver for mysql.
  *
@@ -24,6 +26,36 @@ MysqlDatabaseDriver = function(name, options) {
         "database": options.database || null
     });
     this.client.connect();
+    
+    this.executeRawCommand = function(tool, parameter_string) {
+        return function(cb) {
+            var command_parts = [
+                options['command.' + tool] ? options['command.' + tool] : tool
+            ];
+            
+            if (options.host) {
+                command_parts.push('--host=' + options.host);
+            }
+            if (options.user) {
+                command_parts.push('--user=' + options.user);
+            }
+            if (options.password) {
+                command_parts.push('--password=' + options.password);
+            }
+            if (options.port) {
+                command_parts.push('--port=' + options.port);
+            }
+            if (options.database) {
+                command_parts.push(options.database);
+            }
+            
+            command_parts.push(parameter_string);
+            
+            child_process.exec(command_parts.join(' '), function(error, stdout, stderr) {
+                cb(error, stdout, stderr);
+            });        
+        };
+    };
 };
 
 extend(true, MysqlDatabaseDriver.prototype, Logging.prototype);
@@ -203,4 +235,54 @@ MysqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
 
 MysqlDatabaseDriver.prototype.escapeValue = function(value) {
     return this.client.escape(value);
+};
+
+MysqlDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
+    var that = this;
+    return function(cb) {
+        /*
+         * First of all the structure of the database
+         */
+        that.executeRawCommand('mysqldump', '--compact --add-drop-table -d > ' + file_name)(function(error, stdout, stderr) {
+            /*
+             * Now the contents of the executed_migrations table
+             */
+            that.executeRawCommand('mysqldump', '--compact --add-drop-table --skip-create-options executed_migrations >> ' + file_name)(function(error, stdout, stderr) {
+                cb(error);
+            });
+        });
+    };
+};
+
+MysqlDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
+    var that = this;
+    return function(cb) {
+        /*
+         * First of all the structure of the database
+         */
+        that.executeRawCommand('mysqldump', ' > ' + file_name)(function(error, stdout, stderr) {
+            cb(error);
+        });
+    };
+};
+
+MysqlDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
+    var that = this;
+    return function(cb) {
+        that.executeRawCommand('mysql', ' < ' + file_name)(function(error, stdout, stderr) {
+            cb(error);
+        });
+    };
+};
+
+MysqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
+    var that = this;
+    return function(cb) {
+        /*
+         * First of all the structure of the database
+         */
+        that.executeRawCommand('mysql', ' < ' + file_name)(function(error, stdout, stderr) {
+            cb(error);
+        });
+    };
 };

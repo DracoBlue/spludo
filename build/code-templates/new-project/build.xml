@@ -1,4 +1,4 @@
-<project name="%%%project.name%%%" default="list" basedir=".">
+<project name="%%%project.name%%%" default="" basedir=".">
 
     <description>
         This is the %%%project.name%%% application built with spludo.
@@ -13,27 +13,28 @@
     <!-- Necessary to use the spludo default tasks -->
     <property name="spludo.directory" location="%%%spludo.directory%%%"/>
     <import file="${spludo.directory}/build/build.xml"/>
-
+    <import file="${spludo.directory}/build/tasks/build-db.xml"/>
+    
     <!-- project specific tasks -->
 
-    <target name="clean" description="clean up" depends="core-clean" >
+    <target name="clean" description="Clean the build directory" depends="core-clean" >
         <delete dir="${build}"/>
     </target>
 
-    <target name="test">
+    <target name="test" description="Execute the tests">
         <exec executable="bash">
             <arg line="-c &quot;node ${spludo.directory}/build/run_tests.js&quot;" />
         </exec>
     </target>
 
-    <target name="test-xml">
+    <target name="test-xml" description="Execute the tests (with xml output)">
         <mkdir dir="${build}" />
         <exec executable="bash">
             <arg line="-c &quot;node ${spludo.directory}/build/run_tests.js xml > ${build}/test_results.xml &quot;" />
         </exec>
     </target>
 
-    <target name="lint">
+    <target name="lint" description="Execute jslint">
         <exec executable="bash">
             <arg line="-c &quot;jsl -conf ${spludo.directory}/build/jsl/jsl.conf -nologo -nofilelisting -process 'static/*.js' -process 'lib/*.js' -process 'controllers/*.js' -process 'views/*.js'&quot;" />
         </exec>
