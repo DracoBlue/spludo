@@ -44,7 +44,9 @@ ConsoleApplication.prototype.run = function() {
     bootstrap_manager.event_emitter.addListener('end', function() {
         try {
             BaseApplication.executePath(self.options["path"])(function (response) {
-                sys.puts(response);
+                if (response !== null) {
+                    sys.puts(response);
+                }
                 finish_handler();
             });
         } catch (e) {
