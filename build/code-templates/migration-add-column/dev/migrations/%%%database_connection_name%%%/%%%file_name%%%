@@ -1,0 +1,14 @@
+module.exports.up = function(database_connection) {
+    return function(cb) {
+        database_connection.addColumn('%%%table_name%%%', '%%%column_name%%%', %%%column_definition%%%)(function(error, message) {
+            cb(error, message);
+        });
+    };
+};
+module.exports.down = function(database_connection) {
+    return function(cb) {
+        database_connection.dropColumn('%%%table_name%%%', '%%%column_name%%%')(function(error, message) {
+            cb(error, message);
+        });
+    };
+};

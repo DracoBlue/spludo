@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* added code generation for Migrations
 * added SqliteDatabaseDriver
 * added a Database Migration system
 * added MysqlDatabaseDriver
