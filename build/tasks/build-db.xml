@@ -38,7 +38,13 @@
             <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js structure:load&quot;" />
         </exec>
     </target>
-    
+
+    <target name="db:structure:reset" description="Remove the current database structure dump.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js structure:reset&quot;" />
+        </exec>
+    </target>
+
     <target name="db:fixtures:dump" description="Dump the current database as fixtures.">
         <exec executable="bash">
             <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js fixtures:dump&quot;" />

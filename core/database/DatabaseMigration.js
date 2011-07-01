@@ -103,6 +103,8 @@ DatabaseMigration.prototype.downgradeAll = function() {
                         already_migrated_files.push(that.migrations_folder + raw_file_name);
                     }
                 }
+                
+                already_migrated_files.reverse();
 
                 if (already_migrated_files.length === 0) {
                     /*
@@ -130,7 +132,7 @@ DatabaseMigration.prototype.downgradeFiles = function(files) {
                 console.log('  > Executing downgrade: ' + file_timestamp);
                 require(file_name_without_file_extension).down(that.connection)(function(error, message) {
                     if (error) {
-                        console.log('Failed downgrading: ' + file_timestamp);
+                        console.log('Failed downgrading: ' + file_timestamp, message);
                         cb(true, message);
                         return ;
                     }
@@ -162,7 +164,7 @@ DatabaseMigration.prototype.migrateFiles = function(files) {
                 console.log('  > Executing migration: ' + file_timestamp);
                 require(file_name_without_file_extension).up(that.connection)(function(error, message) {
                     if (error) {
-                        console.log('Failed migrating: ' + file_timestamp);
+                        console.log('Failed migrating: ' + file_timestamp, message);
                         cb(true, message);
                         return ;
                     }
@@ -203,6 +205,15 @@ DatabaseMigration.prototype.loadStructureDump = function() {
     };
 };
 
+DatabaseMigration.prototype.removeStructureDump = function() {
+    var that = this;
+    return function(cb) {
+        fs.unlink(that.structure_dump_file_path, function(error) {
+            cb(error);
+        });
+    };
+};
+
 DatabaseMigration.prototype.createFixturesDump = function() {
     var that = this;
     return function(cb) {
@@ -217,6 +228,15 @@ DatabaseMigration.prototype.loadFixturesDump = function() {
     return function(cb) {
         that.connection.loadDatabaseFromFile(that.fixtures_dump_file_path)(function(error) {
             cb();
+        });
+    };
+};
+
+DatabaseMigration.prototype.removeFixturesDump = function() {
+    var that = this;
+    return function(cb) {
+        fs.unlink(that.fixtures_dump_file_path, function(error) {
+            cb(error);
         });
     };
 };

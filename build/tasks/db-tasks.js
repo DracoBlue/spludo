@@ -92,6 +92,17 @@ new Controller("db:structure:load", {
     }
 });
 
+new Controller("db:structure:reset", {
+    "execute": function(params, context) {
+        return forEachDatabaseMigration(function(database_name, migration, chain_cb) {
+            console.log('Resetting structure dump for: ' + database_name);
+            migration.removeStructureDump()(function() {
+                chain_cb();
+            });
+        });
+    }
+});
+
 new Controller("db:fixtures:dump", {
     "execute": function(params, context) {
         return forEachDatabaseMigration(function(database_name, migration, chain_cb) {
@@ -108,6 +119,17 @@ new Controller("db:fixtures:load", {
         return forEachDatabaseMigration(function(database_name, migration, chain_cb) {
             console.log('Loading: ' + database_name);
             migration.loadFixturesDump()(function() {
+                chain_cb();
+            });
+        });
+    }
+});
+
+new Controller("db:fixtures:reset", {
+    "execute": function(params, context) {
+        return forEachDatabaseMigration(function(database_name, migration, chain_cb) {
+            console.log('Resetting: ' + database_name);
+            migration.removeFixturesDump()(function() {
                 chain_cb();
             });
         });
