@@ -39,18 +39,18 @@ exports.get%%%service_name%%%ById = function(cb, id) {
     });
 };
 
-exports.update%%%service_name%%% = function(cb, user, values) {
+exports.update%%%service_name%%% = function(cb, %%%service_name_lower_case%%%, values) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
-    this.database_connection.updateTableRows('%%%database_table_name%%%', values, '%%%id_key%%%  = ?', [user.getId()])(function(error, affected_rows) {
+    this.database_connection.updateTableRows('%%%database_table_name%%%', values, '%%%id_key%%%  = ?', [%%%service_name_lower_case%%%.getId()])(function(error, affected_rows) {
         cb(error, affected_rows);
     });
 };
 
-exports.delete%%%service_name%%% = function(cb, user) {
+exports.delete%%%service_name%%% = function(cb, %%%service_name_lower_case%%%) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
-    this.database_connection.deleteTableRows('%%%database_table_name%%%', '%%%id_key%%%  = ?', [user.getId()])(function(error, affected_rows) {
+    this.database_connection.deleteTableRows('%%%database_table_name%%%', '%%%id_key%%%  = ?', [%%%service_name_lower_case%%%.getId()])(function(error, affected_rows) {
         cb(error, affected_rows);
     });
 };
