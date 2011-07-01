@@ -57,4 +57,10 @@
         </exec>
     </target>
     
+    <target name="db:fixtures:reset" description="Remove the current database fixtures dump.">
+        <exec executable="bash">
+            <arg line="-c &quot;node ${spludo.directory}/build/run_db_tasks.js fixtures:reset&quot;" />
+        </exec>
+    </target>
+    
 </project>
