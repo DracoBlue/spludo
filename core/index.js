@@ -124,7 +124,9 @@ database_manager = new DatabaseManager();
  * Databases:
  */
 require("./database/DatabaseMigration");
+require("./database/BaseSqlDatabaseDriver");
 require("./database/MysqlDatabaseDriver");
+require("./database/SqliteDatabaseDriver");
 
 require("./server/CookieSessionManager");
 

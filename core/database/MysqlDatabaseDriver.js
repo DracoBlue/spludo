@@ -58,7 +58,7 @@ MysqlDatabaseDriver = function(name, options) {
     };
 };
 
-extend(true, MysqlDatabaseDriver.prototype, Logging.prototype);
+extend(true, MysqlDatabaseDriver.prototype, BaseSqlDatabaseDriver.prototype);
 MysqlDatabaseDriver.prototype.logging_prefix = 'MysqlDatabaseDriver';
 
 MysqlDatabaseDriver.prototype.query = function(sql, parameters) {
@@ -74,119 +74,16 @@ MysqlDatabaseDriver.prototype.query = function(sql, parameters) {
     };
 };
 
-MysqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_condition, where_parameters) {
+MysqlDatabaseDriver.prototype.execute = function(sql, parameters) {
     var that = this;
     return function(cb) {
-        var sql_parameters = [];
-
-        var sql_string_parts = ['SELECT * FROM `' + table_name + '`'];
-
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
-        
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
+        that.client.query(sql, parameters || [], function (err, results, fields) {
+            if (err) {
+                cb(true, err);
+                return ;
             }
-        }
-
-        that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
-            cb(error, results || []);
-        });        
-    };
-};
-
-MysqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, where_condition, where_parameters) {
-    var that = this;
-    return function(cb) {
-        var sql_parameters = [];
-
-        var sql_string_parts = ['UPDATE `' + table_name + '` SET '];
-        var sql_update_parts = [];
-
-        for (var key in values) {
-            if (values.hasOwnProperty(key)) {
-                sql_update_parts.push('`' + key + '` = ?');
-                sql_parameters.push(values[key]);
-            }
-        }
-
-        if (sql_update_parts.length === 0) {
-            /*
-             * Nothing to do.
-             */
-            cb(true);
-            return ;
-        }
-
-        sql_string_parts.push(' ' + sql_update_parts.join(', '));
-
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
-        
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
-            }
-        }
-
-        that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
-            cb(error, results.affectedRows || results.insertId || 0);
-        });        
-    };
-};
-
-MysqlDatabaseDriver.prototype.createTableRow = function(table_name, values) {
-    var that = this;
-    return function(cb) {
-        var sql_parameters = [];
-
-        var sql_string_parts = ['INSERT INTO `' + table_name + '` '];
-        var sql_key_parts = [];
-        var sql_value_parts = [];
-        var sql_parameters = [];
-
-        for (var key in values) {
-            if (values.hasOwnProperty(key)) {
-                sql_key_parts.push('`' + key + '`');
-                sql_value_parts.push('?');
-                sql_parameters.push(values[key]);
-            }
-        }
-
-        sql_string_parts.push(' (' + sql_key_parts.join(', ') + ')');
-        sql_string_parts.push(' VALUES (');
-        sql_string_parts.push(sql_value_parts.join(', '));
-        sql_string_parts.push(')');
-
-        that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
-            cb(error, results.insertId || 0);
-        });        
-    };
-};
-
-MysqlDatabaseDriver.prototype.deleteTableRows = function(table_name, where_condition, where_parameters) {
-    var that = this;
-    return function(cb) {
-        var sql_parameters = [];
-
-        var sql_string_parts = ['DELETE FROM `' + table_name + '`'];
-
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
-        
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
-            }
-        }
-
-        that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
-            cb(error, results.affectedRows || results.insertId || 0);
-        });        
+            cb(false, results.insertId || results.affectedRows || 0);
+        });
     };
 };
 
@@ -197,6 +94,54 @@ MysqlDatabaseDriver.prototype.shutdown = function() {
             cb();
         });
     };
+};
+
+MysqlDatabaseDriver.prototype.generateColumnDefinitionLineForFieldOptions = function(field_options) {
+    field_options = field_options || {};
+    var query_parts = [];
+
+    if (typeof field_options["type"] !== 'undefined') {
+        query_parts.push(' ');
+        query_parts.push(field_options["type"]);
+        if (typeof field_options["type_size"] !== 'undefined') {
+            query_parts.push('(');
+            query_parts.push(field_options["type_size"]);
+            query_parts.push(')');
+        }
+    }
+    
+    if (typeof field_options["null"] !== 'undefined') {
+        if (field_options["null"]) {
+            query_parts.push(" NULL");
+        } else {
+            query_parts.push(" NOT NULL");
+        }
+    }
+
+    if (typeof field_options["primary"] !== 'undefined') {
+        if (field_options["primary"]) {
+            query_parts.push(" PRIMARY KEY");
+        }
+    }
+    
+    if (typeof field_options["auto_increment"] !== 'undefined') {
+        if (field_options["auto_increment"]) {
+            query_parts.push(" AUTO_INCREMENT");
+        }
+    }
+
+    if (typeof field_options["default"] !== 'undefined') {
+        if (field_options["default"]) {
+            query_parts.push(" DEFAULT ");
+            if (field_options["default"] === null) {
+                query_parts.push(" NULL");
+            } else {
+                query_parts.push(this.escapeValue(field_options["default"]));
+            }
+        }
+    }
+    
+    return query_parts.join(' ');
 };
 
 MysqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
@@ -223,7 +168,8 @@ MysqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
                         'type_size': type_size,
                         'null': result.Null === 'NO' ? false : true,
                         'primary': result.Key === 'PRI' ? true : false,
-                        'default': result.Default
+                        'default': result.Default,
+                        'auto_increment': result.Extra.split(' ').indexOf('auto_increment') === -1 ? false : true
                     });
                 }
             }
@@ -257,9 +203,6 @@ MysqlDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
 MysqlDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     var that = this;
     return function(cb) {
-        /*
-         * First of all the structure of the database
-         */
         that.executeRawCommand('mysqldump', ' > ' + file_name)(function(error, stdout, stderr) {
             cb(error);
         });
@@ -278,9 +221,6 @@ MysqlDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
 MysqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
     var that = this;
     return function(cb) {
-        /*
-         * First of all the structure of the database
-         */
         that.executeRawCommand('mysql', ' < ' + file_name)(function(error, stdout, stderr) {
             cb(error);
         });
