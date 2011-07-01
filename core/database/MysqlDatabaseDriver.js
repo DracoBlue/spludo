@@ -15,7 +15,26 @@ var child_process = require('child_process');
  *   npm install mysql
  * </pre>
  *
- * @extends Logging
+ * @param {String}
+ *      name Name of the mysql database driver instance
+ * @param {String}
+ *      [options.database=null] Name of the database attached to this driver 
+ * @param {String}
+ *      options.host Host of the mysql database server (e.g. "localhost")
+ * @param {Number}
+ *      [options.port=3306] Port of the mysql database server
+ * @param {String}
+ *      [options.user=null] User for the database
+ * @param {String}
+ *      [options.password=null] Password for the database user
+ * @param {String}
+ *      [options[command.mysql]="mysql"] The command line tool to execute raw
+ *          commands on the database
+ * @param {String}
+ *      [options[command.mysqldump]="mysqldump"] The command line tool to
+ *          execute raw dump commands on the database
+ *      
+ * @extends BaseSqlDatabaseDriver
  */
 MysqlDatabaseDriver = function(name, options) {
     this.client = new require('mysql').Client({
@@ -27,6 +46,18 @@ MysqlDatabaseDriver = function(name, options) {
     });
     this.client.connect();
     
+    /**
+     * @private
+     * 
+     * @param {String} tool Either mysql or mysqldump, can be overwritten with
+     *      the <pre>command.mysql</pre> or <pre>command.mysqldump</pre> options
+     * @param {String} parameter_string Parameters to append to the command
+     *      line call.
+     * 
+     * @returns {Boolean} Did an error occur?
+     * @returns {String} Standard out output
+     * @returns {String} Standard error output
+     */
     this.executeRawCommand = function(tool, parameter_string) {
         return function(cb) {
             var command_parts = [
@@ -61,6 +92,13 @@ MysqlDatabaseDriver = function(name, options) {
 extend(true, MysqlDatabaseDriver.prototype, BaseSqlDatabaseDriver.prototype);
 MysqlDatabaseDriver.prototype.logging_prefix = 'MysqlDatabaseDriver';
 
+/**
+ * Query the database with a specific sql command for matching rows. Those
+ * will be returned in an array.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Object}[] The results of the query as array
+ */
 MysqlDatabaseDriver.prototype.query = function(sql, parameters) {
     var that = this;
     return function(cb) {
@@ -74,6 +112,13 @@ MysqlDatabaseDriver.prototype.query = function(sql, parameters) {
     };
 };
 
+/**
+ * Execute an operation on the database. The return value is the amount of affected rows
+ * or the last insert id. 
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} Affected rows or last insert id
+ */
 MysqlDatabaseDriver.prototype.execute = function(sql, parameters) {
     var that = this;
     return function(cb) {
@@ -87,6 +132,9 @@ MysqlDatabaseDriver.prototype.execute = function(sql, parameters) {
     };
 };
 
+/**
+ * Shuts down the database driver and closes the client connection
+ */
 MysqlDatabaseDriver.prototype.shutdown = function() {
     var that = this;
     return function(cb) {
@@ -96,6 +144,15 @@ MysqlDatabaseDriver.prototype.shutdown = function() {
     };
 };
 
+
+/**
+ * @private
+ * 
+ * @param {TableColumnMeta}[] field_options
+ * 
+ * @returns {String} A string which can be used in create table or add/drop
+ *      column sql statements
+ */
 MysqlDatabaseDriver.prototype.generateColumnDefinitionLineForFieldOptions = function(field_options) {
     field_options = field_options || {};
     var query_parts = [];
@@ -144,6 +201,12 @@ MysqlDatabaseDriver.prototype.generateColumnDefinitionLineForFieldOptions = func
     return query_parts.join(' ');
 };
 
+/**
+ * Retrieve the meta data about all columns in that table.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {TableColumnMeta}[]
+ */
 MysqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
     var that = this;
     return function(cb) {
@@ -179,10 +242,22 @@ MysqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
     };
 };
 
+/**
+ * Escape the value in such way, that it can be inserted in any sql query
+ * without sql injection issues
+ * 
+ * @param {Number|String|Boolean}
+ *      [value]
+ * @return {String}
+ */
 MysqlDatabaseDriver.prototype.escapeValue = function(value) {
     return this.client.escape(value);
 };
 
+/**
+ * Store the structure (not the data!) of this database to a file.
+ * @returns {Boolean} Did an error occur?
+ */
 MysqlDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -200,6 +275,11 @@ MysqlDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
     };
 };
 
+/**
+ * Store the entire database to a file.
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 MysqlDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -209,6 +289,12 @@ MysqlDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     };
 };
 
+/**
+ * Load the database structure from a file. Wipes the data if the dump contains
+ * drop table statements.
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 MysqlDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -218,6 +304,10 @@ MysqlDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
     };
 };
 
+/**
+ * Load the entire database from a file.
+ * @returns {Boolean} Did an error occur?
+ */
 MysqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
     var that = this;
     return function(cb) {

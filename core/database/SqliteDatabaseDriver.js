@@ -15,7 +15,15 @@ var child_process = require('child_process');
  *   npm install sqlite
  * </pre>
  *
- * @extends Logging
+  * @param {String}
+ *      name Name of the sqlite database driver instance
+ * @param {String}
+ *      [options.database=null] Name of the database attached to this driver 
+ * @param {String}
+ *      [options.command]="sqlite3"] The command line tool to execute raw
+ *          commands on the database
+ *    
+ * @extends BaseSqlDatabaseDriver
  */
 SqliteDatabaseDriver = function(name, options) {
     var that = this;
@@ -53,6 +61,13 @@ SqliteDatabaseDriver = function(name, options) {
 extend(true, SqliteDatabaseDriver.prototype, BaseSqlDatabaseDriver.prototype);
 SqliteDatabaseDriver.prototype.logging_prefix = 'SqliteDatabaseDriver';
 
+/**
+ * Execute an operation on the database. The return value is the amount of affected rows
+ * or the last insert id. 
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} Affected rows or last insert id
+ */
 SqliteDatabaseDriver.prototype.execute = function(sql, parameters) {
     var that = this;
     return function(cb) {
@@ -86,6 +101,13 @@ SqliteDatabaseDriver.prototype.execute = function(sql, parameters) {
     };
 };
 
+/**
+ * Query the database with a specific sql command for matching rows. Those
+ * will be returned in an array.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Object}[] The results of the query as array
+ */
 SqliteDatabaseDriver.prototype.query = function(sql, parameters) {
     var that = this;
     return function(cb) {
@@ -101,8 +123,9 @@ SqliteDatabaseDriver.prototype.query = function(sql, parameters) {
     };
 };
 
-
-
+/**
+ * Shuts down the database driver and closes the client connection
+ */
 SqliteDatabaseDriver.prototype.shutdown = function() {
     var that = this;
     return function(cb) {
@@ -116,6 +139,14 @@ SqliteDatabaseDriver.prototype.shutdown = function() {
     };
 };
 
+/**
+ * @private
+ * 
+ * @param {TableColumnMeta}[] field_options
+ * 
+ * @returns {String} A string which can be used in create table or add/drop
+ *      column sql statements
+ */
 SqliteDatabaseDriver.prototype.generateColumnDefinitionLineForFieldOptions = function(field_options) {
     field_options = field_options || {};
     var query_parts = [];
@@ -180,6 +211,12 @@ SqliteDatabaseDriver.prototype.dropColumn = function(table_name, field_name, fie
     };
 };
 
+/**
+ * Retrieve the meta data about all columns in that table.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {TableColumnMeta}[]
+ */
 SqliteDatabaseDriver.prototype.getTableMeta = function(table_name) {
     var that = this;
     return function(cb) {
@@ -249,6 +286,14 @@ SqliteDatabaseDriver.prototype.getTableMeta = function(table_name) {
     };
 };
 
+/**
+ * Escape the value in such way, that it can be inserted in any sql query
+ * without sql injection issues
+ * 
+ * @param {Number|String|Boolean}
+ *      [value]
+ * @return {String}
+ */
 SqliteDatabaseDriver.prototype.escapeValue = function(value) {
     if (typeof value === 'number') {
         return value;
@@ -257,6 +302,13 @@ SqliteDatabaseDriver.prototype.escapeValue = function(value) {
     return '\'' + value.toString().replace(/'/g,'\'\'') + '\'';
 };
 
+/**
+ * Unescape a value, which was previously escaped to prevent sql injection.
+ * 
+ * @private
+ * @param {String}
+ * @return {String}
+ */
 SqliteDatabaseDriver.prototype.unescapeValue = function(value) {
     if (typeof value === 'number') {
         return value;
@@ -270,6 +322,10 @@ SqliteDatabaseDriver.prototype.unescapeValue = function(value) {
     throw new Error('Invalid escaped value!');
 };
 
+/**
+ * Store the structure (not the data!) of this database to a file.
+ * @returns {Boolean} Did an error occur?
+ */
 SqliteDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -287,6 +343,11 @@ SqliteDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
     };
 };
 
+/**
+ * Store the entire database to a file.
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 SqliteDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -296,6 +357,12 @@ SqliteDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     };
 };
 
+/**
+ * Load the database structure from a file. Wipes the data if the dump contains
+ * drop table statements.
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 SqliteDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
     var that = this;
     return function(cb) {
@@ -305,6 +372,10 @@ SqliteDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
     };
 };
 
+/**
+ * Load the entire database from a file.
+ * @returns {Boolean} Did an error occur?
+ */
 SqliteDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
     var that = this;
     return function(cb) {

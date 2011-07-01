@@ -20,38 +20,124 @@ BaseSqlDatabaseDriver = function(name, options) {
 extend(true, BaseSqlDatabaseDriver.prototype, Logging.prototype);
 BaseSqlDatabaseDriver.prototype.logging_prefix = 'BaseSqlDatabaseDriver';
 
+
+/**
+ * @class Meta information about a database table column. It is returned by BaseSqlDatabaseDriver#getTableMeta
+ * 
+ * @extends Object
+ * 
+ * @property {String}
+ *            name The name of the field
+ * @property {String}
+ *            type Type of the field (e.g. VARCHAR, INTEGER, TEXT)
+ * @property {Number}
+ *            type_size=null If the type of the field has a specific size,
+ *            this porperty is set to the value. Otherwise it's null.
+ * @property {Boolean}
+ *            null Is it possible to set the column's value to null?
+ * @property {Boolean}
+ *            primary Is this column's part of the primary key?
+ * @property {Boolean}
+ *            auto_increment Has this column an auto_increment?
+ * @property {String|Number|null}
+ *            default=null Default value of this column
+ */
+var TableColumnMeta = function() {
+
+};
+
+/**
+ * Query the database with a specific sql command for matching rows. Those
+ * will be returned in an array.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Object}[] The results of the query as array
+ */
 BaseSqlDatabaseDriver.prototype.query = function(sql, parameters) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Execute an operation on the database. The return value is the amount of affected rows
+ * or the last insert id. 
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} Affected rows or last insert id
+ */
 BaseSqlDatabaseDriver.prototype.execute = function(sql, parameters) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Retrieve the meta data about all columns in that table.
+ * 
+ * @returns {Boolean} Did an error occur?
+ * @returns {TableColumnMeta}[]
+ */
 BaseSqlDatabaseDriver.prototype.getTableMeta = function(table_name) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Escape the value in such way, that it can be inserted in any sql query
+ * without sql injection issues
+ * 
+ * @param {Number|String|Boolean}
+ *      [value]
+ * @return {String}
+ */
 BaseSqlDatabaseDriver.prototype.escapeValue = function(value) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Store the structure (not the data!) of this database to a file.
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.dumpStructureToFile = function(file_name) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Store the entire database to a file.
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.dumpDatabaseToFile = function(file_name) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Load the database structure from a file. Usually wipes the data.
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.loadStructureFromFile = function(file_name) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Load the entire database from a file.
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
     throw new Error('Abstract method is not, yet implemented in: ' + this.logging_prefix);
 };
 
+/**
+ * Select a set of table rows from the database
+ * 
+ * @param {String}
+ *      table_name Name of the table
+ * @param {String}
+ *      [where_condition=''] The filter condition for the selection. May
+ *          contain <code>?</code> characters, which will be replaced
+ *          by the escaped values of the <code>where_parameters</code>
+ *          array.
+ * @param {Array}
+ *      [where_parameters=[]] The bound values for the prepared statement
+ *      at <pre>where_condition</pre>
+ * @returns {Boolean} Did an error occur?
+ * @returns {Object}[] The matching rows as Objects
+ */
 BaseSqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_condition, where_parameters) {
     var that = this;
     return function(cb) {
@@ -75,6 +161,26 @@ BaseSqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_con
     };
 };
 
+/**
+ * Updates a set fo table rows
+ * 
+ * @param {String}
+ *      table_name Name of the table
+ * @param {Object}
+ *      values A key-value object, which holds all table columns which should
+ *      be updated with a new value.
+ * @param {String}
+ *      [where_condition=''] The filter conidition for the selection. May
+ *          contain <code>?</code> characters, which will be replaced
+ *          by the escaped values of the <code>where_parameters</code>
+ *          array.
+ * @param {Array}
+ *      [where_parameters=[]] The bound values for the prepared statement
+ *      at <pre>where_condition</pre>
+ *      
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} The amount of affected rows
+ */
 BaseSqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, where_condition, where_parameters) {
     var that = this;
     return function(cb) {
@@ -116,6 +222,18 @@ BaseSqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, w
     };
 };
 
+/**
+ * Updates a set fo table rows
+ * 
+ * @param {String}
+ *      table_name Name of the table
+ * @param {Object}
+ *      values A key-value object, which holds all table columns which should
+ *      be set.
+ *      
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} The last_insert_id (if the table has one)
+ */
 BaseSqlDatabaseDriver.prototype.createTableRow = function(table_name, values) {
     var that = this;
     return function(cb) {
@@ -145,6 +263,23 @@ BaseSqlDatabaseDriver.prototype.createTableRow = function(table_name, values) {
     };
 };
 
+/**
+ * Removes a set fo table rows
+ * 
+ * @param {String}
+ *      table_name Name of the table
+ * @param {String}
+ *      [where_condition=''] The filter condition for the selection. May
+ *          contain <code>?</code> characters, which will be replaced
+ *          by the escaped values of the <code>where_parameters</code>
+ *          array.
+ * @param {Array}
+ *      [where_parameters=[]] The bound values for the prepared statement
+ *      at <pre>where_condition</pre>
+ *      
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} The amount of affected rows
+ */
 BaseSqlDatabaseDriver.prototype.deleteTableRows = function(table_name, where_condition, where_parameters) {
     var that = this;
     return function(cb) {
@@ -168,12 +303,23 @@ BaseSqlDatabaseDriver.prototype.deleteTableRows = function(table_name, where_con
     };
 };
 
+/**
+ * Shuts down the database driver and closes the client connection
+ */
 BaseSqlDatabaseDriver.prototype.shutdown = function() {
     return function(cb) {
         cb();
     };
 };
 
+/**
+ * Create a new table in the database.
+ * 
+ * @param {String} table_name
+ * @param {TableColumnMeta}[] The field_options for the table's columns
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.createTable = function(table_name, fields) {
     var that = this;
     
@@ -197,6 +343,13 @@ BaseSqlDatabaseDriver.prototype.createTable = function(table_name, fields) {
     };
 };
 
+/**
+ * Drops a table from the database.
+ * 
+ * @param {String} table_name
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.dropTable = function(table_name) {
     var that = this;
     
@@ -212,6 +365,15 @@ BaseSqlDatabaseDriver.prototype.dropTable = function(table_name) {
     };
 };
 
+/**
+ * Creates a new column in a table.
+ * 
+ * @param {String} table_name
+ * @param {String} field_name
+ * @param {TableColumnMeta} field_options
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.addColumn = function(table_name, field_name, field_options) {
     var that = this;
 
@@ -227,6 +389,16 @@ BaseSqlDatabaseDriver.prototype.addColumn = function(table_name, field_name, fie
     };
 };
 
+/**
+ * Alters a column of a table. All field_options must be set, missing ones will
+ * usually be removed.
+ * 
+ * @param {String} table_name
+ * @param {String} field_name
+ * @param {TableColumnMeta} field_options
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.alterColumn = function(table_name, field_name, field_options) {
     var that = this;
     var new_field_name = field_options.name || field_name;
@@ -243,6 +415,14 @@ BaseSqlDatabaseDriver.prototype.alterColumn = function(table_name, field_name, f
     };
 };
 
+/**
+ * Drops a field from the database table.
+ * 
+ * @param {String} table_name
+ * @param {String} field_name
+ * 
+ * @returns {Boolean} Did an error occur?
+ */
 BaseSqlDatabaseDriver.prototype.dropColumn = function(table_name, field_name) {
     var that = this;
 
