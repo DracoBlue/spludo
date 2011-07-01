@@ -58,6 +58,8 @@ DatabaseMigration.prototype.migrateAll = function() {
                     return ;
                 }
                 
+                not_yet_migrated_files.sort();
+                
                 console.log(' Executing missing migrations:');
                 that.connection.query("CREATE TABLE executed_migrations ("
                 + "`name` VARCHAR( 255 ) NOT NULL,"
@@ -104,6 +106,7 @@ DatabaseMigration.prototype.downgradeAll = function() {
                     }
                 }
                 
+                already_migrated_files.sort();
                 already_migrated_files.reverse();
 
                 if (already_migrated_files.length === 0) {
