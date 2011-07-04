@@ -260,6 +260,12 @@ SqliteDatabaseDriver.prototype.getTableMeta = function(table_name) {
                         type_name = field_data[2];
                         field_options = ' ' + (field_data[3] || '') + ' ';
                     }
+
+                    /*
+                     * The field name may be with ` or without, so let's just
+                     * replace it with nothing
+                     */
+                    field_name = field_name.replace(/`/g, '');
                     
                     var default_value = null;
                     /*
