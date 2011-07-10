@@ -442,14 +442,15 @@ BaseSqlDatabaseDriver.prototype.deleteTableRows = function(table_name, where_con
 
         var sql_string_parts = ['DELETE FROM `' + table_name + '`'];
 
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
-        
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
+        var sql_parameters = [];
+        if (where_condition) {
+            var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
+            if (converted_criteria_data[0]) {
+                cb(true, 'Invalid criteria');
+                return ;
             }
+            sql_string_parts.push(converted_criteria_data[1]);
+            sql_parameters = converted_criteria_data[2];
         }
 
         that.execute(sql_string_parts.join(''), sql_parameters)(function(error, affected_rows) {
