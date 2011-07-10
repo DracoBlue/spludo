@@ -123,11 +123,117 @@ BaseSqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
 };
 
 /**
+ * Converts a given where_condition + where_parameters to proper sql. where_condition may
+ * be a string or a criteria.
+ * 
+ * @param {String|Criteria}
+ *      [where_condition=''] The filter condition for the selection. May
+ *          contain <code>?</code> characters, which will be replaced
+ *          by the escaped values of the <code>where_parameters</code>
+ *          array.
+ * @param {Array}
+ *      [where_parameters=[]] The bound values for the prepared statement
+ *      at <pre>where_condition</pre>
+ * @returns {Boolean} Did an error occur?
+ * @returns {Object}[] The matching rows as Objects
+ */
+BaseSqlDatabaseDriver.prototype.convertWhereConditionAndParametersToSqlQueryAndParameters = function(where_condition, where_parameters) {
+    if (typeof where_condition === 'string') {
+        /*
+         * If it's just a string and no criteria, just return it properly
+         */
+        if (where_condition.length > 0) {
+            return [false, ' WHERE ' + where_condition, where_parameters];
+        }
+        
+        return [false, '', []];
+    }
+    
+    /*
+     * It actually is a criteria. We'll ignore where_parameters in this case.
+     */
+    var criteria = where_condition;
+    
+    var sql_string_parts = [];
+    var sql_parameters = [];
+    var where_parts = criteria.getWhereParts();
+    var where_parts_length = where_parts.length;
+    
+    if (where_parts_length > 0) {
+        sql_string_parts.push('WHERE');
+    }
+    
+    for (var i = 0; i < where_parts_length; i++) {
+        if (i !== 0) {
+            sql_string_parts.push('AND');
+        }
+        
+        var where_part = where_parts[i];
+        var key = where_part[0];
+        var where_part_operator = where_part[1];
+        var value_or_values = where_part[2];
+        
+        /*
+         * FIXME: Escape KEYS!
+         */
+        sql_string_parts.push('`' + key + '`');
+        
+        if (where_part_operator === 'IN') {
+            sql_string_parts.push('IN');
+            var escaped_values = [];
+            var values = value_or_values;
+            var values_length = values.length;
+            if (values_length === 0) {
+                /*
+                 * We have no values, but an in query -> fail!
+                 */
+                return [true];
+            }
+            for (var v = 0; v < values_length; v++) {
+                escaped_values.push(this.escapeValue(values[v]));
+            }
+            sql_string_parts.push('(');
+            sql_string_parts.push(escaped_values.join(','));
+            sql_string_parts.push(')');
+        } else {
+            sql_string_parts.push(where_part_operator + ' ? ');
+            sql_parameters.push(value_or_values); 
+        }
+    }
+    
+    var order_by_parts = criteria.getOrderByParts();
+    var order_by_parts_length = order_by_parts.length;
+    if (order_by_parts_length > 0) {
+        sql_string_parts.push('ORDER BY');
+        var order_by_sql = [];
+        for (var m = 0; m < order_by_parts_length; m++) {
+            order_by_sql.push(order_by_parts[m][0] + ' ' + order_by_parts[m][1]);
+        }
+        sql_string_parts.push(order_by_sql.join(', '));
+    }
+    
+    var limit = criteria.getLimit();
+    var offset = criteria.getOffset();
+    
+    if (limit !== null || offset !== null) {
+        limit = limit || 0;
+        offset = offset || 0;
+        if (offset === 0) {
+            sql_string_parts.push('LIMIT ' + limit);
+        } else {
+            sql_string_parts.push('LIMIT ' + offset + ', ' + limit);
+        }
+    }
+    
+    return [false, ' ' + sql_string_parts.join(' '), sql_parameters];
+};
+
+/**
  * Select a set of table rows from the database
  * 
  * @param {String}
  *      table_name Name of the table
- * @param {String}
+ * @param {String|Criteria}
  *      [where_condition=''] The filter condition for the selection. May
  *          contain <code>?</code> characters, which will be replaced
  *          by the escaped values of the <code>where_parameters</code>
@@ -141,18 +247,17 @@ BaseSqlDatabaseDriver.prototype.loadDatabaseFromFile = function(file_name) {
 BaseSqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_condition, where_parameters) {
     var that = this;
     return function(cb) {
-        var sql_parameters = [];
-
         var sql_string_parts = ['SELECT * FROM `' + table_name + '`'];
-
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
         
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
+        var sql_parameters = [];
+        if (where_condition) {
+            var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
+            if (converted_criteria_data[0]) {
+                cb(true, 'Invalid criteria');
+                return ;
             }
+            sql_string_parts.push(converted_criteria_data[1]);
+            sql_parameters = converted_criteria_data[2];
         }
 
         that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
@@ -162,6 +267,50 @@ BaseSqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_con
 };
 
 /**
+ * Count the matching rows of a table from the database
+ * 
+ * @param {String}
+ *      table_name Name of the table
+ * @param {String|Criteria}
+ *      [where_condition=''] The filter condition for the selection. May
+ *          contain <code>?</code> characters, which will be replaced
+ *          by the escaped values of the <code>where_parameters</code>
+ *          array.
+ * @param {Array}
+ *      [where_parameters=[]] The bound values for the prepared statement
+ *      at <pre>where_condition</pre>
+ * @returns {Boolean} Did an error occur?
+ * @returns {Number} The matching rows count
+ */
+BaseSqlDatabaseDriver.prototype.countTableRows = function(table_name, where_condition, where_parameters) {
+    var that = this;
+    return function(cb) {
+        var sql_string_parts = ['SELECT COUNT(*) bsqldbdrv__count FROM `' + table_name + '`'];
+
+        var sql_parameters = [];
+        if (where_condition) {
+            var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
+            if (converted_criteria_data[0]) {
+                cb(true, 'Invalid criteria');
+                return ;
+            }
+            sql_string_parts.push(converted_criteria_data[1]);
+            sql_parameters = converted_criteria_data[2];
+        }
+
+        that.query(sql_string_parts.join(''), sql_parameters)(function(error, results) {
+            if (!error && results.length) {
+                cb(false, parseInt(results[0]['bsqldbdrv__count'], 10));
+            } else {
+                cb(true, 0);
+            }
+        });        
+    };
+};
+
+
+
+/**
  * Updates a set fo table rows
  * 
  * @param {String}
@@ -169,7 +318,7 @@ BaseSqlDatabaseDriver.prototype.selectTableRows = function(table_name, where_con
  * @param {Object}
  *      values A key-value object, which holds all table columns which should
  *      be updated with a new value.
- * @param {String}
+ * @param {String|Criteria}
  *      [where_condition=''] The filter conidition for the selection. May
  *          contain <code>?</code> characters, which will be replaced
  *          by the escaped values of the <code>where_parameters</code>
@@ -203,19 +352,25 @@ BaseSqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, w
             cb(true, 0);
             return ;
         }
-
-        sql_string_parts.push(' ' + sql_update_parts.join(', '));
-
-        if (where_condition && where_condition.length > 0) {
-            sql_string_parts.push(' WHERE ' + where_condition);
         
-            where_parameters = where_parameters || [];
-            var where_parameters_length = where_parameters.length;
-            for (var i = 0; i < where_parameters_length; i++) {
-                sql_parameters.push(where_parameters[i]);
+        sql_string_parts.push(' ' + sql_update_parts.join(', '));
+        
+        var where_parameters = [];
+        if (where_condition) {
+            var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
+            if (converted_criteria_data[0]) {
+                cb(true, 'Invalid criteria');
+                return ;
             }
+            sql_string_parts.push(converted_criteria_data[1]);
+            where_parameters = converted_criteria_data[2];
         }
 
+        var where_parameters_length = where_parameters.length;
+        for (var i = 0; i < where_parameters_length; i++) {
+            sql_parameters.push(where_parameters[i]);
+        }
+        
         that.execute(sql_string_parts.join(''), sql_parameters)(function(error, affected_rows) {
             cb(error, affected_rows);
         });        
@@ -268,7 +423,7 @@ BaseSqlDatabaseDriver.prototype.createTableRow = function(table_name, values) {
  * 
  * @param {String}
  *      table_name Name of the table
- * @param {String}
+ * @param {String|Criteria}
  *      [where_condition=''] The filter condition for the selection. May
  *          contain <code>?</code> characters, which will be replaced
  *          by the escaped values of the <code>where_parameters</code>
