@@ -221,7 +221,7 @@ SqliteDatabaseDriver.prototype.getTableMeta = function(table_name) {
     var that = this;
     return function(cb) {
         that.connectToDatabase(function() {
-            that.client.execute('SELECT sql FROM sqlite_master WHERE type=\'table\' and name=\'' + table_name + '\';', function (err, results) {
+            that.client.execute('PRAGMA table_info(\'' + table_name + '\');', function (err, results) {
                 if (err) {
                     cb(true, err);
                     return ;
@@ -232,58 +232,29 @@ SqliteDatabaseDriver.prototype.getTableMeta = function(table_name) {
                     return ;
                 }
                 
-                var sql = results[0].sql;
-                
                 var fields = [];
                 
-                var raw_parts = /^CREATE[^\(]+\((.*)\)$/.exec(sql)[1].split(', ');
-                
-                for (var i = 0; i < raw_parts.length; i++) {
-                    raw_parts[i] = raw_parts[i].trim();
-                    var field_name = null;
-                    var type_name = null;
-                    var type_size = null;
-                    var field_options = '';
-                    
-                    var field_data = null;
+                for (var key in results) {
+                    if (results.hasOwnProperty(key)) {
+                        var result = results[key];
+                        result['type'] = result['type'].trim();
+                        var type_data = result['type'].match(/^([^\(]+)\(([^\(]+)\)/);
+                        var type_name = (type_data && type_data[1].trim()) || result['type'];
+                        var type_size = (type_data && parseInt(type_data[2], 10)) || null;
 
-                    field_data = /([^ ]+)[ ]+([^ ]+)[ ]+\(([^\)]+)\)( .*)?/.exec(raw_parts[i]);
-                    
-                    if (field_data) {
-                        field_name = field_data[1];
-                        type_name = field_data[2];
-                        type_size = parseInt(field_data[3].trim(), 10);
-                        field_options = ' ' + (field_data[4] || '') + ' ';
-                    } else {
-                        field_data = /([^ ]+)[ ]+([^ ]+)( .*)?/.exec(raw_parts[i]);
-                        field_name = field_data[1];
-                        type_name = field_data[2];
-                        field_options = ' ' + (field_data[3] || '') + ' ';
+                        fields.push({
+                            'name': result.name,
+                            'type': type_name,
+                            'type_size': type_size,
+                            'null': result.notnull === 0 ? true : false,
+                            'primary': result.pk === 0 ? false : true,
+                            'default': result.dflt_value,
+                            /*
+                             * PK's in Sqlite are usually auto increment values globaly.
+                             */
+                            'auto_increment': result.pk === 0 ? false : true
+                        });
                     }
-
-                    /*
-                     * The field name may be with ` or without, so let's just
-                     * replace it with nothing
-                     */
-                    field_name = field_name.replace(/`/g, '');
-                    
-                    var default_value = null;
-                    /*
-                     * This is _really_ hacky. We shouldn't do it that way ...
-                     */
-                    var default_values_data = / DEFAULT[ ]+(.+)$/.exec(field_options);
-                    if (default_values_data) {
-                        default_value = that.unescapeValue(default_values_data[1].trim());
-                    }
-                    
-                    fields.push({
-                        'name': field_name,
-                        'type': type_name,
-                        'type_size': type_size,
-                        'null': field_options.indexOf(' NOT NULL  ') !== -1 ? false : true,
-                        'primary': field_options.indexOf(' AUTOINCREMENT ') !== -1 ? true : false,
-                        'default': default_value
-                    });
                 }
                 
                 cb(false, fields);
