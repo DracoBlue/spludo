@@ -355,7 +355,6 @@ BaseSqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, w
         
         sql_string_parts.push(' ' + sql_update_parts.join(', '));
         
-        var where_parameters = [];
         if (where_condition) {
             var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
             if (converted_criteria_data[0]) {
@@ -442,7 +441,6 @@ BaseSqlDatabaseDriver.prototype.deleteTableRows = function(table_name, where_con
 
         var sql_string_parts = ['DELETE FROM `' + table_name + '`'];
 
-        var sql_parameters = [];
         if (where_condition) {
             var converted_criteria_data = that.convertWhereConditionAndParametersToSqlQueryAndParameters(where_condition, where_parameters || []);
             if (converted_criteria_data[0]) {
