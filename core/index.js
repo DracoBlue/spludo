@@ -12,6 +12,8 @@ var fs = require('fs');
 
 var application_directory = process.cwd() + "/";
 
+require.paths.push(application_directory + "node_modules");
+
 require('./util');
 
 require("./StringToolkit");
