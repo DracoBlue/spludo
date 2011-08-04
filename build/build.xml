@@ -13,14 +13,14 @@
     
     <target name="core-test" description="Execute the core tests">
         <exec executable="bash" dir="${spludo.directory}/spludotests">
-            <arg line="-c &quot;node ../build/run_tests.js&quot;" />
+            <arg line="-c &quot;vows -spec&quot;" />
         </exec>
     </target>
     
     <target name="core-test-xml" description="Execute the core tests (with xml output)">
         <mkdir dir="${build}/core" />
         <exec executable="bash" dir="${spludo.directory}/spludotests">
-            <arg line="-c &quot;node ../build/run_tests.js xml > ${build}/core/test_results.xml &quot;" />
+            <arg line="-c &quot;vows --xunit > ${build}/core/test_results.xml &quot;" />
         </exec>
     </target>
     

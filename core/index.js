@@ -63,8 +63,6 @@ if (!config.get('logging', {}).log_core) {
             "ServerApplication",
             "StaticFilesManager",
             "StorageManager",
-            'TestApplication',
-            'TestSuiteManager',
             "ViewManager",
             "ValidatorManager"
         ];
@@ -319,4 +317,3 @@ plugin_names.forEach(function(plugin_name) {
 require("./BaseApplication");
 require("./server/ServerApplication");
 require("./console/ConsoleApplication");
-require("./test/TestApplication");

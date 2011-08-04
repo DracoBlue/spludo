@@ -18,7 +18,7 @@ The tests also support an option to return .xml format (junit-style) to
 integrate with tools like hudson or cruise control.
 
 You may run the tests with the following command to achieve that:
- node ../build/run_tests.js xml
+ ant core-test-xml
  
 Please use that ONLY to retrieve the xml format, because the "ant core-test"
 command is way more convenient for the normal test execution.
