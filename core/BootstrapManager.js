@@ -25,6 +25,10 @@ BootstrapManager = function() {
     
     this.event_emitter = new events.EventEmitter();
     
+    this.is_loaded = false;
+    
+    this.loaded_listeners = [];
+    
     this.event_emitter.addListener("finishPart", function() {
         that.trace("finishPart");
         that.mandatory_elements_missing_count--;
@@ -33,6 +37,13 @@ BootstrapManager = function() {
         if (that.mandatory_elements_missing_count === 0) {
             that.info("All necessary parts loaded.");
             that.event_emitter.emit("end");
+            that.is_loaded = true;
+            that.loaded_listeners.forEach(function(listener) {
+                process.nextTick(function() {
+                    listener();
+                });
+            });
+            that.loaded_listeners = [];
         }
     });
 };
@@ -115,4 +126,14 @@ BootstrapManager.prototype.whenReady = function(parts, callback) {
     };
     
     setTimeout(checkIfReadyHandler, 100);
+};
+
+BootstrapManager.prototype.whenLoaded = function(callback) {
+    if (this.is_loaded) {
+        process.nextTick(function() {
+           callback(); 
+        });
+    } else {
+        this.loaded_listeners.push(callback);
+    }
 };
