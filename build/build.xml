@@ -28,16 +28,13 @@
     <target name="core-lint-xml" description="Execute jslint on the spludo core (with xml output)">
         <mkdir dir="${build}/core" />
         <exec executable="bash" dir="${spludo.directory}">
-            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -process 'core/*.js' -nologo -nofilelisting -nocontext -nosummary > ${build}/core/jslint_report.txt &quot;" />
-        </exec>
-        <exec executable="bash" dir="${spludo.directory}">
-            <arg line="-c &quot;node build/convert_jslint_to_checkstyle.js ${build}/core/jslint_report.txt > ${build}/core/jslint_report.xml &quot;" />
+            <arg line="-c &quot;jshint core/*.js core/server/*.js core/console core/storage core/database core/test --config build/jshint.conf --jslint-reporter > ${build}/core/jslint_report.xml &quot;" />
         </exec>
     </target>
 
     <target name="core-lint" description="Execute jslint on the spludo core">
         <exec executable="bash" dir="${spludo.directory}">
-            <arg line="-c &quot;jsl -conf build/jsl/jsl.conf -nologo -nofilelisting -process 'core/*.js'&quot;" />
+            <arg line="-c &quot;jshint core/*.js core/server/*.js core/console core/storage core/database core/test --config build/jshint.conf &quot;" />
         </exec>
     </target>
 

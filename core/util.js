@@ -86,7 +86,7 @@ GLOBAL.extend = function() {
     }
 
     // Handle case when target is a string or something (possible in deep copy)
-    if ( typeof target !== "object" && !typeof target === 'function') {
+    if ( typeof target !== "object" && typeof target !== 'function') {
         target = {};
     }
 
@@ -102,8 +102,8 @@ GLOBAL.extend = function() {
             return false;
         }
         
-        var has_own_constructor = hasOwnProperty.call(obj, "constructor");
-        var has_is_property_of_method = hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf");
+        var has_own_constructor = Object.hasOwnProperty.call(obj, "constructor");
+        var has_is_property_of_method = Object.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf");
         // Not own constructor property must be Object
         if ( obj.constructor && !has_own_constructor && !has_is_property_of_method) {
             return false;
@@ -113,11 +113,11 @@ GLOBAL.extend = function() {
         // if last one is own, then all properties are own.
     
         var last_key;
-        for ( key in obj ) {
+        for (var key in obj) {
             last_key = key;
         }
         
-        return typeof last_key === "undefined" || hasOwnProperty.call( obj, last_key );
+        return typeof last_key === "undefined" || Object.hasOwnProperty.call( obj, last_key );
     };
 
 

@@ -34,7 +34,7 @@ ValidatorManager.prototype.getValidator = function(name) {
 
 ValidatorManager.prototype.shutdown = function() {
     this.trace("shutdown", arguments);
-    for (name in this.validators) {
+    for (var name in this.validators) {
         /*
          * Check wether this validator has a shutdown method.
          */

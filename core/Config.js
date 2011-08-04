@@ -14,7 +14,7 @@ Config = function() {
 };
 
 Config.prototype.setValues = function(values) {
-    for (k in values) {
+    for (var k in values) {
         this.values[k] = values[k];
     }
 };

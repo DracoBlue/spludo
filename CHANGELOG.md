@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* added jshint instead of jslint
 * added support for node_modules folder in project directory
 * added Criteria for DatabaseDrivers
 * added code generation for Migrations

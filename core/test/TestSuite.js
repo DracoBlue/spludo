@@ -16,8 +16,8 @@ TestSuite = function(name, tests) {
     this.tests = [];
 
     this.resetStats();
-
-    for (i in tests) {
+    
+    for (var i in tests) {
         this.addTest(i, tests[i]);
     }
 
@@ -96,33 +96,31 @@ TestSuite.prototype.execute = function() {
         var tests_count = self.tests.length;
         
         var tests_chain = [];
-    
-        for ( var i = 0; i < tests_count; i++) {
-            (function(current_test) {
-                tests_chain.push(function(chain_cb) {
-                    self.log('Running test:' + current_test.name);
-                    var stats_before_test = {
+        
+        self.tests.forEach(function(current_test) {
+            tests_chain.push(function(chain_cb) {
+                self.log('Running test:' + current_test.name);
+                var stats_before_test = {
                         assertions: self.stats.assertions,
                         failures: self.stats.failures
-                    };
-                    self.current_test_name = current_test.name;
-                    self.stats.tests++;
-                    var before_time = (new Date()).getMilliseconds();
-                    var test_result = current_test.execute.apply(self, []);
-                    if (typeof test_result === 'function') {
-                        /*
-                         * It's an asynchronous test!
-                         */
-                        test_result(function() {
-                            executedTestsHandler(current_test, stats_before_test, before_time, chain_cb);
-                        });
-                    } else {
+                };
+                self.current_test_name = current_test.name;
+                self.stats.tests++;
+                var before_time = (new Date()).getMilliseconds();
+                var test_result = current_test.execute.apply(self, []);
+                if (typeof test_result === 'function') {
+                    /*
+                     * It's an asynchronous test!
+                     */
+                    test_result(function() {
                         executedTestsHandler(current_test, stats_before_test, before_time, chain_cb);
-                    }
-                });
-            })(self.tests[i]);
-        }
-        
+                    });
+                } else {
+                    executedTestsHandler(current_test, stats_before_test, before_time, chain_cb);
+                }
+            });            
+        });
+    
         tests_chain.push(function() {
             self.log('Finished test suite: ' + self.name);
             cb();

@@ -391,8 +391,6 @@ BaseSqlDatabaseDriver.prototype.updateTableRows = function(table_name, values, w
 BaseSqlDatabaseDriver.prototype.createTableRow = function(table_name, values) {
     var that = this;
     return function(cb) {
-        var sql_parameters = [];
-
         var sql_string_parts = ['INSERT INTO `' + table_name + '` '];
         var sql_key_parts = [];
         var sql_value_parts = [];

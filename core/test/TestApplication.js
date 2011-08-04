@@ -58,16 +58,13 @@ TestApplication.prototype.run = function() {
         /*
          * For each plugin, load what needs to be loaded.
          */
-        for ( var i = 0; i < plugin_names.length; i++) {
-            (function(i) {
-                var plugin_name = plugin_names[i];
-                load_tests_chain.push(function(chain_cb) {
-                    test_suite_manager.loadTests(application_directory + "plugins/" + plugin_name + "/", plugin_name)(function(){
-                        chain_cb();
-                    });
+        plugin_names.forEach(function(plugin_name) {
+            load_tests_chain.push(function(chain_cb) {
+                test_suite_manager.loadTests(application_directory + "plugins/" + plugin_name + "/", plugin_name)(function(){
+                    chain_cb();
                 });
-            })(i);
-        }
+            });
+        });
         
         load_tests_chain.push(function(chain_cb) {
             self.log('Running all suites');

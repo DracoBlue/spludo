@@ -12,7 +12,8 @@
  * @extends Logging
  */
 DatabaseManager = function() {
-    this.databases = {};
+    this.databases = [];
+    this.databases_by_name = {};
 };
 
 extend(true, DatabaseManager.prototype, Logging.prototype);
@@ -75,16 +76,18 @@ Criteria.prototype.addOrderBy = function(key, direction) {
 };
 
 DatabaseManager.prototype.getDatabase = function(name) {
-    if (!this.databases[name]) {
+    if (!this.databases_by_name[name]) {
         var options = config.get('database_connections', {})[name];
         if (typeof options === 'undefined') {
             throw new Error("Database Configuration for name " + name + " not found!");
         } else {
             var engine = GLOBAL[options.driver_name || "StorageDatabaseDriver"];
-            this.databases[name] = new engine(name, options.driver_options || {});            
+            var database = new engine(name, options.driver_options || {});
+            this.databases_by_name[name] = database;
+            this.databases.push(database);
         }
     }
-    return this.databases[name];
+    return this.databases_by_name[name];
 };
 
 DatabaseManager.prototype.createCriteria = function() {
@@ -98,26 +101,24 @@ DatabaseManager.prototype.shutdown = function() {
     return function(cb) {
         var shutdown_chain = [];
         
-        for (name in self.databases) {
+        self.databases.forEach(function(current_database) {
             /*
              * Check whether this database has a shutdown method.
              */
-            if (typeof self.databases[name].shutdown === "function") {
-                (function(current_database) {
-                    shutdown_chain.push(function(chain_cb) {
-                        try {
-                            current_database.shutdown()(function() {
-                                chain_cb();
-                            });
-                        } catch (e) {
-                            self.warn("Exception when trying to shutdown database " + name);
-                            self.warn(e);
+            if (typeof current_database.shutdown === "function") {
+                shutdown_chain.push(function(chain_cb) {
+                    try {
+                        current_database.shutdown()(function() {
                             chain_cb();
-                        }
-                    });
-                })(self.databases[name]);
+                        });
+                    } catch (e) {
+                        self.warn("Exception when trying to shutdown database " + name);
+                        self.warn(e);
+                        chain_cb();
+                    }
+                });
             }
-        }
+        });
         
         if (shutdown_chain.length) {
             group.apply(GLOBAL, shutdown_chain)(function() {

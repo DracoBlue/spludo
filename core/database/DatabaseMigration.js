@@ -61,10 +61,10 @@ DatabaseMigration.prototype.migrateAll = function() {
                 not_yet_migrated_files.sort();
                 
                 console.log(' Executing missing migrations:');
-                that.connection.query("CREATE TABLE executed_migrations ("
-                + "`name` VARCHAR( 255 ) NOT NULL,"
-                + "UNIQUE ( `name` )"
-                + ");")(function(error) {
+                that.connection.query("CREATE TABLE executed_migrations (" +
+                    "`name` VARCHAR( 255 ) NOT NULL," +
+                    "UNIQUE ( `name` )" +
+                    ");")(function(error) {
                     that.migrateFiles(not_yet_migrated_files)(cb);
                 });
             });

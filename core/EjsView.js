@@ -6,6 +6,10 @@
  * information, please see the LICENSE file in the root folder.
  */
 
+/*jshint
+ evil: true
+*/
+
 var fs = require("fs");
 
 var next_ejs_slot_view_id = 1;

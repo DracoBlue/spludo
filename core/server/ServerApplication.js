@@ -104,7 +104,7 @@ ServerApplication.prototype.run = function() {
             } catch (e) {
                 context.status = 404;
                 response = "Page not found!\n\n" + (e.stack || e.message) + "\n\n";
-                response = response + "Arguments: " + sys.inspect(e.arguments);
+                response = response + "Arguments: " + sys.inspect(e['arguments']);
                 responseHandler(response);
             }
         });

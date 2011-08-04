@@ -34,7 +34,7 @@ DataMapperManager.prototype.getDataMapper = function(name) {
 
 DataMapperManager.prototype.shutdown = function() {
     this.trace("shutdown", arguments);
-    for (name in this.data_mappers) {
+    for (var name in this.data_mappers) {
         /*
          * Check wether this data_mapper has a shutdown method.
          */

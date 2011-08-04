@@ -291,32 +291,30 @@ view_manager.loadViews(application_directory);
 /*
  * For each plugin, load what needs to be loaded.
  */
-for ( var i = 0; i < plugin_names.length; i++) {
-    (function (plugin_name) {
-        var plugin_folder = application_directory + "plugins/" + plugin_name + "/";
+plugin_names.forEach(function(plugin_name) {
+    var plugin_folder = application_directory + "plugins/" + plugin_name + "/";
     
-        var plugin_token = bootstrap_manager.createMandatoryElement('plugin.' + plugin_name);
-        
-        controller_manager.loadControllers(plugin_folder, plugin_name);
-        view_manager.loadViews(plugin_folder, plugin_name);
-        
-        try {
-            plugin_static_folder_stats = fs.statSync(plugin_folder + "static/");
-            static_files_manager.addFolder(plugin_folder + "static/");
-        } catch (e) {
-            /*
-            * Folder does not exist!
-            */
-        }
-        
-        bootstrap_manager.whenReady([
-            'plugin.' + plugin_name + '.controllers',
-            'plugin.' + plugin_name + '.views'
-        ], function() {
-            bootstrap_manager.finishMandatoryElement(plugin_token);
-        });
-    })(plugin_names[i]);
-}
+    var plugin_token = bootstrap_manager.createMandatoryElement('plugin.' + plugin_name);
+    
+    controller_manager.loadControllers(plugin_folder, plugin_name);
+    view_manager.loadViews(plugin_folder, plugin_name);
+    
+    try {
+        plugin_static_folder_stats = fs.statSync(plugin_folder + "static/");
+        static_files_manager.addFolder(plugin_folder + "static/");
+    } catch (e) {
+        /*
+        * Folder does not exist!
+        */
+    }
+    
+    bootstrap_manager.whenReady([
+        'plugin.' + plugin_name + '.controllers',
+        'plugin.' + plugin_name + '.views'
+    ], function() {
+        bootstrap_manager.finishMandatoryElement(plugin_token);
+    });
+});
 
 require("./BaseApplication");
 require("./server/ServerApplication");

@@ -54,7 +54,7 @@ ControllerManager.prototype.getController = function(path) {
         return [ this.controllers_string[path][0], [ path ], this.controllers_string[path][1] ];
     }
 
-    for (i in this.controllers_regexp) {
+    for (var i in this.controllers_regexp) {
         var match = String(path).match(this.controllers_regexp[i][0]);
         if (match) {
             return [ this.controllers_regexp[i][1], match, this.controllers_regexp[i][2] ];
@@ -82,7 +82,7 @@ ControllerManager.prototype.loadControllers = function(path, plugin_name) {
     try {
         child_process.exec("ls " + path + "controllers/*.js", function(err, stdout, stderr) {
             var files_in_folder = stdout.split("\n");
-            for (i in files_in_folder) {
+            for (var i in files_in_folder) {
                 if (files_in_folder[i] !== "") {
                     controller_files.push(files_in_folder[i]);
                 }

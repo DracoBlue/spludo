@@ -39,7 +39,7 @@ Options.prototype = {
             return;
         }
 
-        for (option_key in options) {
+        for (var option_key in options) {
             this.options[option_key] = options[option_key];
         }
     }

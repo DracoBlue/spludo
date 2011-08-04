@@ -83,7 +83,7 @@ CookieSessionManager.prototype.createSession = function(session) {
          * of session. We need some way better function here.
          */
         var tryToFindAnUnusedSessionId = function() {
-            var session_id = new String(Math.floor(Math.random()*999999999));
+            var session_id = Math.floor(Math.random()*999999999).toString();
             self.storage.has(session_id)(function(is_in_use) {
                 if (is_in_use) {
                     session_id = null;

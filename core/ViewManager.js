@@ -86,20 +86,18 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
             if (!err) {
                 var files_in_folder = stdout.split("\n");
     
-                for (i in files_in_folder) {
-                    for (i in files_in_folder) {
-                        var file = files_in_folder[i].substr(2);
-                        if (file !== "") {
-                            view_files.push(file);
-                        }
+                for (var i in files_in_folder) {
+                    var file = files_in_folder[i].substr(2);
+                    if (file !== "") {
+                        view_files.push(file);
                     }
                 }
 
                 self.current_plugin_name = plugin_name;
                 
                 
-                for (i in view_files) {
-                    var view_file_name = view_files[i];
+                for (var m in view_files) {
+                    var view_file_name = view_files[m];
                     require(path + 'views/' + view_file_name);
                 }
                 
@@ -114,54 +112,50 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
         bootstrap_manager.finishMandatoryElement(js_bootstrap_token);
     }
     
-    var view_engines_length = this.view_engines.length;
-    for (var i=0; i<view_engines_length; i++) {
-        (function(view_engine_options) {
-            var file_extension = view_engine_options[0];
-            self.debug('loadViews',"loading views for file extension: " + file_extension);
-            var engine = GLOBAL[view_engine_options[1]];
-            
-            var part_bootstrap_token_name = bootstrap_token_name + '.' + file_extension;
-            views_bootstrap_parts.push(part_bootstrap_token_name);
-            
-            var part_bootstrap_token = bootstrap_manager.createMandatoryElement(part_bootstrap_token_name);
-    
-            try {
-                child_process.exec("cd " + path + "views && find . -name '*." + file_extension + "'", function(err, stdout, stderr) {
-                    var view_files = [];
+    this.view_engines.forEach(function(view_engine_options) {
+        var file_extension = view_engine_options[0];
+        self.debug('loadViews',"loading views for file extension: " + file_extension);
+        var engine = GLOBAL[view_engine_options[1]];
+        
+        var part_bootstrap_token_name = bootstrap_token_name + '.' + file_extension;
+        views_bootstrap_parts.push(part_bootstrap_token_name);
+        
+        var part_bootstrap_token = bootstrap_manager.createMandatoryElement(part_bootstrap_token_name);
+        
+        try {
+            child_process.exec("cd " + path + "views && find . -name '*." + file_extension + "'", function(err, stdout, stderr) {
+                var view_files = [];
+                
+                if (!err) {
+                    var files_in_folder = stdout.split("\n");
                     
-                    if (!err) {
-                        var files_in_folder = stdout.split("\n");
-                        
-                        for (i in files_in_folder) {
-                            var file = files_in_folder[i].substr(2);
-                            if (file !== "") {
-                                view_files.push(file);
-                            }
+                    for (var i in files_in_folder) {
+                        var file = files_in_folder[i].substr(2);
+                        if (file !== "") {
+                            view_files.push(file);
                         }
                     }
-                    
-                    self.current_plugin_name = plugin_name;
-                    
-                    for (i in view_files) {
-                        var view_file_name = view_files[i];
-                        view_name = view_file_name.substr(0, view_file_name.length - file_extension.length - 1);
-                        new engine(view_name, path + 'views/' + view_file_name);
-                    }
-                    
-                    delete self.current_plugin_name;
-                    
-                    bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
-                });
-            } catch (e) {
-                /*
-                 * views folder does not exist!
-                 */
+                }
+                
+                self.current_plugin_name = plugin_name;
+                
+                for (var m in view_files) {
+                    var view_file_name = view_files[m];
+                    view_name = view_file_name.substr(0, view_file_name.length - file_extension.length - 1);
+                    new engine(view_name, path + 'views/' + view_file_name);
+                }
+                
+                delete self.current_plugin_name;
+                
                 bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
-            }
-        })(this.view_engines[i]);
-        
-    }
+            });
+        } catch (e) {
+            /*
+             * views folder does not exist!
+             */
+            bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
+        }
+    });
     
     bootstrap_manager.whenReady(views_bootstrap_parts, function() {
         bootstrap_manager.finishMandatoryElement(views_bootstrap_token);

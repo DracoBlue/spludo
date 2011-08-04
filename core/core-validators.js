@@ -37,7 +37,7 @@ new Validator("number", {
             var num_parameter = 0;
     
             try {
-                num_parameter = new Number(parameter);
+                num_parameter = parseInt(parameter, 10);
             } catch (e) {
                 errors.push("type");
                 cb(errors);

@@ -48,16 +48,13 @@ TestSuiteManager.prototype.execute = function() {
     
     return function(cb) {
         var suite_chain = [];
-        
-        for ( var i = 0; i < suites_count; i++) {
-            (function(current_suite) {
-                suite_chain.push(function(chain_cb) {
-                    current_suite.suite.execute()(function() {
-                        chain_cb();
-                    });
+        self.suites.forEach(function(current_suite) {
+            suite_chain.push(function(chain_cb) {
+                current_suite.suite.execute()(function() {
+                    chain_cb();
                 });
-            })(self.suites[i]);
-        }
+            });
+        });
         
         suite_chain.push(function() {
             cb();
@@ -261,13 +258,13 @@ TestSuiteManager.prototype.loadTests = function(path, plugin_name) {
     
                 var test_files = [];
                 
-                for (i in files_in_folder) {
-                    if (files_in_folder[i] !== "") {
-                        test_files.push(files_in_folder[i]);
+                for (var m in files_in_folder) {
+                    if (files_in_folder[m] !== "") {
+                        test_files.push(files_in_folder[m]);
                     }
                 }
                 
-                for (i in test_files) {
+                for (var i in test_files) {
                     self.current_test_file = test_files[i];
                     self.current_plugin_name = plugin_name;
                     

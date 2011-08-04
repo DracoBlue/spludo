@@ -47,7 +47,7 @@ BootstrapManager.prototype.createToken = function() {
     var token = false;
     
     while (!token) {
-        token = new String(Math.floor(Math.random()*999999999));
+        token = Math.floor(Math.random()*999999999).toString();
         
         if (typeof this.taken_tokens[token] !== "undefined") {
             token = false;

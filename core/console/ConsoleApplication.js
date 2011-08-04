@@ -39,7 +39,7 @@ ConsoleApplication.prototype.run = function() {
              */
             process.exit(0);
         });
-    }
+    };
 
     bootstrap_manager.event_emitter.addListener('end', function() {
         try {
@@ -51,7 +51,7 @@ ConsoleApplication.prototype.run = function() {
             });
         } catch (e) {
             response = "Error\n" + (e.stack || e.message) + "\n\n";
-            response = response + "Arguments: " + sys.inspect(e.arguments);
+            response = response + "Arguments: " + sys.inspect(e['arguments']);
             sys.puts(response);
             finish_handler();
         }

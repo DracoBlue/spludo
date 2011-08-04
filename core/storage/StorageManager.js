@@ -12,7 +12,8 @@
  * @extends Logging
  */
 StorageManager = function() {
-    this.storages = {};
+    this.storages_by_name = {};
+    this.storages = [];
 };
 
 extend(true, StorageManager.prototype, Logging.prototype);
@@ -21,12 +22,13 @@ StorageManager.prototype.logging_prefix = 'StorageManager';
 
 StorageManager.prototype.addStorage = function(name, storage) {
     this.trace("addStorage", arguments);
-    this.storages[name] = storage;
+    this.storages_by_name[name] = storage;
+    this.storages.push(storage);
 };
 
 StorageManager.prototype.getStorage = function(name) {
-    if (this.storages[name]) {
-        return this.storages[name];
+    if (this.storages_by_name[name]) {
+        return this.storages_by_name[name];
     }
 
     throw new Error("Storage for name " + name + " not found!");
@@ -39,26 +41,24 @@ StorageManager.prototype.shutdown = function() {
     return function(cb) {
         var shutdown_chain = [];
         
-        for (name in self.storages) {
+        self.storages.forEach(function(current_storage) {
             /*
              * Check whether this storage has a shutdown method.
              */
-            if (typeof self.storages[name].shutdown === "function") {
-                (function(current_storage) {
-                    shutdown_chain.push(function(chain_cb) {
-                        try {
-                            current_storage.shutdown()(function() {
-                                chain_cb();
-                            });
-                        } catch (e) {
-                            self.warn("Exception when trying to shutdown storage " + name);
-                            self.warn(e);
+            if (typeof current_storage.shutdown === "function") {
+                shutdown_chain.push(function(chain_cb) {
+                    try {
+                        current_storage.shutdown()(function() {
                             chain_cb();
-                        }
-                    });
-                })(self.storages[name]);
+                        });
+                    } catch (e) {
+                        self.warn("Exception when trying to shutdown storage " + name);
+                        self.warn(e);
+                        chain_cb();
+                    }
+                });
             }
-        }
+        });
         
         if (shutdown_chain.length) {
             group.apply(GLOBAL, shutdown_chain)(function() {

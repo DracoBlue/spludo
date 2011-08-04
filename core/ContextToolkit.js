@@ -123,7 +123,7 @@ ContextToolkit = {
         var cookie_key = null;
         var cookie_value = null;
 
-        for (i in raw) {
+        for (var i in raw) {
             /*
              * Transform (raw_line): test1=%7B%22key%22%3A%22value%22%7D To
              * (cookie_key: cookie_value): "test1": { "key": "value" }
@@ -174,7 +174,7 @@ ContextToolkit = {
 
         var set_cookie_headers = [];
 
-        for (key in cookies) {
+        for (var key in cookies) {
             /*
              * We did not received that cookie as request cookie, or at least
              * changed it afterwards.
