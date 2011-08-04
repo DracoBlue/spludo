@@ -27,7 +27,7 @@ var sys = require("sys");
  * Runs the application.
  */
 ConsoleApplication.prototype.run = function() {
-    var self = this;
+    var that = this;
     var response = null;
 
     var finish_handler = function() {
@@ -43,7 +43,7 @@ ConsoleApplication.prototype.run = function() {
 
     bootstrap_manager.event_emitter.addListener('end', function() {
         try {
-            BaseApplication.executePath(self.options["path"])(function (response) {
+            BaseApplication.executePath(that.options["path"])(function (response) {
                 if (response !== null) {
                     sys.puts(response);
                 }

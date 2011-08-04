@@ -22,7 +22,7 @@ Validation = function() {
 extend(true, Validation.prototype, Options.prototype, Logging.prototype);
 
 Validation.prototype.execute = function(values) {
-    var self = this;
+    var that = this;
 
     return function(cb) {
         var errors = [];
@@ -65,7 +65,7 @@ Validation.prototype.execute = function(values) {
         };
 
         for (var key in values) {
-            var validators = self.validators[key];
+            var validators = that.validators[key];
             if (validators) {
                 var validators_length = validators.length;
                 for (var v = 0; v < validators_length; v++) {
@@ -79,7 +79,7 @@ Validation.prototype.execute = function(values) {
         }
 
         group.apply(GLOBAL, validation_group)(function() {
-            self.validated_values = validated_values;
+            that.validated_values = validated_values;
 
             cb(errors);
         });

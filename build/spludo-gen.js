@@ -38,7 +38,7 @@ SpludoGenerator.addCodeTemplate = function(name, options) {
 };
 
 SpludoGenerator.handleCodeTemplate = function(name) {
-    var self = this;
+    var that = this;
     
     var code_template = this.code_templates[name];
     var parameters = code_template.parameters;
@@ -108,7 +108,7 @@ SpludoGenerator.handleCodeTemplate = function(name) {
             
             if (typeof code_template.preExecuteHook !== "undefined") {
                 code_template.preExecuteHook(values)(function() {
-                    self.performCodeTemplate(__dirname + '/code-templates/' + code_template.name + '/', values)(function() {
+                    that.performCodeTemplate(__dirname + '/code-templates/' + code_template.name + '/', values)(function() {
                         if (typeof code_template.postExecuteHook !== "undefined") {
                             code_template.postExecuteHook(values)(function() {
                                 cb();
@@ -119,7 +119,7 @@ SpludoGenerator.handleCodeTemplate = function(name) {
                     });
                 });
             } else {
-                self.performCodeTemplate(__dirname + '/code-templates/' + code_template.name + '/', values)(function() {
+                that.performCodeTemplate(__dirname + '/code-templates/' + code_template.name + '/', values)(function() {
                     if (typeof code_template.postExecuteHook !== "undefined") {
                         code_template.postExecuteHook(values)(function() {
                             cb();
@@ -137,7 +137,7 @@ SpludoGenerator.handleCodeTemplate = function(name) {
 };
 
 SpludoGenerator.performCodeTemplate = function(template_directory, values) {
-    var self = this;
+    var that = this;
 
     var values_length = values.length;
     
@@ -180,21 +180,21 @@ SpludoGenerator.performCodeTemplate = function(template_directory, values) {
                 
                 if (file_stat.isDirectory()) {
                     try {
-                        fs.mkdirSync(self.target_directory + token_replacer(file), 0755);
-                        sys.puts("Created folder: " + self.target_directory + token_replacer(file));
+                        fs.mkdirSync(that.target_directory + token_replacer(file), 0755);
+                        sys.puts("Created folder: " + that.target_directory + token_replacer(file));
                     } catch (error)
                     {
-                        sys.puts("Folder already exists: " + self.target_directory + token_replacer(file));
+                        sys.puts("Folder already exists: " + that.target_directory + token_replacer(file));
                     }
                 } else {
                     if (path.extname(file) === '.jpg' || path.extname(file) === '.png') {
                         var raw_file_contents = fs.readFileSync(template_directory + file, 'binary').toString();
-                        fs.writeFileSync(self.target_directory + token_replacer(file), raw_file_contents, 'binary');
-                        sys.puts("Created (binary) file: " + self.target_directory + token_replacer(file));
+                        fs.writeFileSync(that.target_directory + token_replacer(file), raw_file_contents, 'binary');
+                        sys.puts("Created (binary) file: " + that.target_directory + token_replacer(file));
                     } else {
                         var raw_file_contents = fs.readFileSync(template_directory + file).toString();
-                        fs.writeFileSync(self.target_directory + token_replacer(file), token_replacer(raw_file_contents));
-                        sys.puts("Created file: " + self.target_directory + token_replacer(file));
+                        fs.writeFileSync(that.target_directory + token_replacer(file), token_replacer(raw_file_contents));
+                        sys.puts("Created file: " + that.target_directory + token_replacer(file));
                     }
                 }
             }

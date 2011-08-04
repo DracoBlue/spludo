@@ -96,12 +96,12 @@ DatabaseManager.prototype.createCriteria = function() {
 
 DatabaseManager.prototype.shutdown = function() {
     this.trace("shutdown", arguments);
-    var self = this;
+    var that = this;
     
     return function(cb) {
         var shutdown_chain = [];
         
-        self.databases.forEach(function(current_database) {
+        that.databases.forEach(function(current_database) {
             /*
              * Check whether this database has a shutdown method.
              */
@@ -112,8 +112,8 @@ DatabaseManager.prototype.shutdown = function() {
                             chain_cb();
                         });
                     } catch (e) {
-                        self.warn("Exception when trying to shutdown database " + name);
-                        self.warn(e);
+                        that.warn("Exception when trying to shutdown database " + name);
+                        that.warn(e);
                         chain_cb();
                     }
                 });

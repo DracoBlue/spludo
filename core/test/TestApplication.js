@@ -33,7 +33,7 @@ var sys = require("sys");
 var fs = require("fs");
 
 TestApplication.prototype.run = function() {
-    var self = this;
+    var that = this;
     bootstrap_manager.event_emitter.addListener('end', function() {
         var application_directory = process.cwd() + "/";
 
@@ -67,9 +67,9 @@ TestApplication.prototype.run = function() {
         });
         
         load_tests_chain.push(function(chain_cb) {
-            self.log('Running all suites');
+            that.log('Running all suites');
             test_suite_manager.execute()(function() {
-                if (self.options.format === "xml") {
+                if (that.options.format === "xml") {
                     sys.puts(test_suite_manager.getResultAsJunitXml());
                 } else {
                     sys.puts(test_suite_manager.getResultAsText());
@@ -79,7 +79,7 @@ TestApplication.prototype.run = function() {
         });
 
         load_tests_chain.push(function() {
-            self.log('Shutting down the storage manager');
+            that.log('Shutting down the storage manager');
             storage_manager.shutdown()(function() {
                 /*
                  * We need to call this, because for instance watchFile does not

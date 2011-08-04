@@ -62,7 +62,7 @@ ViewManager.prototype.getView = function(name, plugin_name) {
  */
 ViewManager.prototype.loadViews = function(path, plugin_name) {
     this.trace('loadViews', arguments);
-    var self = this;
+    var that = this;
     
     var bootstrap_token_name = "views";
     
@@ -93,7 +93,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     }
                 }
 
-                self.current_plugin_name = plugin_name;
+                that.current_plugin_name = plugin_name;
                 
                 
                 for (var m in view_files) {
@@ -101,7 +101,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     require(path + 'views/' + view_file_name);
                 }
                 
-                delete self.current_plugin_name;
+                delete that.current_plugin_name;
             }
             bootstrap_manager.finishMandatoryElement(js_bootstrap_token);
         });
@@ -114,7 +114,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
     
     this.view_engines.forEach(function(view_engine_options) {
         var file_extension = view_engine_options[0];
-        self.debug('loadViews',"loading views for file extension: " + file_extension);
+        that.debug('loadViews',"loading views for file extension: " + file_extension);
         var engine = GLOBAL[view_engine_options[1]];
         
         var part_bootstrap_token_name = bootstrap_token_name + '.' + file_extension;
@@ -137,7 +137,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     }
                 }
                 
-                self.current_plugin_name = plugin_name;
+                that.current_plugin_name = plugin_name;
                 
                 for (var m in view_files) {
                     var view_file_name = view_files[m];
@@ -145,7 +145,7 @@ ViewManager.prototype.loadViews = function(path, plugin_name) {
                     new engine(view_name, path + 'views/' + view_file_name);
                 }
                 
-                delete self.current_plugin_name;
+                delete that.current_plugin_name;
                 
                 bootstrap_manager.finishMandatoryElement(part_bootstrap_token);
             });

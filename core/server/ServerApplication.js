@@ -50,14 +50,14 @@ var querystring = require("querystring");
  * Runs the application.
  */
 ServerApplication.prototype.run = function() {
-    var self = this;
+    var that = this;
     
     var finishRequest = function(req, res, body, params) {
         var context = {
             status: 200,
             headers: {
                 'Content-Type': 'text/plain',
-                'Server': self.options.server_name
+                'Server': that.options.server_name
             }
         };
         

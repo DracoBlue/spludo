@@ -25,9 +25,9 @@ dev_server = {
     },
 
     "start": function() {
-        var self = this;
+        var that = this;
         sys.debug('DEVSERVER: Starting server');
-        self.watchFiles();
+        that.watchFiles();
 
         this.process = child_process.spawn(process.ARGV[0], ['run_server.js']);
 
@@ -42,23 +42,23 @@ dev_server = {
         this.process.addListener('exit', function (code) {
             sys.debug('DEVSERVER: Child process exited: ' + code);
             this.process = null;
-            if (self.restarting) {
-                self.restarting = true;
-                self.unwatchFiles();
-                self.start();
+            if (that.restarting) {
+                that.restarting = true;
+                that.unwatchFiles();
+                that.start();
             }
         });
 
     },
 
     "watchFiles": function() {
-        var self = this;
+        var that = this;
 
         child_process.exec('find . | grep "\.js$"', function(error, stdout, stderr) {
             var files = stdout.trim().split("\n");
 
             files.forEach(function(file) {
-                self.files.push(file);
+                that.files.push(file);
                 fs.watchFile(file, {interval : 500}, function(curr, prev) {
                     if (curr.mtime.valueOf() != prev.mtime.valueOf() || curr.ctime.valueOf() != prev.ctime.valueOf()) {
                         sys.debug('DEVSERVER: Restarting because of changed file at ' + file);

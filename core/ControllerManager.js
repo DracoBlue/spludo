@@ -69,7 +69,7 @@ ControllerManager.prototype.getController = function(path) {
  */
 ControllerManager.prototype.loadControllers = function(path, plugin_name) {
     this.trace("loadControllers", arguments);
-    var self = this;
+    var that = this;
     
     var bootstrap_token_name = "controllers";
     
@@ -88,13 +88,13 @@ ControllerManager.prototype.loadControllers = function(path, plugin_name) {
                 }
             }
             
-            self.current_plugin_name = plugin_name;
+            that.current_plugin_name = plugin_name;
 
             for (i in controller_files) {
                 require(controller_files[i].substr(0, controller_files[i].length - 3));
             }
     
-            delete self.current_plugin_name;
+            delete that.current_plugin_name;
         });
         bootstrap_manager.finishMandatoryElement(bootstrap_token);
     } catch (e) {

@@ -26,21 +26,21 @@ StaticFilesManager.prototype.logging_prefix = 'StaticFilesManager';
 
 StaticFilesManager.prototype.addFolder = function(folder_name) {
     this.trace('addFolder', arguments);
-    var self = this;
+    var that = this;
     
     if (this.folders[folder_name]) {
         throw new Error("Folder " + folder_name + " already added!");
     }
     this.folders[folder_name] = true;
 
-    self.debug("addFolder","adding " + folder_name + " as static folder.");
+    that.debug("addFolder","adding " + folder_name + " as static folder.");
     child_process.exec("cd " + folder_name + " && find . -type f", function(err, stdout, stderr) {
         var files = stdout.split("\n");
         var files_length = files.length;
         for ( var f = 0; f < files_length; f++) {
             if (files[f] !== "") {
                 var file_name = files[f].substr(2);
-                self.addFile(file_name, folder_name + file_name);
+                that.addFile(file_name, folder_name + file_name);
             }
         }
     });

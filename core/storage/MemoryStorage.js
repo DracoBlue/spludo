@@ -20,28 +20,28 @@ MemoryStorage = function(name, options) {
 extend(true, MemoryStorage.prototype, Options.prototype, Logging.prototype);
 
 MemoryStorage.prototype.set = function(key, value) {
-    var self = this;
+    var that = this;
     return function(cb) {
-        self.values[key] = value;
+        that.values[key] = value;
         cb(true);
     };
 };
 
 MemoryStorage.prototype.get = function(key) {
-    var self = this;
+    var that = this;
     return function(cb) {
-        if (typeof self.values[key] === 'undefined') {
+        if (typeof that.values[key] === 'undefined') {
             cb();
         } else {
-            cb(self.values[key]);
+            cb(that.values[key]);
         }
     };
 };
 
 MemoryStorage.prototype.has = function(key) {
-    var self = this;
+    var that = this;
     return function(cb) {
-        if (typeof self.values[key] === 'undefined') {
+        if (typeof that.values[key] === 'undefined') {
             cb(false);
         } else {
             cb(true);
@@ -50,12 +50,12 @@ MemoryStorage.prototype.has = function(key) {
 };
 
 MemoryStorage.prototype.remove = function(key) {
-    var self = this;
+    var that = this;
     return function(cb) {
-        if (typeof self.values[key] === 'undefined') {
+        if (typeof that.values[key] === 'undefined') {
             cb(false);
         } else {
-            delete self.values[key];
+            delete that.values[key];
             cb(true);
         }
     };

@@ -14,7 +14,7 @@ var events = require("events");
  * @extends Logging
  */
 BootstrapManager = function() {
-    var self = this;
+    var that = this;
     
     this.mandatory_elements_missing_count = 0;
     this.mandatory_elements_missing = {};
@@ -26,13 +26,13 @@ BootstrapManager = function() {
     this.event_emitter = new events.EventEmitter();
     
     this.event_emitter.addListener("finishPart", function() {
-        self.trace("finishPart");
-        self.mandatory_elements_missing_count--;
+        that.trace("finishPart");
+        that.mandatory_elements_missing_count--;
 
-        self.trace("finishPart", "there are " + self.mandatory_elements_missing_count + " to go");
-        if (self.mandatory_elements_missing_count === 0) {
-            self.info("All necessary parts loaded.");
-            self.event_emitter.emit("end");
+        that.trace("finishPart", "there are " + that.mandatory_elements_missing_count + " to go");
+        if (that.mandatory_elements_missing_count === 0) {
+            that.info("All necessary parts loaded.");
+            that.event_emitter.emit("end");
         }
     });
 };
@@ -86,7 +86,7 @@ BootstrapManager.prototype.finishMandatoryElement = function(token) {
 BootstrapManager.prototype.whenReady = function(parts, callback) {
     this.trace("whenReady", arguments);
     
-    var self = this;
+    var that = this;
     
     var check_if_ready_timer = null;
     
@@ -95,11 +95,11 @@ BootstrapManager.prototype.whenReady = function(parts, callback) {
         var tokens_missing = 0;
         var parts_waiting = 0;
         for (var i=0; i<parts_length; i++) {
-            if (typeof self.name_token_map[parts[i]] === 'undefined') {
+            if (typeof that.name_token_map[parts[i]] === 'undefined') {
                 tokens_missing++;
             } else {
-                var part_token = self.name_token_map[parts[i]];
-                if (typeof self.mandatory_elements_missing[part_token] !== 'undefined') {
+                var part_token = that.name_token_map[parts[i]];
+                if (typeof that.mandatory_elements_missing[part_token] !== 'undefined') {
                     parts_waiting++;
                 }
             }

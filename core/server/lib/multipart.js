@@ -64,7 +64,7 @@ function cat (message, callback) {
 // the stream's "parts" object is a nested collection of the header objects
 // check the stream's "part" member to know what it's currently chewin on.
 // this.part.parent refers to that part's containing message (which may be
-// the stream itself)
+// the stream itthat)
 // child messages inherit their parent's headers
 // A non-multipart message looks just like a multipart message with a
 // single part.
@@ -79,7 +79,7 @@ function Stream (message) {
       this._pause = message;
     }
   } else if (message.body) {
-    var self = this;
+    var that = this;
     if (message.body.pause && message.body.resume) {
       this._pause = message.body;
     }

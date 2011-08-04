@@ -12,7 +12,7 @@
  * @extends Logging
  */
 ServiceManager = function() {
-    var self = this;
+    var that = this;
     this.instances = {};
 };
 

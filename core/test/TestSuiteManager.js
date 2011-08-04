@@ -41,14 +41,14 @@ TestSuiteManager.prototype.addTestSuite = function(name, suite, plugin_name, fil
  * Execute all registered suites.
  */
 TestSuiteManager.prototype.execute = function() {
-    var self = this;
+    var that = this;
     
     var suites_count = this.suites.length;
     var current_suite = null;
     
     return function(cb) {
         var suite_chain = [];
-        self.suites.forEach(function(current_suite) {
+        that.suites.forEach(function(current_suite) {
             suite_chain.push(function(chain_cb) {
                 current_suite.suite.execute()(function() {
                     chain_cb();
@@ -246,11 +246,11 @@ TestSuiteManager.prototype.getResultAsText = function() {
  * Get all available views and load them ... .
  */
 TestSuiteManager.prototype.loadTests = function(path, plugin_name) {
-    var self = this;
+    var that = this;
     
     return function(cb) {
     
-        self.info("loadTests: plugin:" + plugin_name + ", path:" + path);
+        that.info("loadTests: plugin:" + plugin_name + ", path:" + path);
         
         try {
             child_process.exec("ls " + path + "tests/*.js", function(err, stdout, stderr) {
@@ -265,15 +265,15 @@ TestSuiteManager.prototype.loadTests = function(path, plugin_name) {
                 }
                 
                 for (var i in test_files) {
-                    self.current_test_file = test_files[i];
-                    self.current_plugin_name = plugin_name;
+                    that.current_test_file = test_files[i];
+                    that.current_plugin_name = plugin_name;
                     
                     require(test_files[i].substr(0, test_files[i].length - 3));
                     
-                    delete self.current_plugin_name;
+                    delete that.current_plugin_name;
                 }
                 
-                delete self.current_test_file;
+                delete that.current_test_file;
                 
                 cb();
             });

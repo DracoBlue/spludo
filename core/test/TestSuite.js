@@ -48,66 +48,66 @@ TestSuite.prototype.resetStats = function() {
 };
 
 TestSuite.prototype.execute = function() {
-    var self = this;
+    var that = this;
 
     var current_test;
     
     var executedTestsHandler = function(current_test, stats_before_test, before_time, cb) {
-        if (self.stats.failures != stats_before_test.failures) {
+        if (that.stats.failures != stats_before_test.failures) {
             /*
              * An failure occured :(.
              */
-            self.stats.errors++;
+            that.stats.errors++;
         } else {
-            self.stats.tests_success++;
+            that.stats.tests_success++;
         }
 
         current_test.stats = {
-            assertions: self.stats.assertions - stats_before_test.assertions,
-            failures: self.stats.failures - stats_before_test.failures,
+            assertions: that.stats.assertions - stats_before_test.assertions,
+            failures: that.stats.failures - stats_before_test.failures,
             "time": ((new Date()).getMilliseconds() - before_time) / 1000
         };
 
         current_test.stats.assertions_success = current_test.stats.assertions - current_test.stats.failures;
-        self.log('Finished test: ' + current_test.name);
+        that.log('Finished test: ' + current_test.name);
         cb();
     };
     
     return function(cb) {
-        self.resetStats();
+        that.resetStats();
         
-        self.log('Running test suite: ' + self.name);
+        that.log('Running test suite: ' + that.name);
     
-        self.current_name = "";
+        that.current_name = "";
     
         QUnit.log = function(result, message) {
             if (!result) {
-                self.stats.failures++;
-                self.failures.push( {
-                    name: self.current_test_name,
+                that.stats.failures++;
+                that.failures.push( {
+                    name: that.current_test_name,
                     message: message
                 });
             } else {
-                self.stats.assertions_success++;
+                that.stats.assertions_success++;
             }
-            self.stats.assertions++;
+            that.stats.assertions++;
         };
     
-        var tests_count = self.tests.length;
+        var tests_count = that.tests.length;
         
         var tests_chain = [];
         
-        self.tests.forEach(function(current_test) {
+        that.tests.forEach(function(current_test) {
             tests_chain.push(function(chain_cb) {
-                self.log('Running test:' + current_test.name);
+                that.log('Running test:' + current_test.name);
                 var stats_before_test = {
-                        assertions: self.stats.assertions,
-                        failures: self.stats.failures
+                        assertions: that.stats.assertions,
+                        failures: that.stats.failures
                 };
-                self.current_test_name = current_test.name;
-                self.stats.tests++;
+                that.current_test_name = current_test.name;
+                that.stats.tests++;
                 var before_time = (new Date()).getMilliseconds();
-                var test_result = current_test.execute.apply(self, []);
+                var test_result = current_test.execute.apply(that, []);
                 if (typeof test_result === 'function') {
                     /*
                      * It's an asynchronous test!
@@ -122,7 +122,7 @@ TestSuite.prototype.execute = function() {
         });
     
         tests_chain.push(function() {
-            self.log('Finished test suite: ' + self.name);
+            that.log('Finished test suite: ' + that.name);
             cb();
         });
         

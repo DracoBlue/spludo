@@ -36,12 +36,12 @@ StorageManager.prototype.getStorage = function(name) {
 
 StorageManager.prototype.shutdown = function() {
     this.trace("shutdown", arguments);
-    var self = this;
+    var that = this;
     
     return function(cb) {
         var shutdown_chain = [];
         
-        self.storages.forEach(function(current_storage) {
+        that.storages.forEach(function(current_storage) {
             /*
              * Check whether this storage has a shutdown method.
              */
@@ -52,8 +52,8 @@ StorageManager.prototype.shutdown = function() {
                             chain_cb();
                         });
                     } catch (e) {
-                        self.warn("Exception when trying to shutdown storage " + name);
-                        self.warn(e);
+                        that.warn("Exception when trying to shutdown storage " + name);
+                        that.warn(e);
                         chain_cb();
                     }
                 });

@@ -772,7 +772,7 @@ QUnit.equiv = function () {
 
             "regexp": function (b, a) {
                 return hoozit(b) === "regexp" &&
-                    a.source === b.source && // the regex itself
+                    a.source === b.source && // the regex itthat
                     a.global === b.global && // and its modifers (gmi) ...
                     a.ignoreCase === b.ignoreCase &&
                     a.multiline === b.multiline;
