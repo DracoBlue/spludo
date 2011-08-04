@@ -139,6 +139,8 @@ SpludoGenerator.handleCodeTemplate = function(name) {
 SpludoGenerator.performCodeTemplate = function(template_directory, values) {
     var that = this;
 
+    values.push(['spludo_directory', spludo_directory]);
+    
     var values_length = values.length;
     
     var token_replacer = function(input) {

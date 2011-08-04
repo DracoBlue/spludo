@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* spludo_directory variable is now set always when calling spludo-gen
 * added bootstrap_manager.whenLoaded(callback) to get notified as
   soon as the app is ready.
 * replaced self with that
