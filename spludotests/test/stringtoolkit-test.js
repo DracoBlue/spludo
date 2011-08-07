@@ -5,10 +5,10 @@
  * Licensed under the terms of MIT License. For the full copyright and license
  * information, please see the LICENSE file in the root folder.
  */
+require('./../../core');
+
 var vows = require("vows");
 var assert = require("assert");
-
-require('./../../core');
 
 vows.describe("core.stringtoolkit").addBatch({
     
