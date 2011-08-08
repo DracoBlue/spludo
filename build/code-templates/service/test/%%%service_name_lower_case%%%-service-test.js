@@ -11,16 +11,16 @@ vows.describe("services").addBatch({
             bootstrap_manager.whenLoaded(this.callback);        
         },
     
-        createUpdateDelete: function() {
-            var that = this;
-            var %%%service_name_lower_case%%%_service = service_manager.get('%%%service_name%%%');
+        createUpdateDelete: {
+            'topic': function() {
+                var that = this;
+                var %%%service_name_lower_case%%%_service = service_manager.get('%%%service_name%%%');
+        
+                var test_data_key = 'name';
+                var test_data_key_getter = 'getName';
+                var test_data_initial_value = 'MyName';
+                var test_data_updated_value = 'MyUpdatedName';
     
-            var test_data_key = 'name';
-            var test_data_key_getter = 'getName';
-            var test_data_initial_value = 'MyName';
-            var test_data_updated_value = 'MyUpdatedName';
-    
-            return function(cb) {
                 var %%%service_name_lower_case%%%_id = null;
                 var %%%service_name_lower_case%%% = null;
                 chain(function(chain_cb) {
@@ -31,9 +31,8 @@ vows.describe("services").addBatch({
                     creation_parameters[test_data_key] = test_data_initial_value;
     
                     %%%service_name_lower_case%%%_service.create%%%service_name%%%(function(error, new_%%%service_name_lower_case%%%_id) {
-                        equal(error, false);
+                        assert.equal(error, false);
                         %%%service_name_lower_case%%%_id = new_%%%service_name_lower_case%%%_id;
-                        that.debug('last_insert_id', %%%service_name_lower_case%%%_id);
                         chain_cb();
                     }, creation_parameters);
                 }, function(chain_cb) {
@@ -41,9 +40,9 @@ vows.describe("services").addBatch({
                      * Now let's try to find the created one again
                      */
                     %%%service_name_lower_case%%%_service.get%%%service_name%%%ById(function(found_%%%service_name_lower_case%%%) {
-                        equal(typeof %%%service_name_lower_case%%% !== 'undefined', true);
+                        assert.equal(typeof %%%service_name_lower_case%%% !== 'undefined', true);
                         %%%service_name_lower_case%%% = found_%%%service_name_lower_case%%%;
-                        equal(%%%service_name_lower_case%%%[test_data_key_getter](), test_data_initial_value);
+                        assert.equal(%%%service_name_lower_case%%%[test_data_key_getter](), test_data_initial_value);
                         chain_cb();
                     }, %%%service_name_lower_case%%%_id);
                 }, function(chain_cb) {
@@ -54,8 +53,8 @@ vows.describe("services").addBatch({
                     update_parameters[test_data_key] = test_data_updated_value;
     
                     %%%service_name_lower_case%%%_service.update%%%service_name%%%(function(error, affected_rows) {
-                        equal(error, false);
-                        equal(affected_rows, 1);
+                        assert.equal(error, false);
+                        assert.equal(affected_rows, 1);
                         chain_cb();
                     }, %%%service_name_lower_case%%%, update_parameters);
                 }, function(chain_cb) {
@@ -64,8 +63,8 @@ vows.describe("services").addBatch({
                      * values
                      */
                     %%%service_name_lower_case%%%_service.get%%%service_name%%%ById(function(found_%%%service_name_lower_case%%%) {
-                        equal(typeof found_%%%service_name_lower_case%%% !== 'undefined', true);
-                        equal(found_%%%service_name_lower_case%%%[test_data_key_getter](), test_data_updated_value);
+                        assert.equal(typeof found_%%%service_name_lower_case%%% !== 'undefined', true);
+                        assert.equal(found_%%%service_name_lower_case%%%[test_data_key_getter](), test_data_updated_value);
                         chain_cb();
                     }, %%%service_name_lower_case%%%_id);
                 }, function(chain_cb) {
@@ -73,8 +72,8 @@ vows.describe("services").addBatch({
                      * Let's remove the created one now!
                      */
                     %%%service_name_lower_case%%%_service.delete%%%service_name%%%(function(error, affected_rows) {
-                        equal(error, false);
-                        equal(affected_rows, 1);
+                        assert.equal(error, false);
+                        assert.equal(affected_rows, 1);
                         chain_cb();
                     }, %%%service_name_lower_case%%%);
                 }, function(chain_cb) {
@@ -82,7 +81,7 @@ vows.describe("services").addBatch({
                      * Now let's see if it's removed!
                      */
                     %%%service_name_lower_case%%%_service.get%%%service_name%%%ById(function(found_%%%service_name_lower_case%%%) {
-                        equal(typeof found_%%%service_name_lower_case%%%, 'undefined');
+                        assert.equal(typeof found_%%%service_name_lower_case%%%, 'undefined');
                         chain_cb();
                     }, %%%service_name_lower_case%%%_id);
                 }, function(chain_cb) {
@@ -92,15 +91,13 @@ vows.describe("services").addBatch({
                     var update_parameters = {};
                     update_parameters[test_data_key] = test_data_initial_value;
     
-                    %%%service_name_lower_case%%%_service.update%%%service_name%%%(function(error, affected_rows) {
-                        equal(error, false);
-                        equal(affected_rows, 0);
-                        chain_cb();
-                    }, %%%service_name_lower_case%%%, update_parameters);
-                }, function() {
-                    cb();
-                })
-            };
+                    %%%service_name_lower_case%%%_service.update%%%service_name%%%(that.callback, %%%service_name_lower_case%%%, update_parameters);
+                });
+            },
+            'was the removal successful': function(error, affected_rows) {
+                assert.isTrue(!error);
+                assert.equal(affected_rows, 0);
+            }
         }  
     }
 }).export(module);
