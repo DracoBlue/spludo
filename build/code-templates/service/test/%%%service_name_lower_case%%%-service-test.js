@@ -1,7 +1,7 @@
+require('%%%spludo_directory%%%/core');
+
 var vows = require("vows");
 var assert = require("assert");
-
-require('%%%spludo_directory%%%/core');
 
 vows.describe("services").addBatch({
     
