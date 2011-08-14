@@ -62,7 +62,8 @@ ServerApplication.prototype.run = function() {
         };
         
         context.params = params || {};
-
+        context.request = req;
+        
         var execution_path = null;
         
         var request_url = url.parse(req.url, true);

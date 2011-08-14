@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* context.request now holds the current req instance
 * added inflection.js
 * added node_modules for own vendor libraries
 * replaced own testing system with vows (if you want to run the tests, please install vows!)
