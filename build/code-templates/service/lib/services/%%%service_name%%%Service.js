@@ -3,31 +3,24 @@
  * 
  * @extends Logging
  */
-extend(true, exports, Logging.prototype);
-exports.logging_prefix = '%%%service_name%%%Service';
+var %%%service_name%%%Service = function() {
+    this.trace('initialize', arguments);
+    this.addTracing();
+    var database_connection_name = config.get('%%%service_name_lower_case%%%', {}).database_connection;
+    this.database_connection = database_manager.getDatabase(database_connection_name);
+};
+
+extend(true, %%%service_name%%%Service.prototype, Logging.prototype);
+%%%service_name%%%Service.prototype.logging_prefix = '%%%service_name%%%Service';
 
 var assert = require('assert');
-
-var initialized = false;
 
 var %%%service_name%%% = function(initial_values) {
     this.values = initial_values || {};
 };
 %%%service_object_definition%%%
 
-exports.initialize = function() {
-    this.trace('initialize', arguments);
-    if (initialized)
-    {
-        throw new Error('Already initialized!');
-    }
-    initialized = true;
-    this.addTracing();
-    var database_connection_name = config.get('%%%service_name_lower_case%%%', {}).database_connection;
-    this.database_connection = database_manager.getDatabase(database_connection_name);
-};
-
-exports.get%%%service_name%%%ById = function(cb, id) {
+%%%service_name%%%Service.prototype.get%%%service_name%%%ById = function(cb, id) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
     this.database_connection.selectTableRows('%%%database_table_name%%%', '%%%id_key%%%  = ?', [id])(function(error, results) {
@@ -39,7 +32,7 @@ exports.get%%%service_name%%%ById = function(cb, id) {
     });
 };
 
-exports.update%%%service_name%%% = function(cb, %%%service_name_lower_case%%%, values) {
+%%%service_name%%%Service.prototype.update%%%service_name%%% = function(cb, %%%service_name_lower_case%%%, values) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
     this.database_connection.updateTableRows('%%%database_table_name%%%', values, '%%%id_key%%%  = ?', [%%%service_name_lower_case%%%.getId()])(function(error, affected_rows) {
@@ -47,7 +40,7 @@ exports.update%%%service_name%%% = function(cb, %%%service_name_lower_case%%%, v
     });
 };
 
-exports.delete%%%service_name%%% = function(cb, %%%service_name_lower_case%%%) {
+%%%service_name%%%Service.prototype.delete%%%service_name%%% = function(cb, %%%service_name_lower_case%%%) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
     this.database_connection.deleteTableRows('%%%database_table_name%%%', '%%%id_key%%%  = ?', [%%%service_name_lower_case%%%.getId()])(function(error, affected_rows) {
@@ -55,7 +48,7 @@ exports.delete%%%service_name%%% = function(cb, %%%service_name_lower_case%%%) {
     });
 };
 
-exports.create%%%service_name%%% = function(cb, values) {
+%%%service_name%%%Service.prototype.create%%%service_name%%% = function(cb, values) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
     this.database_connection.createTableRow('%%%database_table_name%%%', values)(function(error, last_insert_id) {
@@ -66,4 +59,4 @@ exports.create%%%service_name%%% = function(cb, values) {
 /*
  * Initialize the Module
  */
-exports.initialize();
+module.exports = new %%%service_name%%%Service();
