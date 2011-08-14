@@ -37,14 +37,13 @@ var child_process = require('child_process');
  * @extends BaseSqlDatabaseDriver
  */
 MysqlDatabaseDriver = function(name, options) {
-    this.client = new require('mysql').Client({
+    this.client = require('mysql').createClient({
         "host": options.host,
         "password": options.password || null,
         "port": options.port || 3306,
         "user": options.user || null,
         "database": options.database || null
     });
-    this.client.connect();
     
     /**
      * @private
