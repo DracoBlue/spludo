@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* added ApiServiceController to register a service as REST service
 * context.request now holds the current req instance
 * added inflection.js
 * added node_modules for own vendor libraries

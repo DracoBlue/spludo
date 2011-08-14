@@ -94,6 +94,7 @@ require("./ContextToolkit");
 require("./Context");
 
 require("./ServiceManager");
+require("./ApiServiceController");
 
 /**
  * The global service manager
