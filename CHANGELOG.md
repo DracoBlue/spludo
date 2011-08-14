@@ -9,6 +9,8 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* added inflection.js
+* added node_modules for own vendor libraries
 * replaced own testing system with vows (if you want to run the tests, please install vows!)
 * spludo_directory variable is now set always when calling spludo-gen
 * added bootstrap_manager.whenLoaded(callback) to get notified as
