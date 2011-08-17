@@ -10,6 +10,7 @@ var sys = require("sys");
 var fs = require("fs");
 var path = require("path");
 var child_process = require("child_process");
+var inflection = require("inflection");
 
 SpludoGenerator.addCodeTemplate("new-project", {
     description: "Create a new plain spludo project.",
@@ -414,10 +415,16 @@ SpludoGenerator.addCodeTemplate("service", {
                 });
                 return result_parts.join('');
             };
+
+            var service_name = values_object['service_name'];
+            var service_name_lower_case = service_name.toLowerCase();
             
-            values_object['service_name_lower_case'] = values_object['service_name'].toLowerCase();
-            
+            values_object['service_name_lower_case'] = service_name_lower_case;
             values.push(['service_name_lower_case', values_object['service_name_lower_case']]);
+            values_object['service_name_plural_lower_case'] = inflection.pluralize(service_name_lower_case) || service_name_lower_case;
+            values.push(['service_name_plural_lower_case', values_object['service_name_plural_lower_case']]);
+            values_object['service_name_plural'] = inflection.pluralize(service_name) || service_name;
+            values.push(['service_name_plural', values_object['service_name_plural']]);
 
             var database = database_manager.getDatabase(values_object["database_connection_name"]);
 

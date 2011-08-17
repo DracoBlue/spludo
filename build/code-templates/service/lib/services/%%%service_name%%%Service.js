@@ -32,6 +32,24 @@ var %%%service_name%%% = function(initial_values) {
     });
 };
 
+%%%service_name%%%Service.prototype.get%%%service_name_plural%%%ByIds = function(cb, ids) {
+    assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
+
+    var criteria = database_manager.createCriteria();
+    criteria.andWhereIn('%%%id_key%%%', ids);
+    
+    this.database_connection.selectTableRows('%%%database_table_name%%%', criteria)(function(error, results) {
+        var %%%service_name_plural_lower_case%%% = [];
+
+        var results_length = results.length;
+        for (var i = 0; i < results_length; i++) {
+            %%%service_name_plural_lower_case%%%.push(new %%%service_name%%%(results[i]));
+        } 
+
+        cb(%%%service_name_plural_lower_case%%%);
+    });
+};
+
 %%%service_name%%%Service.prototype.update%%%service_name%%% = function(cb, %%%service_name_lower_case%%%, values) {
     assert.equal(typeof cb, 'function', 'First parameter must be a callback!');
     
