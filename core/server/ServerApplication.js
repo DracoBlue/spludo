@@ -75,7 +75,15 @@ ServerApplication.prototype.run = function() {
             /*
 			 * Ok, we need to parse that!
 			 */
-            extend(true, context.params, querystring.parse(body));
+            try {
+                if (req.headers['content-type'] && req.headers['content-type'].match(/^application\/json.*/)) {
+                        extend(true, context.params, JSON.parse(body));
+                } else {
+                        extend(true, context.params, querystring.parse(body));
+                }
+            } catch (error) {
+                
+            }
         }
         
         ContextToolkit.applyRequestHeaders(context, req.headers);
