@@ -77,9 +77,10 @@ ServerApplication.prototype.run = function() {
 			 */
             try {
                 if (req.headers['content-type'] && req.headers['content-type'].match(/^application\/json.*/)) {
-                        extend(true, context.params, JSON.parse(body));
+                    var body_as_utf8 = new Buffer(body, 'binary');
+                    extend(true, context.params, JSON.parse(body_as_utf8.toString('utf8')));
                 } else {
-                        extend(true, context.params, querystring.parse(body));
+                    extend(true, context.params, querystring.parse(body));
                 }
             } catch (error) {
                 
