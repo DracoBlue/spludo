@@ -24,8 +24,8 @@ SpludoGenerator.addCodeTemplate("migration-create-table", {
             "caption": "The database table name (e.g. users)"
         },
         {
-            "name": "id_key",
-            "caption": "The table field for the id"
+            "name": "fields",
+            "caption": "The fields of the table"
         }
     ],
 
@@ -61,12 +61,13 @@ SpludoGenerator.addCodeTemplate("migration-create-table", {
                         cb(true);
                     }
                 });
-            } else if (name === "id_key") {
+            } else if (name === "fields") {
                 if (value.length === 0) {
-                    sys.puts("Please type in an id key!");
+                    sys.puts("Please type in fields for the table!");
                     cb(true);
                     return ;
                 }
+                
                 cb(false, value);
             } else {
                 cb(true);
@@ -78,8 +79,8 @@ SpludoGenerator.addCodeTemplate("migration-create-table", {
         return function(cb) {
             if (name === 'database_connection_name') {
                 cb(false, "default");
-            } else if (name === 'id_key') {
-               cb(false, "id");
+            } else if (name === 'fields') {
+               cb(false, "name:varchar(255) description:text create_date:datetime");
             } else {
                 cb(true, "");
             }
@@ -116,6 +117,50 @@ SpludoGenerator.addCodeTemplate("migration-create-table", {
             values_object['time_stamp'] = d.getUTCFullYear() + pad(d.getUTCMonth()+1) + pad(d.getUTCDate());
             values_object['time_stamp'] = values_object['time_stamp'] + pad(d.getUTCHours()) + pad(d.getUTCMinutes());
             values.push(['time_stamp', values_object['time_stamp']]);
+            
+            var fields = {};
+            
+            var fields_raw = values_object['fields'].trim().split(" ");
+            var fields_data = [];
+
+            fields["id"] = {
+                "type": "INTEGER",
+                "primary": true
+            };
+
+            fields_raw.forEach(function(field_raw) {
+                field_raw = field_raw.trim();
+                var field_raw_parts = field_raw.split(":");
+                var field_name = field_raw_parts[0];
+                var field_type = field_raw_parts[1] || 'varchar(255)';
+                var field_type_parts = field_type.match(/^(.+)\((.+)\)$/);
+                var field_type_name = field_type;
+                var field_type_size = null;
+                
+                if (field_type_parts) {
+                    field_type_name = field_type_parts[1];
+                    field_type_size = parseInt(field_type_parts[2], 10);
+                }
+                
+                fields[field_name] = fields[field_name] || {};
+                
+                fields[field_name]["type"] = field_type_name.toUpperCase();
+                if (field_type_size !== null) {
+                    fields[field_name]["type_size"] = field_type_size;
+                }
+            });
+            
+            if (fields["id"]["type"] === 'INTEGER' || fields["id"]["type"] === 'BIGINT') {
+                fields["id"]["auto_increment"] = true;
+            }
+            
+            for (var field_name in fields) {
+                var data_line = "'" + field_name + "': " + JSON.stringify(fields[field_name]);
+                fields_data.push(data_line);
+            }
+            
+            values_object['fields_data'] = fields_data.join(",\n            ");
+            values.push(['fields_data', values_object['fields_data']]);
             
             cb();
         };
