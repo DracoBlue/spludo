@@ -9,6 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 1.1.0-dev
 
+* generator for monit+upstart configuration
 * code generation for migrations extended with shortcut fields definition
 * added support for application/json paylod
 * generate *ByIds method for services
