@@ -1,14 +1,15 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 1.1.0-dev
+Version: 1.1.0
 
 Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
-## 1.1.0-dev
+## 1.1.0 (2011/11/20)
 
+* added dependency to node >=0.4.0 && node < 0.5.0
 * generator for monit+upstart configuration
 * code generation for migrations extended with shortcut fields definition
 * added support for application/json paylod
