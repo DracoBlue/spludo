@@ -24,5 +24,5 @@ fi
 
 grep -R "$old_version" * | cut -f "1" -d ":" | while read line
 do
-    sed -i '' "s/$old_version/$new_version/g" "$line"
+    sed -i'' "s/$old_version/$new_version/g" "$line"
 done
