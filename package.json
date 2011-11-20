@@ -1,6 +1,6 @@
 {
     "name" : "spludo",
-    "version": "1.0.3-dev",
+    "version": "1.0.3",
 
     "engines": { "node": ">= 0.4.0" },
 
