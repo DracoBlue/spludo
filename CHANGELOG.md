@@ -1,11 +1,15 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 1.1.0
+Version: 2.0-dev
 
 Official Site: <http://spludo.com/>
 
 Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
+
+## 2.0-dev
+
+* no changes, yet
 
 ## 1.1.0 (2011/11/20)
 

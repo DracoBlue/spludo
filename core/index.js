@@ -31,7 +31,7 @@ config = new Config();
 
 config.setValues({
     "core": {
-        "version": '1.1.0'
+        "version": '2.0-dev'
     }
 });
 try {

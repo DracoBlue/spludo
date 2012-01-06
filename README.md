@@ -1,11 +1,11 @@
 Spludo Framework README
 =======================
 
-Version: 1.1.0
+Version: 2.0-dev
 
 Official Site: <http://spludo.com/>
 
-Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
+Spludo is copyright 2009-2012 by DracoBlue <http://dracoblue.net>
 
 What is Spludo?
 ----------------
