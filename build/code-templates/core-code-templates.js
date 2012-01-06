@@ -138,10 +138,6 @@ SpludoGenerator.addCodeTemplate("controller", {
         {
             "name": "controller.file",
             "caption": "File where to store the controller"
-        },
-        {
-            "name": "plugin.name",
-            "caption": "Plugin to use (e.g. myplugin, keep empty for core)"
         }
     ],
 
@@ -160,24 +156,6 @@ SpludoGenerator.addCodeTemplate("controller", {
                 } else {
                     cb(false, JSON.stringify(value));
                 }
-            } else if (name === "plugin.name") {
-                    if (value === '') {
-                        cb(false, value);
-                    } else {
-                        try {
-                            /*
-                             * Let's check some files which are usually in a spludo installation.
-                             */
-                            var file_stat = fs.statSync(SpludoGenerator.target_directory + 'plugins/' + value);
-                            if (!file_stat.isDirectory()) {
-                                throw new Error("The plugin directory is not a directory!");
-                            }
-                            cb(false, value);
-                        } catch (e) {
-                            sys.puts("The plugin " + value + " does not exist.");
-                            cb(true);
-                        }
-                    }
             } else if (name === "controller.file") {
                 if (value.substr(-3) !== '.js') {
                     sys.puts("Unsupported file extension. Controller files must end with .js always.");
@@ -209,13 +187,7 @@ SpludoGenerator.addCodeTemplate("controller", {
                 values_object[pair[0]] = pair[1];
             });
             
-            var controllers_folder = 'controllers/';
-            if (values_object['plugin.name'] !== '')
-            {
-                controllers_folder = 'plugins/' + values_object['plugin.name'] + '/controllers/';
-            }
-            
-            controllers_folder = SpludoGenerator.target_directory + controllers_folder;
+            var controllers_folder = SpludoGenerator.target_directory + 'controllers/';
             
             try {
                 fs.mkdirSync(controllers_folder, 0755);
@@ -277,10 +249,6 @@ SpludoGenerator.addCodeTemplate("controller", {
             });
             
             var controller_folder = 'controllers/';
-            if (values_object['plugin.name'] !== '')
-            {
-                controller_folder = 'plugins/' + values_object['plugin.name'] + '/controllers/';
-            }
             
             sys.puts("   Edit your new controller now with:");
             sys.puts("      $ vim " + controller_folder + values_object['controller.file']);
