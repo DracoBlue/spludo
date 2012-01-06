@@ -26,7 +26,7 @@ ControllerManager.prototype.addController = function(path, controller) {
     this.trace("addController", arguments);
     var plugin_name = this.current_plugin_name || null;
 
-    if (typeof path === "function") {
+    if (path instanceof RegExp) {
         /*
          * Handle those pretty regexp objects as path!
          */
