@@ -383,9 +383,13 @@ SpludoGenerator.addCodeTemplate("service", {
                 });
                 return result_parts.join('');
             };
+            
+            var toUnderscoreNotation = function(input) {
+                return input.replace(/([A-Z])/g, "_$1").substr(1).toLowerCase();
+            };
 
             var service_name = values_object['service_name'];
-            var service_name_lower_case = service_name.toLowerCase();
+            var service_name_lower_case = toUnderscoreNotation(service_name);
             
             values_object['service_name_lower_case'] = service_name_lower_case;
             values.push(['service_name_lower_case', values_object['service_name_lower_case']]);

@@ -11,6 +11,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 * removed plugin system #4
 * folder for code-templates is not needed anymore #6
+* added proper underscore notation for generated services #7
 
 ## 1.1.0 (2011/11/20)
 
