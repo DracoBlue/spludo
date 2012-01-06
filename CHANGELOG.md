@@ -9,7 +9,7 @@ Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
 
 ## 2.0-dev
 
-* no changes, yet
+* removed plugin system #4
 
 ## 1.1.0 (2011/11/20)
 
