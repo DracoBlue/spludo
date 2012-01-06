@@ -213,7 +213,7 @@ SpludoGenerator.performCodeTemplate = function(template_directory, values) {
 require("./code-templates/core-code-templates");
 require("./code-templates/db-code-templates");
 
-var code_template = process.ARGV[2];
+var code_template = process.argv[2];
 
 sys.puts("  ");
 sys.puts(" Spludo 2.0-dev Generator - http://spludo.com/ - Copyright 2009-2011 by DracoBlue <http://dracoblue.net>");

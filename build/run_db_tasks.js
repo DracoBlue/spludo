@@ -1,5 +1,5 @@
 require("./../core");
 require("./tasks/db-tasks");
 new ConsoleApplication({
-    "path": "db:" + process.ARGV[2]
+    "path": "db:" + process.argv[2]
 }).run();
