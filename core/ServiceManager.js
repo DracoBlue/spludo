@@ -24,7 +24,7 @@ ServiceManager.prototype.get = function(key) {
    if (!this.instances[key]) {
        var path = config.get('services', {})[key];
        if (typeof path === 'undefined') {
-           this.instances[key] = require('services/' + key + 'Service');
+           this.instances[key] = require(config.get('core').application_path + 'lib/services/' + key + 'Service');
        } else {
            this.instances[key] = require(path);
        }
