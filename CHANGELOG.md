@@ -1,13 +1,13 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 2.0-dev
+Version: 2.0.0
 
 Official Site: <http://spludo.com/>
 
-Spludo is copyright 2009-2011 by DracoBlue <http://dracoblue.net>
+Spludo is copyright 2009-2012 by DracoBlue <http://dracoblue.net>
 
-## 2.0-dev
+## 2.0.0 (2012/01/30)
 
 * removed plugin system #4
 * folder for code-templates is not needed anymore #6

@@ -28,7 +28,7 @@ config = new Config();
 
 config.setValues({
     "core": {
-        "version": '2.0-dev',
+        "version": '2.0.0',
         "application_path": application_directory
     }
 });
