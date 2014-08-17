@@ -53,16 +53,16 @@ Resources
 * Issue Tracker: <http://github.com/DracoBlue/spludo/issues>
 * User-Guide: [USERGUIDE.md](USERGUIDE.md)
 * Tutorial: <https://github.com/DracoBlue/docsforit>
-    1. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/new-project.md>
-    2. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/base-html-structure.md>
-    3. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/markdown-views.md>
-    4. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/docs-manager.md>
-    5. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/extending-the-docs-manager.md>
-    6. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sections-navigation.md>
-    7. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sorting-the-sections.md>
-    8. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/configuration.md>
-    9. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/editing-the-sections.md>
-    10. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/authentication.md>
+    1. [New Project](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/new-project.md)
+    2. [Base HTML Structure](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/base-html-structure.md)
+    3. [Markdown Views](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/markdown-views.md)
+    4. [Docs-Manager](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/docs-manager.md)
+    5. [Extending the Docs-Manager](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/extending-the-docs-manager.md)
+    6. [Sections-Navigation](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sections-navigation.md)
+    7. [Sorting the Sections](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sorting-the-sections.md)
+    8. [Configuration](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/configuration.md)
+    9. [Editing the Sections](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/editing-the-sections.md)
+    10. [Authentication](https://github.com/DracoBlue/docsforit/blob/master/etc/sections/authentication.md)
 
 License
 --------
