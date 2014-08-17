@@ -1,11 +1,11 @@
 Spludo Framework README
 =======================
 
-Version: 2.0.0
+Latest Release: [![GitHub version](https://badge.fury.io/gh/DracoBlue%2Fspludo.png)](https://github.com/DracoBlue/spludo/releases)
 
-Official Site: <http://spludo.com/>
+Official Site: <https://github.com/DracoBlue/spludo>
 
-Spludo is copyright 2009-2012 by DracoBlue <http://dracoblue.net>
+Spludo is copyright 2009-2014 by DracoBlue <http://dracoblue.net>
 
 What is Spludo?
 ----------------
@@ -39,16 +39,30 @@ New Project in 3 Steps
         $ node run_console.js shell.hello
         Hello, back!
 
+Userguide
+---------
+
+This package contains a [USERGUIDE.md](USERGUIDE.md) with a big introduction into the framework.
+
 Resources
 ----------
 
-* Site: <http://spludo.com/>
-* Contributing: <http://spludo.com/source/>
+* Site: <https://github.com/DracoBlue/spludo>
+* Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
 * Mailing List: <http://groups.google.com/group/spludo>
 * Issue Tracker: <http://github.com/DracoBlue/spludo/issues>
-* Plugins: <http://spludo.com/plugins/>
-* Tutorial: <http://docsforit.spludo.com/>
-* User-Guide: <http://spludo.com/user-guide/>
+* User-Guide: [USERGUIDE.md](USERGUIDE.md)
+* Tutorial: <https://github.com/DracoBlue/docsforit>
+    1. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/new-project.md>
+    2. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/base-html-structure.md>
+    3. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/markdown-views.md>
+    4. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/docs-manager.md>
+    5. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/extending-the-docs-manager.md>
+    6. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sections-navigation.md>
+    7. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/sorting-the-sections.md>
+    8. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/configuration.md>
+    9. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/editing-the-sections.md>
+    10. <https://github.com/DracoBlue/docsforit/blob/master/etc/sections/authentication.md>
 
 License
 --------

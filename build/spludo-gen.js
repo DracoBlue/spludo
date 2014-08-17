@@ -217,7 +217,7 @@ require("./code-templates/db-code-templates");
 var code_template = process.argv[2];
 
 sys.puts("  ");
-sys.puts(" Spludo 2.0.0 Generator - http://spludo.com/ - Copyright 2009-2011 by DracoBlue <http://dracoblue.net>");
+sys.puts(" Spludo Generator - https://github.com/DracoBlue/spludo");
 sys.puts("  ");
 
 if (!code_template || code_template === "help") {

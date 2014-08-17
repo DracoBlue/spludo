@@ -1,10 +1,9 @@
 {
     "name" : "spludo",
-    "version": "2.0.0",
 
     "engines": { "node": ">= 0.6.0" },
 
-    "homepage": "http://spludo.com",
+    "homepage": "https://github.com/DracoBlue/spludo",
 
     "author": "DracoBlue <JanS@DracoBlue.de>",
     "contributors": [
@@ -34,6 +33,6 @@
     },
 
     "licenses" : [
-        { "type" : "MIT",  "url" : "http://spludo.com/license/" }
+        { "type" : "MIT",  "url" : "https://github.com/DracoBlue/spludo/blob/master/LICENSE" }
     ]
 }

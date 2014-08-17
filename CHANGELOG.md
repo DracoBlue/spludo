@@ -1,11 +1,14 @@
 Spludo Framework CHANGELOG
 =======================
 
-Version: 2.0.0
+Official Site: <https://github.com/DracoBlue/spludo>
 
-Official Site: <http://spludo.com/>
+Spludo is copyright 2009-2014 by DracoBlue <http://dracoblue.net>
 
-Spludo is copyright 2009-2012 by DracoBlue <http://dracoblue.net>
+## 2.0.1 (2014/08/17)
+
+* removed spludo.com from source
+* put [USERGUIDE.md](USERGUIDE.md) and [CODINGSTANDARDS.md](CODINGSTANDARDS.md) into the repository
 
 ## 2.0.0 (2012/01/30)
 
